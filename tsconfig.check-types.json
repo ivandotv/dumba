@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "assumeChangesOnlyAffectDirectDependencies": true
+    // "tsBuildInfoFile": ".buildcache/--check-types.tsbuildinfo"
+  }
+  // "include": ["src/**/*"],
+  // "exclude": ["**/node_modules"]
+}

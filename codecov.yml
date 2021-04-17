@@ -1,0 +1,7 @@
+flags:
+  # filter the folder(s) you wish to measure by that flag
+  dumba:
+    # only include files in the backend folder
+    carryforward: true
+    paths:
+      - packages/dumba/

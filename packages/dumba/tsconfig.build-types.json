@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.build-types.json",
+  "compilerOptions": {
+    // "noEmit": false,
+    "outDir": "./dist/types",
+    "tsBuildInfoFile": "../../.buildcache/dumba/build-types.tsbuildinfo"
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "**/node_modules",
+    "src/**/__tests__",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
+  ]
+}

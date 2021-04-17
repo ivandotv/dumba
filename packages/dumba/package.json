@@ -1,0 +1,59 @@
+{
+  "name": "dumba",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Ivan Vlatkovic",
+  "description": "Mobx forms made easy",
+  "buildTarget": "server",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/dumba.esm.js",
+  "unpkg": "dist/unpkg/dumba.js",
+  "jsdelivr": "dist/unpkg/dumba.js",
+  "sideEffects": false,
+  "types": "dist/types/",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "lint": "eslint --fix \"src/**/\"",
+    "lint:check": "eslint \"src/**/\"",
+    "format": "prettier --write src/**",
+    "format:check": "prettier --check src/**",
+    "lint:ci": "yarn lint:check && yarn format:check",
+    "docs": "del docs/api && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --out docs/api ./src",
+    "test": "cross-env BABEL_ENV=test jest --verbose --coverage --no-cache",
+    "test:watch": "cross-env BABEL_ENV=test jest --watch",
+    "test:ci": "cross-env BABEL_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
+    "type:check": "del dist/types && del .buildcache && tsc -p tsconfig.check-types.json",
+    "type:build": "del dist/types && del .buildcache && tsc -p tsconfig.build-types.json",
+    "type:watch": "yarn type:check --watch",
+    "browser:watch": "del dist/cjs && cross-env BABEL_ENV=browserWatch NODE_ENV=development babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps --watch",
+    "browser:build": "yarn type:build && yarn test && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
+    "build": "yarn browser:build",
+    "prepublishOnly": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivandotv/dumba.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ivandotv/dumba/issues"
+  },
+  "homepage": "https://github.com/ivandotv/dumba#readme",
+  "keywords": [],
+  "dependencies": {
+    "deep-for-each": "^3.0.0",
+    "p-is-promise": "^3",
+    "set-value": "^3.0.2",
+    "unique-random": "^2"
+  },
+  "devDependencies": {
+    "mobx": "^6.2.0",
+    "mobx-react-lite": "^3.2.0",
+    "react": "^17.0.2"
+  },
+  "peerDependencies": {
+    "mobx": "^6.2.0"
+  }
+}
