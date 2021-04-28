@@ -8,7 +8,8 @@ export function equals(a: any, b: any): boolean {
   if (!a || !b || (typeof a !== 'object' && typeof b !== 'object'))
     return a === b
   if (a.prototype !== b.prototype) return false
-  let keys = Object.keys(a)
+  const keys = Object.keys(a)
   if (keys.length !== Object.keys(b).length) return false
+
   return keys.every((k) => equals(a[k], b[k]))
 }

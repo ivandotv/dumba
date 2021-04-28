@@ -43,10 +43,13 @@ export class Field<T> {
   errors: FieldResult<T>['errors'] = null
 
   form!: Form<any>
+
   name!: string
+
   path!: string
 
-  public initialValue: T
+  initialValue: T
+
   onChange: (...args: any[]) => Promise<FieldResult<T>>
 
   protected timeoutId?: number
@@ -88,11 +91,13 @@ export class Field<T> {
 
   setValue(value: T): FieldResult<T> {
     this.value = value
+
     return this.validate()
   }
 
   setValueAsync(value: T): Promise<FieldResult<T>> {
     this.value = value
+
     return this.validateAsync()
   }
 
@@ -113,6 +118,7 @@ export class Field<T> {
       ...result
     }
   }
+
   async validateAsync(): Promise<FieldResult<T>> {
     this.isValidating = true
     const result = await this.runner.validateAsync(this.value, this.form)

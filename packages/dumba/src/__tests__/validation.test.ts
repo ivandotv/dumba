@@ -1,8 +1,6 @@
 import { createValidation, Validation } from '../validation'
 
 describe('Validation', () => {
-  beforeEach(() => {})
-
   test('Create validation via validation factory', () => {
     const msg = 'Test message'
     const fn = () => true

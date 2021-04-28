@@ -9,13 +9,11 @@ import {
 } from './__fixtures__/fixtures'
 
 describe('Form Validator', () => {
-  beforeEach(() => {})
-
   test('fields are correctly initialized', () => {
     const form = new Form(getSchema())
 
     expect(form.fields.name).toBeInstanceOf(Field)
-    // @ts-ignore - a field does not exist
+    // @ts-expect-error - a field does not exist
     expect(form.fields.info.a).toBeUndefined()
     expect(form.fields.info.b).toBeInstanceOf(Field)
     expect(form.fields.info.c.c1).toBeInstanceOf(Field)

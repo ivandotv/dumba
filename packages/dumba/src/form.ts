@@ -1,10 +1,10 @@
-// @ts-ignore
+// @ts-expect-error no typings
 import deepForEach from 'deep-for-each'
-// @ts-ignore
+// @ts-expect-error no typings
 import setValue from 'set-value'
 import { Field, FieldResult } from './field'
 
-type SchemaValues<T> = T extends object
+type SchemaValues<T> = T extends Record<string, any>
   ? {
       [key in keyof T]: T[key] extends { value: any }
         ? T[key]['value' & keyof T[key]]
@@ -12,7 +12,7 @@ type SchemaValues<T> = T extends object
     }
   : T
 
-type SchemaResults<T> = T extends object
+type SchemaResults<T> = T extends Record<string, any>
   ? {
       [key in keyof T]: T[key] extends { value: any }
         ? FieldResult<T[key]['value' & keyof T[key]]>
@@ -22,16 +22,19 @@ type SchemaResults<T> = T extends object
 
 export class Form<TSchema> {
   fieldsByPath: Map<string, Field<any>> = new Map()
+
   fields: TSchema
+
   lastSavedData: Map<string, any> = new Map()
 
   isSubmitting = false
+
   submitError = null
 
   constructor(schema: TSchema) {
-    // @ts-ignore
+    // @ts-expect-error - must be initialized with empty object
     this.fields = {}
-    // @ts-ignore
+    // @ts-expect-error - must be initialized with empty object
     this.result = {}
 
     deepForEach(
@@ -85,6 +88,7 @@ export class Form<TSchema> {
     for (const [path, value] of this.lastSavedData.entries()) {
       setValue(data, path, value)
     }
+
     return data as SchemaValues<TSchema>
   }
 
@@ -94,6 +98,7 @@ export class Form<TSchema> {
         return false
       }
     }
+
     return true
   }
 
@@ -103,6 +108,7 @@ export class Form<TSchema> {
         return true
       }
     }
+
     return false
   }
 
@@ -112,6 +118,7 @@ export class Form<TSchema> {
         return true
       }
     }
+
     return false
   }
 
@@ -147,6 +154,7 @@ export class Form<TSchema> {
       const result = await fn(this.getData(), this)
 
       this.lastSavedData = dataBeforeSave
+
       return result
     } catch (e) {
       this.submitError = e
