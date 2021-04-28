@@ -3,6 +3,11 @@ import { createField } from '../field'
 import { Runner } from '../runner'
 import { Validation } from '../validation'
 import * as fixtures from './__fixtures__/fixtures'
+import { configure } from 'mobx'
+
+configure({
+  enforceActions: 'always'
+})
 
 describe('Field', () => {
   describe('Create', () => {

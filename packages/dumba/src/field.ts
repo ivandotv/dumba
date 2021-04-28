@@ -1,3 +1,4 @@
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { Form } from '.'
 import { Runner } from './runner'
 import { equals } from './utils'
@@ -87,6 +88,18 @@ export class Field<T> {
     }
 
     this.onChange = this.onChange.bind(this)
+
+    makeObservable(this, {
+      isValid: computed,
+      isDirty: computed,
+      isValidating: observable,
+      onChange: action,
+      setValue: action,
+      setValueAsync: action,
+      validate: action,
+      validateAsync: action,
+      reset: action
+    })
   }
 
   setValue(value: T): FieldResult<T> {
@@ -122,9 +135,11 @@ export class Field<T> {
   async validateAsync(): Promise<FieldResult<T>> {
     this.isValidating = true
     const result = await this.runner.validateAsync(this.value, this.form)
-    this.isValidating = false
+    runInAction(() => {
+      this.isValidating = false
 
-    this.errors = result.errors
+      this.errors = result.errors
+    })
 
     return {
       name: this.name,

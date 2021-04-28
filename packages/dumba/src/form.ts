@@ -3,6 +3,7 @@ import deepForEach from 'deep-for-each'
 // @ts-expect-error no typings
 import setValue from 'set-value'
 import { Field, FieldResult } from './field'
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 
 type SchemaValues<T> = T extends Record<string, any>
   ? {
@@ -34,8 +35,6 @@ export class Form<TSchema> {
   constructor(schema: TSchema) {
     // @ts-expect-error - must be initialized with empty object
     this.fields = {}
-    // @ts-expect-error - must be initialized with empty object
-    this.result = {}
 
     deepForEach(
       schema,
@@ -50,6 +49,17 @@ export class Form<TSchema> {
         this.fieldsByPath.set(path, formField)
       }
     )
+
+    // initMobx(this)
+    makeObservable(this, {
+      fields: observable,
+      submitError: observable,
+      isSubmitting: observable,
+      isValid: computed,
+      isValidating: computed,
+      isDirty: computed,
+      handleSubmit: action
+    })
   }
 
   validate(): SchemaResults<TSchema> {
@@ -157,11 +167,15 @@ export class Form<TSchema> {
 
       return result
     } catch (e) {
-      this.submitError = e
+      runInAction(() => {
+        this.submitError = e
+      })
 
       throw e
     } finally {
-      this.isSubmitting = false
+      runInAction(() => {
+        this.isSubmitting = false
+      })
     }
   }
 }

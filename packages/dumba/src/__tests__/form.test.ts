@@ -1,3 +1,4 @@
+import { configure } from 'mobx'
 import { createField, Field } from '..'
 import { Form } from '../form'
 import {
@@ -7,6 +8,10 @@ import {
   validationError,
   validationOk
 } from './__fixtures__/fixtures'
+
+configure({
+  enforceActions: 'always'
+})
 
 describe('Form Validator', () => {
   test('fields are correctly initialized', () => {
