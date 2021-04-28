@@ -58,13 +58,30 @@ export class Runner {
   async validateAsync(value: any, ctx: Form<any>): Promise<RunnerResult> {
     this.checkForNull(value)
 
-    const errors = []
+    const errors: string[] = []
+    const validationsToRun = []
+
     for (const validation of this.validations) {
-      const result = await validation.fn(value, ctx)
-      if (!result) {
-        errors.push(validation.msg)
+      validationsToRun.push(
+        Promise.resolve(validation.fn(value, ctx)).then((result) => {
+          return {
+            result,
+            msg: validation.msg
+          }
+        })
+      )
+    }
+
+    await Promise.all(validationsToRun)
+
+    for (const validation of validationsToRun) {
+      //this promise is already resolved.
+      const resolvedFn = await validation
+      if (!resolvedFn.result) {
+        errors.push(resolvedFn.msg)
       }
     }
+
     return errors.length ? { errors, value } : { errors: null, value }
   }
 

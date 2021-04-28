@@ -8,6 +8,7 @@ export function createValidation(
   name?: string
 ) {
   name = name ? name : `n${unique()}`
+
   return new Validation(fn, msg, name)
 }
 
