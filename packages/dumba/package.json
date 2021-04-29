@@ -7,8 +7,6 @@
   "buildTarget": "server",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/dumba.esm.js",
-  "unpkg": "dist/unpkg/dumba.js",
-  "jsdelivr": "dist/unpkg/dumba.js",
   "sideEffects": false,
   "types": "dist/types/",
   "files": [
@@ -28,9 +26,10 @@
     "type:check": "del dist/types && del .buildcache && tsc -p tsconfig.check-types.json",
     "type:build": "del dist/types && del .buildcache && tsc -p tsconfig.build-types.json",
     "type:watch": "yarn type:check --watch",
-    "browser:watch": "del dist/cjs && cross-env BABEL_ENV=browserWatch NODE_ENV=development babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps --watch",
-    "browser:build": "yarn type:build && yarn test && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
-    "build": "yarn browser:build",
+    "build:cjs": "del dist/cjs && cross-env BABEL_ENV=cjs NODE_ENV=production babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps",
+    "build:esm": "del dist/esm && cross-env BABEL_ENV=esm NODE_ENV=production babel src --out-dir dist/esm --extensions .ts,.tsx,.js,.jsx --source-maps",
+    "build": "yarn type:build && yarn build:cjs && yarn build:esm",
+    "build:watch": "del dist/cjs && cross-env BABEL_ENV=cjsWatch NODE_ENV=development babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps --watch",
     "prepublishOnly": "yarn build"
   },
   "repository": {
