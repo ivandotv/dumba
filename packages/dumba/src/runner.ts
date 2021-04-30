@@ -72,13 +72,11 @@ export class Runner {
       )
     }
 
-    await Promise.all(validationsToRun)
+    const resolved = await Promise.all(validationsToRun)
 
-    for (const validation of validationsToRun) {
-      //this promise is already resolved.
-      const resolvedFn = await validation
-      if (!resolvedFn.result) {
-        errors.push(resolvedFn.msg)
+    for (const validation of resolved) {
+      if (!validation.result) {
+        errors.push(validation.msg)
       }
     }
 
