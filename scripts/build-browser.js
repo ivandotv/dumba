@@ -30,7 +30,14 @@ let tasks = [
   function (cb) {
     spawn(
       'yarn',
-      ['--cwd', process.cwd(), 'rollup', '-c', './rollup.config.js'],
+      [
+        '--cwd',
+        process.cwd(),
+        'rollup',
+        '-c',
+        `${path.resolve(`${__dirname}/..`)}/rollup.config.js`
+      ],
+
       {
         stdio: 'inherit',
         shell: true
@@ -42,16 +49,19 @@ let tasks = [
 ]
 
 if (buildBundle.indexOf('cjs') !== -1) {
-  tasks = tasks.concat(async (cb) => {
+  tasks = tasks.concat(async () => {
     return await createCjsIndexFile(pkg.name)
   })
 }
 series(tasks)
 
 async function createCjsIndexFile(libName) {
-  const file = await fs.readFile('./scripts/cjs-browser-template.js', {
-    encoding: 'utf-8'
-  })
+  const file = await fs.readFile(
+    path.resolve(__dirname, './cjs-browser-template.js'),
+    {
+      encoding: 'utf-8'
+    }
+  )
 
   const replaced = file.replace(/__LIBRARY_NAME__/gm, libName)
 
