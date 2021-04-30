@@ -57,9 +57,11 @@ jobs:
         # only when running in node v14
         if: matrix.node == 14
         uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: 'Publish to NPM'
-        if: github.event_name == 'push' && github.repository == 'ivandotv/dumba' && matrix.node == 14
+        if: github.event_name == 'push' && github.repository == 'ivandotv/dumba' && matrix.node == 14 && github.ref == 'refs/head/master'
         uses: changesets/action@master
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
