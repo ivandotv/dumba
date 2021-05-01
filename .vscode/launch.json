@@ -5,16 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Main",
-      "type": "node",
+      "name": "Demo app",
+      "type": "chrome",
       "request": "launch",
-      "program": "${workspaceFolder}/src/index.ts",
-      // "preLaunchTask": "npm: build:cjs",
-      "outFiles": ["${workspaceFolder}/dist/cjs/**/*.js"],
-      "skipFiles": [
-        "${workspaceFolder}/node_modules/**/*.js",
-        "<node_internals>/**/*.js"
-      ]
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/src",
+      "trace": "verbose",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/*"
+      }
+      // "runtimeArgs": ["--preserve-symlinks"]
+      // "resolveSourceMapLocations": ["**", "!**/node_modules/**"]
+      // "resolveSourceMapLocations": null
     },
     {
       "name": "Current test file",
@@ -36,21 +39,6 @@
         "${workspaceFolder}/node_modules/**/*.js",
         "<node_internals>/**/*.js"
       ]
-    },
-    {
-      "name": "Nodemon",
-      "type": "node",
-      "request": "attach",
-      "processId": "${command:PickProcess}",
-      "restart": true,
-      "protocol": "inspector",
-      "skipFiles": [
-        "${workspaceFolder}/node_modules/**/*.js",
-        "<node_internals>/**/*.js"
-      ],
-      // "localRoot": "${workspaceFolder}/src/regexparam",
-      // "remoteRoot": "/",
-      "stopOnEntry": true
     }
   ]
 }

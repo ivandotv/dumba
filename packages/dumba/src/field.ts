@@ -7,7 +7,7 @@ import { createValidation, Validation } from './validation'
 export type CreateFieldData<T> = {
   value: T
   validations?: Validation[] | Validation
-  parseValue?: (data: any) => any
+  parseValue?: (data: any, form: Form) => any
   delay?: number
 }
 
@@ -41,7 +41,7 @@ export function createField<T>(data: CreateFieldData<T>) {
 export class Field<T> {
   isValidating = false
 
-  errors: FieldResult<T>['errors'] = null
+  errors: string[] = []
 
   form!: Form<any>
 
@@ -58,14 +58,14 @@ export class Field<T> {
   constructor(
     public runner: Runner,
     public value: T,
-    protected parseValue?: (data: any) => any,
+    protected parseValue?: (data: any, form: Form) => any,
     public delay?: number
   ) {
     this.initialValue = this.value
 
     this.onChange = async (data: any) => {
       this.value = this.parseValue
-        ? this.parseValue(data)
+        ? this.parseValue(data, this.form)
         : data?.currentTarget?.value != null
         ? data.currentTarget.value
         : null
@@ -126,7 +126,7 @@ export class Field<T> {
   validate(): FieldResult<T> {
     const result = this.runner.validate(this.value, this.form)
 
-    this.errors = result.errors
+    this.errors = result.errors ?? []
 
     return {
       name: this.name,
@@ -141,7 +141,7 @@ export class Field<T> {
     runInAction(() => {
       this.isValidating = false
 
-      this.errors = result.errors
+      this.errors = result.errors ?? []
     })
 
     return {
@@ -152,7 +152,7 @@ export class Field<T> {
   }
 
   get isValid(): boolean {
-    return !this.errors
+    return !this.errors.length
   }
 
   get isDirty(): boolean {
@@ -161,7 +161,7 @@ export class Field<T> {
 
   reset(): void {
     this.value = this.initialValue
-    this.errors = null
+    this.errors = []
   }
 
   addValidation(validation: Validation): void {

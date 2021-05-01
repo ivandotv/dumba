@@ -6,5 +6,13 @@
   "pacakges/*/tests/**/*.{js,jsx,ts,tsx,json}": [
     "eslint --fix",
     "prettier --write"
+  ],
+  "demo/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "demo/tests/**/*.{js,jsx,ts,tsx,json}": [
+    "eslint --fix",
+    "prettier --write"
   ]
 }

@@ -25,7 +25,7 @@
     "type:check": "del ../../.buildcache/dumba/check-types.tsbuildinfo --force && tsc -p tsconfig.check-types.json",
     "type:build": "del dist/types && del ../../.buildcache/dumba/build-types.tsbuildinfo --force && tsc -p tsconfig.build-types.json",
     "type:watch": "yarn type:check --watch",
-    "build": "yarn type:check && yarn type:build && node ../../scripts/build-browser --bundle=cjs,esm",
+    "build": "yarn type:build && node ../../scripts/build-browser --bundle=cjs,esm",
     "build:watch": "del dist/cjs && cross-env BABEL_ENV=cjsWatch NODE_ENV=development babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps --watch",
     "prepublishOnly": "yarn build"
   },
