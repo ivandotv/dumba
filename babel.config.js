@@ -92,9 +92,14 @@ module.exports = {
           '@babel/env',
           {
             useBuiltIns: 'usage',
+            // useBuiltIns: false,
             corejs: 3,
             targets: {
-              browsers: ['>0.2%', 'not dead', 'not op_mini all']
+              browsers: [
+                'last 1 chrome version',
+                'last 1 firefox version',
+                'last 1 safari version'
+              ]
             }
           }
         ]
@@ -108,9 +113,14 @@ module.exports = {
           '@babel/env',
           {
             useBuiltIns: 'usage',
+            // useBuiltIns: false,
             corejs: 3,
             targets: {
-              browsers: ['>0.2%', 'not dead', 'not op_mini all']
+              browsers: [
+                'last 1 chrome version',
+                'last 1 firefox version',
+                'last 1 safari version'
+              ]
             }
           }
         ]
@@ -175,7 +185,7 @@ module.exports = {
           '@babel/env',
           {
             // debug: true,
-            modules: 'cjs',
+            // modules: 'esm',
             targets: {
               node: 'current'
             }
