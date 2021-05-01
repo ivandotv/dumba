@@ -17,6 +17,14 @@ export function asyncValidationError(msg = 'async error') {
   return createValidation(() => Promise.resolve(false), msg)
 }
 
+export function onChangeEvent(value: any) {
+  return {
+    currentTarget: {
+      value
+    }
+  }
+}
+
 export function getSchema() {
   return {
     name: createField({

@@ -52,30 +52,6 @@ describe('Runner', () => {
 
       expect(result).toEqual(expectedResult)
     })
-    test('Throw if value is null', () => {
-      const runner = new Runner([fixtures.validationOk()])
-
-      expect.assertions(1)
-      try {
-        runner.validate(null, getForm())
-      } catch (e) {
-        expect(e.message).toEqual(
-          expect.stringMatching(/Test value can't be null or undefined/)
-        )
-      }
-    })
-    test('Throw if value is undefined', () => {
-      const runner = new Runner([fixtures.validationOk()])
-
-      expect.assertions(1)
-      try {
-        runner.validate(undefined, getForm())
-      } catch (e) {
-        expect(e.message).toEqual(
-          expect.stringMatching(/Test value can't be null or undefined/)
-        )
-      }
-    })
 
     test('Throw if there is an asynchronous validation', () => {
       expect.assertions(1)

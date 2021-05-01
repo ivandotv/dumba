@@ -39,7 +39,6 @@ export class Runner {
   }
 
   validate(value: any, ctx: Form<any>): RunnerResult {
-    this.checkForNull(value)
     const errors = []
 
     for (const validation of this.validations) {
@@ -56,8 +55,6 @@ export class Runner {
   }
 
   async validateAsync(value: any, ctx: Form<any>): Promise<RunnerResult> {
-    this.checkForNull(value)
-
     const errors: string[] = []
     const validationsToRun = []
 
@@ -81,11 +78,5 @@ export class Runner {
     }
 
     return errors.length ? { errors, value } : { errors: null, value }
-  }
-
-  protected checkForNull(value: any): void {
-    if (value == null) {
-      throw new TypeError(`Test value can't be null or undefined`)
-    }
   }
 }

@@ -153,26 +153,85 @@ describe('Field', () => {
   })
   describe('On Change', () => {
     describe('Parse change object', () => {
-      test('Simple value', () => {
-        const event = 'C'
-        const { field } = fixtures.getField()
-        field.onChange(event)
+      test('Throw if onChange value is null', async () => {
+        const value = 'A'
+        const path = '/path'
+        const name = 'lastName'
+        const form = fixtures.getForm()
+        const field = createField({
+          value,
+          validations: [fixtures.asyncValidationOk()]
+        })
 
-        expect(field.value).toBe(event)
+        field.attachToPath(name, path, form)
+
+        expect.assertions(1)
+        try {
+          await field.onChange(null)
+        } catch (e) {
+          expect(e.message).toEqual(
+            expect.stringMatching(/Test value can't be null or undefined/)
+          )
+        }
       })
-      test('Object with "value" property', () => {
-        const event = { value: 'C' }
-        const { field } = fixtures.getField()
-        field.onChange(event)
+      test('Throw if onChange value is undefined', async () => {
+        const value = 'A'
+        const path = '/path'
+        const name = 'lastName'
+        const form = fixtures.getForm()
+        const field = createField({
+          value,
+          validations: [fixtures.asyncValidationOk()]
+        })
 
-        expect(field.value).toBe(event.value)
+        field.attachToPath(name, path, form)
+
+        expect.assertions(1)
+        try {
+          await field.onChange()
+        } catch (e) {
+          expect(e.message).toEqual(
+            expect.stringMatching(/Test value can't be null or undefined/)
+          )
+        }
       })
-      test('Object with "target.value" property', () => {
-        const event = { target: { value: 'C' } }
-        const { field } = fixtures.getField()
-        field.onChange(event)
+      test('Throw if onChange value is not an object with "currentTarget" property', async () => {
+        const value = 'A'
+        const path = '/path'
+        const name = 'lastName'
+        const form = fixtures.getForm()
+        const field = createField({
+          value,
+          validations: [fixtures.asyncValidationOk()]
+        })
 
-        expect(field.value).toBe(event.target.value)
+        field.attachToPath(name, path, form)
+
+        expect.assertions(1)
+        try {
+          await field.onChange({ target: { value: 'test' } })
+        } catch (e) {
+          expect(e.message).toEqual(
+            expect.stringMatching(/Test value can't be null or undefined/)
+          )
+        }
+      })
+
+      test('Currectly parse object with "currentTarget"', async () => {
+        const value = 'A'
+        const newValue = 'B'
+        const path = '/path'
+        const name = 'lastName'
+        const form = fixtures.getForm()
+        const field = createField({
+          value,
+          validations: [fixtures.asyncValidationOk()]
+        })
+
+        field.attachToPath(name, path, form)
+
+        await field.onChange({ currentTarget: { value: newValue } })
+        expect(field.value).toBe(newValue)
       })
 
       test('Custom parse value function', () => {
@@ -246,9 +305,9 @@ describe('Field', () => {
 
     test('If initialized with a delay, validation process will be delayed', async () => {
       jest.useFakeTimers()
-      const eventOne = 1
-      const eventTwo = 2
-      const eventThree = 3
+      const eventOne = fixtures.onChangeEvent(1)
+      const eventTwo = fixtures.onChangeEvent(2)
+      const eventThree = fixtures.onChangeEvent(3)
 
       const validationFn = jest.fn().mockReturnValue(true)
 
@@ -274,35 +333,35 @@ describe('Field', () => {
       expect(field.isValidating).toBe(false)
 
       expect(validationFn).toBeCalledTimes(1)
-      expect(validationFn).toBeCalledWith(eventThree, form)
+      expect(validationFn).toBeCalledWith(eventThree.currentTarget.value, form)
     })
 
     test('Validate successfully', async () => {
-      const value = 'A'
+      const event = fixtures.onChangeEvent('A')
       const path = '/path'
       const name = 'lastName'
       const form = fixtures.getForm()
       const field = createField({
-        value,
+        value: event.currentTarget.value,
         validations: [fixtures.validationOk()]
       })
 
       field.attachToPath(name, path, form)
 
-      const result = field.onChange({ value })
+      const result = field.onChange(event)
       await result
       expect(field.errors).toBeNull()
       expect(field.isValid).toBe(true)
     })
 
     test('Validate unsuccessfully', async () => {
-      const value = 'A'
+      const event = fixtures.onChangeEvent('A')
       const path = '/path'
       const name = 'lastName'
       const form = fixtures.getForm()
       const errorMessage = 'failed validation'
       const field = createField({
-        value,
+        value: event.currentTarget.value,
         validations: [
           fixtures.validationOk(),
           fixtures.asyncValidationError(errorMessage)
@@ -310,7 +369,7 @@ describe('Field', () => {
       })
       field.attachToPath(name, path, form)
 
-      const result = field.onChange({ value })
+      const result = field.onChange(event)
 
       await result
 
@@ -320,7 +379,7 @@ describe('Field', () => {
 
     test('When primitive initial value is not equal to new value, field is dirty', async () => {
       const value = 'A'
-      const newValue = 'B'
+      const event = fixtures.onChangeEvent('B')
       const path = '/path'
       const name = 'lastName'
       const form = fixtures.getForm()
@@ -329,7 +388,7 @@ describe('Field', () => {
       })
       field.attachToPath(name, path, form)
 
-      const result = field.onChange(newValue)
+      const result = field.onChange(event)
 
       await result
 
@@ -354,17 +413,17 @@ describe('Field', () => {
     })
 
     test('When non primitive initial value (array) is not equal to new value, field is dirty', async () => {
-      const value = [1]
-      const newValue = [1, 2]
+      const event = fixtures.onChangeEvent([1])
+      const newEvent = fixtures.onChangeEvent([1, 2])
       const path = '/path'
       const name = 'lastName'
       const form = fixtures.getForm()
       const field = createField({
-        value
+        value: event.currentTarget.value
       })
       field.attachToPath(name, path, form)
 
-      const result = field.setValueAsync(newValue)
+      const result = field.onChange(newEvent)
 
       await result
 
@@ -389,17 +448,17 @@ describe('Field', () => {
       expect(field.isDirty).toBe(true)
     })
     test('When non primitive initial value (object) is equal to new value, field is not dirty', async () => {
-      const value = { a: 'a' }
-      const newValue = { a: 'a' }
+      const event = fixtures.onChangeEvent({ a: 'a' })
+      const newEvent = fixtures.onChangeEvent({ a: 'a' })
       const path = '/path'
       const name = 'lastName'
       const form = fixtures.getForm()
       const field = createField({
-        value
+        value: event.currentTarget.value
       })
       field.attachToPath(name, path, form)
 
-      const result = field.setValueAsync(newValue)
+      const result = field.onChange(newEvent)
 
       await result
 
@@ -408,39 +467,39 @@ describe('Field', () => {
   })
   describe('Reset', () => {
     test('When field is reset, it has the initial value', async () => {
-      const value = [1]
-      const newValue = [1, 2]
+      const event = fixtures.onChangeEvent([1])
+      const newEvent = fixtures.onChangeEvent([1, 2])
       const path = '/path'
       const name = 'lastName'
       const form = fixtures.getForm()
       const field = createField({
-        value
+        value: event.currentTarget.value
       })
       field.attachToPath(name, path, form)
-      await field.setValueAsync(newValue)
+      await field.onChange(newEvent)
 
       field.reset()
 
-      expect(field.value).toBe(value)
+      expect(field.value).toEqual(event.currentTarget.value)
     })
 
     test('When field is reset, it should not keep previous errors', async () => {
-      const value = [1]
-      const newValue = [1, 2]
+      const event = fixtures.onChangeEvent([1])
+      const newEvent = fixtures.onChangeEvent([1, 2])
       const path = '/path'
       const name = 'lastName'
       const form = fixtures.getForm()
       const errorMessage = 'validation failed'
       const field = createField({
-        value,
+        value: event.currentTarget.value,
         validations: fixtures.validationError(errorMessage)
       })
       field.attachToPath(name, path, form)
-      await field.setValueAsync(newValue)
+      await field.onChange(newEvent)
 
       field.reset()
 
-      expect(field.value).toBe(value)
+      expect(field.value).toEqual(event.currentTarget.value)
       expect(field.errors).toBeNull()
     })
   })

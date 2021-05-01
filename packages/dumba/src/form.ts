@@ -21,7 +21,7 @@ type SchemaResults<T> = T extends Record<string, any>
     }
   : T
 
-export class Form<TSchema> {
+export class Form<TSchema = any> {
   fieldsByPath: Map<string, Field<any>> = new Map()
 
   fields: TSchema

@@ -58,8 +58,7 @@ export class Field<T> {
   constructor(
     public runner: Runner,
     public value: T,
-    //@internal
-    public parseValue?: (data: any) => any,
+    protected parseValue?: (data: any) => any,
     public delay?: number
   ) {
     this.initialValue = this.value
@@ -67,11 +66,11 @@ export class Field<T> {
     this.onChange = async (data: any) => {
       this.value = this.parseValue
         ? this.parseValue(data)
-        : data.value
-        ? data.value
-        : data.target && data.target.value
-        ? data.target.value
-        : data
+        : data?.currentTarget?.value != null
+        ? data.currentTarget.value
+        : null
+
+      this.checkForNull(this.value)
 
       return new Promise<FieldResult<T>>((resolve) => {
         if (typeof this.delay !== 'undefined') {
@@ -93,6 +92,8 @@ export class Field<T> {
       isValid: computed,
       isDirty: computed,
       isValidating: observable,
+      errors: observable,
+      value: observable,
       onChange: action,
       setValue: action,
       setValueAsync: action,
@@ -103,12 +104,14 @@ export class Field<T> {
   }
 
   setValue(value: T): FieldResult<T> {
+    this.checkForNull(value)
     this.value = value
 
     return this.validate()
   }
 
   setValueAsync(value: T): Promise<FieldResult<T>> {
+    this.checkForNull(value)
     this.value = value
 
     return this.validateAsync()
@@ -171,5 +174,11 @@ export class Field<T> {
 
   getValidation(name: string): Validation | undefined {
     return this.runner.getValidation(name)
+  }
+
+  protected checkForNull(value: any): void {
+    if (value == null) {
+      throw new TypeError(`Test value can't be null or undefined`)
+    }
   }
 }
