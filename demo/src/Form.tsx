@@ -1,87 +1,151 @@
-import { isObservable } from 'mobx'
+import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormLabel from '@material-ui/core/FormLabel'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import Radio from '@material-ui/core/Radio'
+import RadioGroup from '@material-ui/core/RadioGroup'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
 import { observer } from 'mobx-react-lite'
 import { useForm } from './formStore'
+import { DisplayErrors } from './DisplayErrors'
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      // maxWidth: '600px',
+      // width: '600px',
+      '& > *': {
+        margin: theme.spacing(1),
+        width: '40ch'
+      }
+    }
+  })
+)
 const Form = observer(function Form() {
   const formStore = useForm()
-
-  console.log('value', formStore.fields.name.value)
-  // console.log('is observable ', isObservable(formStore.fields.name.value))
-  console.log('is valid ', formStore.fields.name.isValid)
-  console.log('errors ', formStore.fields.name.errors)
+  const classes = useStyles()
 
   return (
-    <div className="formWrap">
-      <form>
-        <fieldset>
-          <legend>Form Demo</legend>
-          <div
-            className={!formStore.fields.name.isValid ? 'not-valid' : undefined}
-          >
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              onChange={formStore.fields.name.onChange}
-            />
-          </div>
-          <div
-            className={
-              !formStore.fields.email.isValid ? 'not-valid' : undefined
+    <div>
+      <form autoComplete="off" noValidate className={classes.root}>
+        <FormControl>
+          <FormLabel component="legend"></FormLabel>
+          <TextField
+            type="text"
+            size="small"
+            variant="filled"
+            label="Name"
+            disabled={formStore.isSubmitting}
+            error={!!formStore.fields.name.errors.length}
+            id="name"
+            name="name"
+            autoComplete="off"
+            helperText={<DisplayErrors errors={formStore.fields.name.errors} />}
+            onChange={formStore.fields.name.onChange}
+          />
+        </FormControl>
+        <FormControl>
+          <TextField
+            type="text"
+            id="email"
+            name="email"
+            label="Email"
+            disabled={formStore.isSubmitting}
+            value={formStore.fields.email.value}
+            onChange={formStore.fields.email.onChange}
+            error={!!formStore.fields.email.errors.length}
+            helperText={
+              <DisplayErrors errors={formStore.fields.email.errors} />
             }
-          >
-            <label htmlFor="name">Email</label>
-            <input
-              type="text"
-              id="email"
-              name="email"
-              value={formStore.fields.email.value}
-              onChange={formStore.fields.email.onChange}
-            />
-          </div>
-          <div
-            className={
-              !formStore.fields.masked.isValid ? 'not-valid' : undefined
+            autoComplete="off"
+            variant="filled"
+            size="small"
+          />
+        </FormControl>
+        <FormControl disabled={true}>
+          <TextField
+            type="text"
+            id="masked"
+            name="masked"
+            disabled={formStore.isSubmitting}
+            label="Masked: only allow letters A,B,C"
+            variant="filled"
+            error={!!formStore.fields.masked.errors.length}
+            size="small"
+            value={formStore.fields.masked.value}
+            helperText={
+              <DisplayErrors errors={formStore.fields.masked.errors} />
             }
+            onChange={formStore.fields.masked.onChange}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel component="legend">Type</FormLabel>
+          <RadioGroup
+            aria-label="types"
+            name="types"
+            value={formStore.fields.types.value}
+            onChange={formStore.fields.types.onChange}
           >
-            <label htmlFor="masked">Masked: Only Letters "ABC"</label>
-            <input
-              type="text"
-              id="masked"
-              name="masked"
-              value={formStore.fields.masked.value}
-              onChange={formStore.fields.masked.onChange}
+            <FormControlLabel
+              disabled={formStore.isSubmitting}
+              value="number"
+              control={<Radio />}
+              label="Number"
             />
-          </div>
-          <div>
-            <label htmlFor="types">Types</label>
-            <select
-              value={formStore.fields.types.value}
-              onChange={formStore.fields.types.onChange}
-            >
-              <option value="number">Number</option>
-              <option value="string">String</option>
-            </select>
-          </div>
-          <div
-            className={
-              !formStore.fields.numberOrString.isValid ? 'not-valid' : undefined
+            <FormControlLabel
+              disabled={formStore.isSubmitting}
+              value="letter"
+              control={<Radio />}
+              label="Letter"
+            />
+          </RadioGroup>
+        </FormControl>
+        <FormControl>
+          <FormLabel component="legend">Type depended field</FormLabel>
+          <small>Allow letters or numbers, depending on types above</small>
+          <TextField
+            type="text"
+            id="numberOrString"
+            name="numberOrString"
+            variant="filled"
+            size="small"
+            disabled={formStore.isSubmitting}
+            onChange={formStore.fields.numberOrString.onChange}
+            label={
+              formStore.fields.types.value === 'letter'
+                ? 'Letters only'
+                : 'Numbers only'
             }
-          >
-            <label htmlFor="numberOrString">Number or String</label>
-            <br />
-            <small>
-              Depends on <strong>types</strong> above
-            </small>
-            <input
-              type="text"
-              id="numberOrString"
-              name="numberOrString"
-              onChange={formStore.fields.numberOrString.onChange}
-            />
-          </div>
-        </fieldset>
+            error={!!formStore.fields.numberOrString.errors.length}
+            helperText={
+              <DisplayErrors errors={formStore.fields.numberOrString.errors} />
+            }
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel component="legend">Async validation</FormLabel>
+          <small>TIP: use "batman" to pass validaton</small>
+          <TextField
+            type="text"
+            id="username"
+            name="username"
+            variant="filled"
+            size="small"
+            onChange={formStore.fields.username.onChange}
+            label="Username"
+            disabled={formStore.isSubmitting}
+            error={!!formStore.fields.username.errors.length}
+            helperText={
+              <DisplayErrors errors={formStore.fields.username.errors} />
+            }
+          />
+        </FormControl>
+        {formStore.fields.username.isValidating ? <LinearProgress /> : null}
       </form>
     </div>
   )

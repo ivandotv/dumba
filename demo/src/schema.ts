@@ -51,7 +51,7 @@ export const schema = {
     }
   }),
   types: createField({
-    value: 'string',
+    value: 'letter',
     validations: createValidation((value: string, form: Form) => {
       // when the dropdown changes, validate numberOrString
       form.fields.numberOrString.validate()
@@ -66,12 +66,12 @@ export const schema = {
         const dropdownValue = form.fields.types.value
 
         //only handle the case when dropdown value is string
-        if ('string' === dropdownValue && form.fields.numberOrString.isDirty) {
+        if ('letter' === dropdownValue && form.fields.numberOrString.isDirty) {
           // check if only letters
           return isAlpha(value)
         }
         return true
-      }, 'Must by letters'),
+      }, 'Must be letters'),
       createValidation((value: string, form: Form) => {
         const dropdownValue = form.fields.types.value
 
@@ -83,6 +83,25 @@ export const schema = {
 
         return true
       }, 'Must be numeric')
+    ]
+  }),
+  username: createField({
+    value: '',
+    delay: 400,
+    validations: [
+      createValidation(
+        (str: string) => isAlpha(str),
+        'Required, only letters are allowed'
+      ),
+      createValidation((str: string) => {
+        const p = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve(str === 'batman')
+          }, 700)
+        })
+
+        return p as Promise<boolean>
+      }, 'user name taken')
     ]
   })
 }

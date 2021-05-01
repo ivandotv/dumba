@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="App">
       <Form></Form>
-      <Watch></Watch>
+      {/* <Watch></Watch> */}
     </div>
   )
 }

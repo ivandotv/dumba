@@ -3,8 +3,9 @@
 }
 .formWrap {
   max-width: 300px;
-  /* margin: auto; */
+  margin: auto;
 }
+
 .formWrap div {
   margin: 16px 0;
 }
