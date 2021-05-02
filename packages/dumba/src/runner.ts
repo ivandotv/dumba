@@ -10,7 +10,7 @@ export type RunnerResult = {
 export class Runner {
   protected validationsByName: Map<string, Validation> = new Map()
 
-  constructor(public validations: Validation[]) {
+  constructor(public validations: Validation[], protected bailEarly = false) {
     for (const validation of validations) {
       this.validationsByName.set(validation.name, validation)
     }
@@ -49,12 +49,20 @@ export class Runner {
       if (!result) {
         errors.push(validation.msg)
       }
+
+      if (this.bailEarly) {
+        return errors.length ? { errors, value } : { errors: null, value }
+      }
     }
 
     return errors.length ? { errors, value } : { errors: null, value }
   }
 
   async validateAsync(value: any, ctx: Form<any>): Promise<RunnerResult> {
+    if (this.bailEarly) {
+      return await this.bailEarlyAsync(value, ctx)
+    }
+
     const errors: string[] = []
     const validationsToRun = []
 
@@ -78,5 +86,17 @@ export class Runner {
     }
 
     return errors.length ? { errors, value } : { errors: null, value }
+  }
+
+  async bailEarlyAsync(value: any, ctx: Form<any>): Promise<RunnerResult> {
+    for (const validation of this.validations) {
+      const result = await validation.fn(value, ctx)
+
+      if (!result) {
+        return { errors: [validation.msg], value }
+      }
+    }
+
+    return { errors: null, value }
   }
 }

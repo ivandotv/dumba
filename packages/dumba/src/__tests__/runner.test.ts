@@ -39,6 +39,25 @@ describe('Runner', () => {
     })
 
     test('With failure', () => {
+      const value = 'A'
+      const messageOne = 'failed'
+      const messageTwo = 'second failure'
+
+      const expectedResult = {
+        errors: [messageOne, messageTwo],
+        value: value
+      }
+
+      const runner = new Runner([
+        fixtures.validationError(messageOne),
+        fixtures.validationError(messageTwo)
+      ])
+
+      const result = runner.validate(value, getForm())
+
+      expect(result).toEqual(expectedResult)
+    })
+    test('With failure - bail early', () => {
       const expectedValue = 'A'
       const expectedMessage = 'failed'
       const expectedResult = {
@@ -46,11 +65,17 @@ describe('Runner', () => {
         value: expectedValue
       }
 
-      const runner = new Runner([fixtures.validationError(expectedMessage)])
+      const secondValidation = jest.spyOn(fixtures.validationError(), 'fn')
+
+      const runner = new Runner(
+        [fixtures.validationError(expectedMessage)],
+        true
+      )
 
       const result = runner.validate(expectedValue, getForm())
 
       expect(result).toEqual(expectedResult)
+      expect(secondValidation).not.toBeCalled()
     })
 
     test('Throw if there is an asynchronous validation', () => {
@@ -78,6 +103,7 @@ describe('Runner', () => {
 
       expect(result).toEqual(expectedResult)
     })
+
     test('Success with asynchronous validation', async () => {
       const expectedValue = 'A'
       const expectedResult = { errors: null, value: expectedValue }
@@ -101,6 +127,28 @@ describe('Runner', () => {
 
       expect(result).toEqual(expectedResult)
     })
+
+    test('With failure - bail early', async () => {
+      const expectedValue = 'A'
+      const expectedMessage = 'failed'
+      const expectedResult = {
+        errors: [expectedMessage],
+        value: expectedValue
+      }
+
+      const secondValidation = jest.spyOn(fixtures.validationError(), 'fn')
+
+      const runner = new Runner(
+        [fixtures.validationError(expectedMessage)],
+        true
+      )
+
+      const result = await runner.validateAsync(expectedValue, getForm())
+
+      expect(result).toEqual(expectedResult)
+      expect(secondValidation).not.toBeCalled()
+    })
+
     test('Failure with asyncsynchronous validation', async () => {
       const expectedValue = 'A'
       const expectedMessage = 'failed'
@@ -134,6 +182,7 @@ describe('Runner', () => {
       expect(fnTwoSpy).toBeCalledTimes(1)
       expect(fnTwoSpy).toBeCalledWith(expectedValue, form)
     })
+
     test('Run multiple asyncsynchronous validations', async () => {
       const expectedValue = 'A'
       const fnOne = fixtures.validationOk()

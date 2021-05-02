@@ -1,9 +1,10 @@
 import random from 'unique-random'
+import { Form } from './form'
 
 const unique = random(0, 10000)
 
 export function createValidation(
-  fn: (value: any, ctx: any) => boolean | Promise<boolean>,
+  fn: (value: any, ctx: Form) => boolean | Promise<boolean>,
   msg: string,
   name?: string
 ) {

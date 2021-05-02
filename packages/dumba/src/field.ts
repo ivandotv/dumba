@@ -9,6 +9,7 @@ export type CreateFieldData<T> = {
   validations?: Validation[] | Validation
   parseValue?: (data: any, form: Form) => any
   delay?: number
+  bailEarly?: boolean
 }
 
 export type FieldResult<T> = {
@@ -31,7 +32,7 @@ export function createField<T>(data: CreateFieldData<T>) {
     validations = [createValidation(() => true, '')]
   }
 
-  const runner = new Runner(validations)
+  const runner = new Runner(validations, data.bailEarly)
 
   const field = new Field(runner, data.value, data.parseValue, data.delay)
 
