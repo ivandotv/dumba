@@ -88,6 +88,7 @@ export const schema = {
   username: createField({
     value: '',
     delay: 400,
+    bailEarly: true,
     validations: [
       createValidation(
         (str: string) => isAlpha(str),
