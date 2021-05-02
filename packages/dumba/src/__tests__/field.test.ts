@@ -350,7 +350,7 @@ describe('Field', () => {
 
       const result = field.onChange(event)
       await result
-      expect(field.errors).toBeNull()
+      expect(field.errors).toEqual([])
       expect(field.isValid).toBe(true)
     })
 
@@ -500,7 +500,7 @@ describe('Field', () => {
       field.reset()
 
       expect(field.value).toEqual(event.currentTarget.value)
-      expect(field.errors).toBeNull()
+      expect(field.errors).toStrictEqual([])
     })
   })
 })
