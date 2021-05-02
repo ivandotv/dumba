@@ -6,6 +6,8 @@ import Email from './fields/Email'
 import Masked from './fields/Masked'
 import Name from './fields/Name'
 import Types from './fields/Types'
+import Button from '@material-ui/core/Button'
+import { useForm } from './formStore'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,7 +26,10 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 const Form = observer(function Form() {
   const classes = useStyles()
+  const formStore = useForm()
 
+  console.log('all validated ', formStore.allValidated)
+  console.log('all dirty ', formStore.allDirty)
   return (
     <div>
       <form autoComplete="off" noValidate className={classes.root}>
@@ -34,6 +39,18 @@ const Form = observer(function Form() {
         <Types />
         <Dependent />
         <Async />
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={
+            formStore.isSubmitting ||
+            formStore.isValidating ||
+            !formStore.isValid ||
+            !formStore.allValidated
+          }
+        >
+          Submit
+        </Button>
       </form>
     </div>
   )

@@ -132,6 +132,26 @@ export class Form<TSchema = any> {
     return false
   }
 
+  get allDirty(): boolean {
+    for (const field of this.fieldsByPath.values()) {
+      if (!field.isDirty) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  get allValidated(): boolean {
+    for (const field of this.fieldsByPath.values()) {
+      if (!field.validated) {
+        return false
+      }
+    }
+
+    return true
+  }
+
   reset(): void {
     for (const field of this.fieldsByPath.values()) {
       field.reset()

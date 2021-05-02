@@ -62,6 +62,10 @@ export const schema = {
   numberOrString: createField({
     value: '',
     validations: [
+      createValidation(
+        (str: string) => isLength(str, { min: 1 }),
+        "Can't be empty"
+      ),
       createValidation((value: string, form: Form) => {
         const dropdownValue = form.fields.types.value
 

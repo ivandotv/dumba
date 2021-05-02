@@ -19,6 +19,7 @@ const Async = observer(function Async() {
         variant="filled"
         size="small"
         onChange={formStore.fields.username.onChange}
+        onBlur={formStore.fields.username.onBlur}
         label="Username"
         disabled={formStore.isSubmitting}
         error={!!formStore.fields.username.errors.length}

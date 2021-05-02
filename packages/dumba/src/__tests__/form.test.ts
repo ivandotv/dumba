@@ -272,6 +272,26 @@ describe('Form Validator', () => {
     expect(form.isDirty).toBe(true)
   })
 
+  test('When all field values are changed, "allDirty" is true', () => {
+    const form = new Form(getSchema())
+
+    expect(form.isDirty).toBe(false)
+
+    form.fields.info.c.c1.setValueAsync('new value')
+
+    expect(form.isDirty).toBe(true)
+  })
+
+  test('When not all field values are dirty, "allDirty" is false', () => {
+    const form = new Form(getSchema())
+
+    expect(form.isDirty).toBe(false)
+
+    form.fields.info.c.c1.setValueAsync('new value')
+
+    expect(form.isDirty).toBe(true)
+  })
+
   test('Payload always reflects current form data', () => {
     const form = new Form(getSchema())
     // const bValue = form.fields.info.b.value

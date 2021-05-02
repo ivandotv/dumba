@@ -272,7 +272,7 @@ describe('Field', () => {
       const newValidation = new Validation(() => true, '', '')
       const runner = new Runner([new Validation(() => true, '', '')])
       const spyFn = jest.spyOn(runner, 'addValidation')
-      const field = new Field(runner, 'A', undefined, 100)
+      const field = new Field(runner, 'A', false, undefined, 100)
 
       field.addValidation(newValidation)
 
@@ -283,7 +283,7 @@ describe('Field', () => {
       const validation = new Validation(() => true, '', validationName)
       const runner = new Runner([validation])
       const spyFn = jest.spyOn(runner, 'removeValidation')
-      const field = new Field(runner, 'A', undefined, 100)
+      const field = new Field(runner, 'A', false, undefined, 100)
 
       const result = field.removeValidation(validationName)
 
@@ -295,7 +295,7 @@ describe('Field', () => {
       const validation = new Validation(() => true, '', validationName)
       const runner = new Runner([validation])
       const spyFn = jest.spyOn(runner, 'getValidation')
-      const field = new Field(runner, 'A', undefined, 100)
+      const field = new Field(runner, 'A', false, undefined, 100)
 
       const result = field.getValidation(validationName)
 
@@ -313,7 +313,7 @@ describe('Field', () => {
 
       const runner = new Runner([new Validation(validationFn, '', '')])
 
-      const field = new Field(runner, 'A', undefined, 100)
+      const field = new Field(runner, 'A', false, undefined, 100)
       const form = fixtures.getForm()
       field.attachToPath('', '', form)
 
@@ -328,6 +328,7 @@ describe('Field', () => {
       jest.runOnlyPendingTimers()
 
       expect(field.isValidating).toBe(true)
+
       await last
 
       expect(field.isValidating).toBe(false)

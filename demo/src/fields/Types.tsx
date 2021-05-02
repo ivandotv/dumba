@@ -16,6 +16,10 @@ const Types = observer(function Types() {
         name="types"
         row={true}
         value={formStore.fields.types.value}
+        onBlur={(evt) => {
+          console.log('types blur')
+          console.log({ evt })
+        }}
         onChange={formStore.fields.types.onChange}
       >
         <FormControlLabel

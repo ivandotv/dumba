@@ -21,6 +21,8 @@ export type FieldResult<T> = {
 
 export function createField<T>(data: CreateFieldData<T>) {
   let validations
+
+  let alwaysValid = false
   if (data.validations) {
     if (Array.isArray(data.validations)) {
       validations = [...data.validations]
@@ -30,11 +32,18 @@ export function createField<T>(data: CreateFieldData<T>) {
   } else {
     // default no-op validation
     validations = [createValidation(() => true, '')]
+    alwaysValid = true
   }
 
   const runner = new Runner(validations, data.bailEarly)
 
-  const field = new Field(runner, data.value, data.parseValue, data.delay)
+  const field = new Field(
+    runner,
+    data.value,
+    alwaysValid,
+    data.parseValue,
+    data.delay
+  )
 
   return field
 }
@@ -56,19 +65,26 @@ export class Field<T> {
 
   protected timeoutId?: number
 
+  validated = false
+
   constructor(
     public runner: Runner,
     public value: T,
+    protected alwaysValid: boolean,
     protected parseValue?: (data: any, form: Form) => any,
     public delay?: number
   ) {
     this.initialValue = this.value
 
-    this.onChange = async (data: any) => {
+    if (this.alwaysValid) {
+      this.validated = true
+    }
+
+    this.onChange = async (evt: any) => {
       this.value = this.parseValue
-        ? this.parseValue(data, this.form)
-        : data?.currentTarget?.value != null
-        ? data.currentTarget.value
+        ? this.parseValue(evt, this.form)
+        : evt?.currentTarget?.value != null
+        ? evt.currentTarget.value
         : null
 
       this.checkForNull(this.value)
@@ -88,6 +104,11 @@ export class Field<T> {
     }
 
     this.onChange = this.onChange.bind(this)
+    this.onFocus = this.onFocus.bind(this)
+    this.onBlur = this.onBlur.bind(this)
+
+    this.validate = this.validate.bind(this)
+    this.validateAsync = this.validateAsync.bind(this)
 
     makeObservable(this, {
       isValid: computed,
@@ -95,6 +116,7 @@ export class Field<T> {
       isValidating: observable,
       errors: observable,
       value: observable,
+      validated: observable,
       onChange: action,
       setValue: action,
       setValueAsync: action,
@@ -102,6 +124,14 @@ export class Field<T> {
       validateAsync: action,
       reset: action
     })
+  }
+
+  onFocus<T = HTMLInputElement>(evt: React.ChangeEvent<T>) {
+    return this.onChange(evt)
+  }
+
+  onBlur<T = HTMLInputElement>(evt: React.ChangeEvent<T>) {
+    return this.onChange(evt)
   }
 
   setValue(value: T): FieldResult<T> {
@@ -118,6 +148,7 @@ export class Field<T> {
     return this.validateAsync()
   }
 
+  //todo @internal
   attachToPath(name: string, path: string, form: Form<any>): void {
     this.name = name
     this.path = path
@@ -128,6 +159,8 @@ export class Field<T> {
     const result = this.runner.validate(this.value, this.form)
 
     this.errors = result.errors ?? []
+
+    this.validated = true
 
     return {
       name: this.name,
@@ -143,6 +176,7 @@ export class Field<T> {
       this.isValidating = false
 
       this.errors = result.errors ?? []
+      this.validated = true
     })
 
     return {

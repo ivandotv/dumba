@@ -20,6 +20,7 @@ const Masked = observer(function Masked() {
         value={formStore.fields.masked.value}
         helperText={<DisplayErrors errors={formStore.fields.masked.errors} />}
         onChange={formStore.fields.masked.onChange}
+        onBlur={formStore.fields.masked.onBlur}
       />
     </FormControl>
   )
