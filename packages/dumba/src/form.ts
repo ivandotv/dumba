@@ -24,14 +24,14 @@ type SchemaResults<T> = T extends Record<string, any>
 export class Form<TSchema = any> {
   fields: TSchema
 
-  lastSavedData: Map<string, any> = new Map()
-
   isSubmitting = false
 
   submitError = null
 
   //@internal
   fieldsByPath: Map<string, Field<any>> = new Map()
+
+  protected lastSavedDataByPath: Map<string, any> = new Map()
 
   constructor(schema: TSchema) {
     // @ts-expect-error - must be initialized with empty object
@@ -56,12 +56,14 @@ export class Form<TSchema = any> {
     }
 
     // initMobx(this)
-    makeObservable(this, {
+    makeObservable<Form<any>, 'lastSavedDataByPath'>(this, {
       fields: observable,
       submitError: observable,
       isSubmitting: observable,
+      lastSavedDataByPath: observable,
       isValid: computed,
       isValidating: computed,
+      lastSavedData: computed,
       isDirty: computed,
       handleSubmit: action
     })
@@ -94,13 +96,13 @@ export class Form<TSchema = any> {
     return data as SchemaValues<TSchema>
   }
 
-  getLastSavedData(): SchemaValues<TSchema> | null {
-    if (this.lastSavedData.size === 0) {
+  get lastSavedData(): SchemaValues<TSchema> | null {
+    if (this.lastSavedDataByPath.size === 0) {
       return null
     }
 
     const data = {}
-    for (const [path, value] of this.lastSavedData.entries()) {
+    for (const [path, value] of this.lastSavedDataByPath.entries()) {
       setValue(data, path, value)
     }
 
@@ -154,10 +156,10 @@ export class Form<TSchema = any> {
   }
 
   resetToLastSaved(): void {
-    if (this.lastSavedData.size === 0) {
+    if (this.lastSavedDataByPath.size === 0) {
       this.reset()
     } else {
-      for (const [path, value] of this.lastSavedData.entries()) {
+      for (const [path, value] of this.lastSavedDataByPath.entries()) {
         const field = this.fieldsByPath.get(path)
         field!.setValue(value)
       }
@@ -178,7 +180,9 @@ export class Form<TSchema = any> {
 
       const result = await fn(this.getData(), this)
 
-      this.lastSavedData = dataBeforeSave
+      runInAction(() => {
+        this.lastSavedDataByPath = dataBeforeSave
+      })
 
       return result
     } catch (e) {

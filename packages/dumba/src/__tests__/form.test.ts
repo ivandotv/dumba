@@ -354,14 +354,14 @@ describe('Form Validator', () => {
         //change field value
         await form.fields.info.b.setValueAsync('new value')
 
-        expect(form.getLastSavedData()).toEqual(dataBeforeSave)
-        expect(form.getLastSavedData()).not.toEqual(form.getData())
+        expect(form.lastSavedData).toEqual(dataBeforeSave)
+        expect(form.lastSavedData).not.toEqual(form.getData())
       })
 
       test('If the form hasn\'t been submitted, "lastSavedData" is null', async () => {
         const form = new Form(getSchema())
 
-        expect(form.getLastSavedData()).toBeNull()
+        expect(form.lastSavedData).toBeNull()
       })
     })
 
@@ -420,11 +420,11 @@ describe('Form Validator', () => {
         form.fields.name.setValue('new name')
         form.fields.info.b.setValue('new value')
 
-        expect(form.getData()).not.toEqual(form.getLastSavedData())
+        expect(form.getData()).not.toEqual(form.lastSavedData)
 
         form.resetToLastSaved()
 
-        expect(form.getData()).toEqual(form.getLastSavedData())
+        expect(form.getData()).toEqual(form.lastSavedData)
       })
 
       test('If there is no last saved data, reset to initial value', async () => {
@@ -435,7 +435,7 @@ describe('Form Validator', () => {
         form.fields.name.setValue('new name')
         form.fields.info.b.setValue('new value')
 
-        expect(form.getLastSavedData()).toBe(null)
+        expect(form.lastSavedData).toBe(null)
 
         form.resetToLastSaved()
 
