@@ -45,7 +45,7 @@
   "dependencies": {
     "deep-for-each": "^3.0.0",
     "p-is-promise": "^3",
-    "set-value": "^3.0.2",
+    "set-value": "^4.0.0",
     "unique-random": "^2"
   },
   "devDependencies": {
