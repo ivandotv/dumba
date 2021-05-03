@@ -151,7 +151,7 @@ const esm = {
   })
 }
 
-const esmWithPolyfill = {
+const _esmWithPolyfill = {
   input,
   output: [
     {
@@ -178,7 +178,7 @@ const esmWithPolyfill = {
 const envToBuild = {
   cjs: [cjsDev, cjsProd],
   umd: [umd, umdWithPolyfill],
-  esm: [esm, esmWithPolyfill]
+  esm: [esm]
 }
 
 function libPath(path, libName) {
