@@ -1,8 +1,8 @@
 {
-  "extends": "../../tsconfig.check-types.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "../../.buildcache/dumba/check-types.tsbuildinfo"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["**/node_modules"]
+    "tsBuildInfoFile": "./.buildcache/check-types.tsbuildinfo",
+    "noEmit": true,
+    "assumeChangesOnlyAffectDirectDependencies": true
+  }
 }

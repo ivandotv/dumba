@@ -1,15 +1,17 @@
 {
-  "extends": "../../tsconfig.build-types.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    // "noEmit": false,
     "outDir": "./dist/types",
-    "tsBuildInfoFile": "../../.buildcache/dumba/build-types.tsbuildinfo"
+    "emitDeclarationOnly": true,
+    "declarationMap": true,
+    "declaration": true,
+    "tsBuildInfoFile": "./.buildcache/build-types.tsbuildinfo"
   },
-  "include": ["src/**/*"],
-  "exclude": [
-    "**/node_modules",
-    "src/**/__tests__",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts"
-  ]
+  "include": ["src/**/*"]
+  // "exclude": [
+  //   "**/node_modules",
+  //   "src/**/__tests__",
+  //   "src/**/*.test.ts",
+  //   "src/**/*.spec.ts"
+  // ]
 }

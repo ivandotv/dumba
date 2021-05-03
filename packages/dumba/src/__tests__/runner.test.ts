@@ -57,7 +57,7 @@ describe('Runner', () => {
 
       expect(result).toEqual(expectedResult)
     })
-    test('With failure - bail early', () => {
+    test('Bail early - with failure', () => {
       const expectedValue = 'A'
       const expectedMessage = 'failed'
       const expectedResult = {
@@ -76,6 +76,19 @@ describe('Runner', () => {
 
       expect(result).toEqual(expectedResult)
       expect(secondValidation).not.toBeCalled()
+    })
+    test('Bail early - with success', () => {
+      const expectedValue = 'A'
+      const expectedResult = {
+        errors: null,
+        value: expectedValue
+      }
+
+      const runner = new Runner([fixtures.validationOk()], true)
+
+      const result = runner.validate(expectedValue, getForm())
+
+      expect(result).toEqual(expectedResult)
     })
 
     test('Throw if there is an asynchronous validation', () => {
@@ -248,58 +261,6 @@ describe('Runner', () => {
       const result = await runner.validateAsync(expectedValue, form)
 
       expect(expectedResult).toEqual(result)
-    })
-  })
-  describe('Add and remove validations', () => {
-    test('Add one validation', () => {
-      const expectedValue = 'A'
-      const validationMsgOne = 'one'
-      const validationMsgTwo = 'two'
-      const expectedResult = {
-        errors: [validationMsgOne, validationMsgTwo],
-        value: expectedValue
-      }
-      const runner = new Runner([fixtures.validationError(validationMsgOne)])
-      const totalBefore = runner.validations.length
-      runner.addValidation(fixtures.validationError(validationMsgTwo))
-
-      const result = runner.validate(expectedValue, getForm())
-
-      expect(result).toEqual(expectedResult)
-      expect(runner.validations.length).toEqual(totalBefore + 1)
-    })
-
-    test('Remove one validation', () => {
-      const expectedValue = 'A'
-      const validationMsgOne = 'one'
-      const validationMsgTwo = 'two'
-      const validationTwoName = 'validation two'
-      const expectedResult = {
-        errors: [validationMsgOne],
-        value: expectedValue
-      }
-      const runner = new Runner([
-        fixtures.validationError(validationMsgOne),
-        fixtures.validationError(validationMsgTwo, validationTwoName)
-      ])
-      const totalBefore = runner.validations.length
-
-      runner.removeValidation(validationTwoName)
-
-      const result = runner.validate(expectedValue, getForm())
-
-      expect(result).toEqual(expectedResult)
-      expect(runner.validations.length).toBe(totalBefore - 1)
-    })
-    test('get validation by name', () => {
-      const msg = 'one'
-      const name = 'name-one'
-      const validation = fixtures.validationOk(msg, name)
-      const runner = new Runner([validation])
-
-      const result = runner.getValidation(name)
-
-      expect(result).toBe(validation)
     })
   })
 })

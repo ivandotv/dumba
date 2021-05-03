@@ -1,7 +1,7 @@
-import { Field } from '..'
+import { Field, Form } from '..'
 import { createField } from '../field'
 import { Runner } from '../runner'
-import { Validation } from '../validation'
+import { createValidation, Validation } from '../validation'
 import * as fixtures from './__fixtures__/fixtures'
 import { configure } from 'mobx'
 
@@ -268,41 +268,6 @@ describe('Field', () => {
       expect(field.isValidating).toBe(false)
     })
 
-    test('Add new validation', async () => {
-      const newValidation = new Validation(() => true, '', '')
-      const runner = new Runner([new Validation(() => true, '', '')])
-      const spyFn = jest.spyOn(runner, 'addValidation')
-      const field = new Field(runner, 'A', false, undefined, 100)
-
-      field.addValidation(newValidation)
-
-      expect(spyFn).toBeCalledWith(newValidation)
-    })
-    test('Remove validation', async () => {
-      const validationName = 'validation name'
-      const validation = new Validation(() => true, '', validationName)
-      const runner = new Runner([validation])
-      const spyFn = jest.spyOn(runner, 'removeValidation')
-      const field = new Field(runner, 'A', false, undefined, 100)
-
-      const result = field.removeValidation(validationName)
-
-      expect(spyFn).toBeCalledWith(validationName)
-      expect(result).toBe(true)
-    })
-    test('Get validation', async () => {
-      const validationName = 'validation name'
-      const validation = new Validation(() => true, '', validationName)
-      const runner = new Runner([validation])
-      const spyFn = jest.spyOn(runner, 'getValidation')
-      const field = new Field(runner, 'A', false, undefined, 100)
-
-      const result = field.getValidation(validationName)
-
-      expect(spyFn).toBeCalledWith(validationName)
-      expect(result).toBe(validation)
-    })
-
     test('If initialized with a delay, validation process will be delayed', async () => {
       jest.useFakeTimers()
       const eventOne = fixtures.onChangeEvent(1)
@@ -311,7 +276,7 @@ describe('Field', () => {
 
       const validationFn = jest.fn().mockReturnValue(true)
 
-      const runner = new Runner([new Validation(validationFn, '', '')])
+      const runner = new Runner([new Validation(validationFn, '')])
 
       const field = new Field(runner, 'A', false, undefined, 100)
       const form = fixtures.getForm()
@@ -502,6 +467,183 @@ describe('Field', () => {
 
       expect(field.value).toEqual(event.currentTarget.value)
       expect(field.errors).toStrictEqual([])
+    })
+    test('When field is reset, "validated" property is "false"', async () => {
+      const event = fixtures.onChangeEvent([1])
+      const newEvent = fixtures.onChangeEvent([1, 2])
+      const path = '/path'
+      const name = 'lastName'
+      const form = fixtures.getForm()
+      const field = createField({
+        value: event.currentTarget.value,
+        validations: fixtures.validationOk()
+      })
+      field.attachToPath(name, path, form)
+      await field.onChange(newEvent)
+
+      field.reset()
+
+      expect(field.validated).toBe(false)
+    })
+    test('When field is reset, if field is "alwaysValid", "validated" property is "true"', async () => {
+      const event = fixtures.onChangeEvent([1])
+      const newEvent = fixtures.onChangeEvent([1, 2])
+      const path = '/path'
+      const name = 'lastName'
+      const form = fixtures.getForm()
+      const field = createField({
+        value: event.currentTarget.value
+      })
+      field.attachToPath(name, path, form)
+
+      await field.onChange(newEvent)
+
+      field.reset()
+
+      expect(field.validated).toBe(true)
+    })
+  })
+
+  describe('Dependent fields', () => {
+    test('Field registers dependencies correctly', () => {
+      const bValidation = fixtures.validationOk()
+      const cValidation = fixtures.validationOk()
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            value: 'b',
+            validations: bValidation
+          }),
+          levelTwo: {
+            c: createField({
+              dependsOn: ['a', 'levelOne.b'],
+              value: 'c',
+              validations: cValidation
+            })
+          }
+        }
+      }
+
+      const form = new Form(schema)
+
+      expect(form.fields.a.dependants.size).toBe(1)
+      expect([...form.fields.a.dependants.values()]).toStrictEqual([
+        form.fields.levelOne.levelTwo.c
+      ])
+
+      expect(form.fields.levelOne.b.dependants.size).toBe(1)
+      expect([...form.fields.levelOne.b.dependants.values()]).toStrictEqual([
+        form.fields.levelOne.levelTwo.c
+      ])
+    })
+
+    test('If field to be depended upon is not present,throw error', () => {
+      const notPresentField = 'c'
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        b: createField({ value: 'b', dependsOn: notPresentField })
+      }
+      expect.assertions(1)
+      try {
+        new Form(schema)
+      } catch (e) {
+        expect(e.message).toEqual(
+          expect.stringMatching(new RegExp(`"${notPresentField}" not found`))
+        )
+      }
+    })
+
+    test('When field is changed, all dependant field validations are run', async () => {
+      const cFnSpy = jest.fn().mockReturnValueOnce(true)
+      const cValidation = createValidation(cFnSpy, '')
+      const newFieldValue = 'new value'
+      const fieldEvent = { currentTarget: { value: newFieldValue } }
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            value: 'b'
+          }),
+          levelTwo: {
+            c: createField({
+              dependsOn: ['a', 'levelOne.b'],
+              value: 'c',
+              validations: cValidation
+            })
+          }
+        }
+      }
+
+      const form = new Form(schema)
+
+      await form.fields.a.onChange(fieldEvent)
+
+      expect(cFnSpy).toBeCalledTimes(1)
+      expect(cFnSpy).toBeCalledWith(form.fields.levelOne.levelTwo.c.value, form)
+    })
+    test('When field value is set, all dependant field validations are run', () => {
+      const cFnSpy = jest.fn().mockReturnValueOnce(true)
+      const cValidation = createValidation(cFnSpy, '')
+      const newFieldValue = 'new value'
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            value: 'b'
+          }),
+          levelTwo: {
+            c: createField({
+              dependsOn: ['a', 'levelOne.b'],
+              value: 'c',
+              validations: cValidation
+            })
+          }
+        }
+      }
+      const form = new Form(schema)
+
+      form.fields.a.setValue(newFieldValue)
+
+      expect(cFnSpy).toBeCalledTimes(1)
+      expect(cFnSpy).toBeCalledWith(form.fields.levelOne.levelTwo.c.value, form)
+    })
+    test('Can depend on deeply nested fields', () => {
+      const newFieldValue = 'new value'
+
+      const cFnSpy = jest.fn().mockReturnValueOnce(true)
+      const cValidation = createValidation(cFnSpy, '')
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            value: 'b'
+          }),
+          levelTwo: {
+            c: createField({
+              dependsOn: ['a', 'levelOne.b'],
+              value: 'c',
+              validations: cValidation
+            })
+          }
+        }
+      }
+      const form = new Form(schema)
+
+      form.fields.levelOne.b.setValue(newFieldValue)
+
+      expect(cFnSpy).toBeCalledTimes(1)
+      expect(cFnSpy).toBeCalledWith(form.fields.levelOne.levelTwo.c.value, form)
     })
   })
 })

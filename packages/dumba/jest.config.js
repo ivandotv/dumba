@@ -1,4 +1,4 @@
-console.log('main config')
+/* eslint-disable @typescript-eslint/no-var-requires */
 const baseConfig = require('../../jest.config')
 
 module.exports = {

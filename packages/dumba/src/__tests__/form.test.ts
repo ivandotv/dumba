@@ -272,24 +272,18 @@ describe('Form Validator', () => {
     expect(form.isDirty).toBe(true)
   })
 
-  test('When all field values are changed, "allDirty" is true', () => {
+  test('When field values are not yet validated, "isValidated" is false', async () => {
     const form = new Form(getSchema())
 
-    expect(form.isDirty).toBe(false)
-
-    form.fields.info.c.c1.setValueAsync('new value')
-
-    expect(form.isDirty).toBe(true)
+    expect(form.isValidated).toBe(false)
   })
 
-  test('When not all field values are dirty, "allDirty" is false', () => {
+  test('When field values are  validated, "isValidated" is true', async () => {
     const form = new Form(getSchema())
 
-    expect(form.isDirty).toBe(false)
+    await form.validateAsync()
 
-    form.fields.info.c.c1.setValueAsync('new value')
-
-    expect(form.isDirty).toBe(true)
+    expect(form.isValidated).toBe(true)
   })
 
   test('Payload always reflects current form data', () => {

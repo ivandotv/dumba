@@ -1,22 +1,15 @@
-import random from 'unique-random'
 import { Form } from './form'
-
-const unique = random(0, 10000)
 
 export function createValidation(
   fn: (value: any, ctx: Form) => boolean | Promise<boolean>,
-  msg: string,
-  name?: string
+  msg: string
 ) {
-  name = name ? name : `n${unique()}`
-
-  return new Validation(fn, msg, name)
+  return new Validation(fn, msg)
 }
 
 export class Validation {
   constructor(
     public fn: (value: any, ctx: any) => boolean | Promise<boolean>,
-    public msg: string,
-    public name: string
+    public msg: string
   ) {}
 }

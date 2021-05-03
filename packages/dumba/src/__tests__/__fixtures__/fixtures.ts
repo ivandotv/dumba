@@ -2,15 +2,15 @@ import { Form } from '../..'
 import { createField, CreateFieldData } from '../../field'
 import { createValidation } from '../../validation'
 
-export function validationOk(msg = '', name?: string) {
-  return createValidation(() => true, msg, name)
+export function validationOk() {
+  return createValidation(() => true, '')
 }
-export function validationError(msg = 'error', name?: string) {
-  return createValidation(() => false, msg, name)
+export function validationError(msg = 'error') {
+  return createValidation(() => false, msg)
 }
 
-export function asyncValidationOk(msg = '', name?: string) {
-  return createValidation(() => Promise.resolve(true), msg, name)
+export function asyncValidationOk() {
+  return createValidation(() => Promise.resolve(true), '')
 }
 
 export function asyncValidationError(msg = 'async error') {
@@ -97,6 +97,6 @@ export function getField(
   }
 }
 
-export function getForm(schema?: any) {
+export function getForm<T>(schema?: T) {
   return new Form(schema ? schema : getSchema())
 }

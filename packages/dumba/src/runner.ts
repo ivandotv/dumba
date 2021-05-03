@@ -8,37 +8,12 @@ export type RunnerResult = {
 }
 
 export class Runner {
-  protected validationsByName: Map<string, Validation> = new Map()
-
-  constructor(public validations: Validation[], protected bailEarly = false) {
-    for (const validation of validations) {
-      this.validationsByName.set(validation.name, validation)
-    }
-  }
-
-  addValidation(validation: Validation): void {
-    if (validation.name) {
-      this.validationsByName.set(validation.name, validation)
-      this.validations = [...this.validationsByName.values()]
-    } else {
-      this.validations.push(validation)
-    }
-  }
-
-  removeValidation(name: string): boolean {
-    const removed = this.validationsByName.delete(name)
-    if (removed) {
-      this.validations = [...this.validationsByName.values()]
-    }
-
-    return removed
-  }
-
-  getValidation(name: string): Validation | undefined {
-    return this.validationsByName.get(name)
-  }
+  constructor(public validations: Validation[], protected bailEarly = false) {}
 
   validate(value: any, ctx: Form<any>): RunnerResult {
+    if (!this.validations.length) {
+      return { errors: null, value }
+    }
     const errors = []
 
     for (const validation of this.validations) {
@@ -59,6 +34,9 @@ export class Runner {
   }
 
   async validateAsync(value: any, ctx: Form<any>): Promise<RunnerResult> {
+    if (!this.validations.length) {
+      return { errors: null, value }
+    }
     if (this.bailEarly) {
       return await this.bailEarlyAsync(value, ctx)
     }

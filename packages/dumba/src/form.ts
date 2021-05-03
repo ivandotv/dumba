@@ -22,8 +22,6 @@ type SchemaResults<T> = T extends Record<string, any>
   : T
 
 export class Form<TSchema = any> {
-  fieldsByPath: Map<string, Field<any>> = new Map()
-
   fields: TSchema
 
   lastSavedData: Map<string, any> = new Map()
@@ -31,6 +29,9 @@ export class Form<TSchema = any> {
   isSubmitting = false
 
   submitError = null
+
+  //@internal
+  fieldsByPath: Map<string, Field<any>> = new Map()
 
   constructor(schema: TSchema) {
     // @ts-expect-error - must be initialized with empty object
@@ -49,6 +50,10 @@ export class Form<TSchema = any> {
         this.fieldsByPath.set(path, formField)
       }
     )
+
+    for (const field of this.fieldsByPath.values()) {
+      field.initDependencies()
+    }
 
     // initMobx(this)
     makeObservable(this, {
@@ -132,17 +137,7 @@ export class Form<TSchema = any> {
     return false
   }
 
-  get allDirty(): boolean {
-    for (const field of this.fieldsByPath.values()) {
-      if (!field.isDirty) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  get allValidated(): boolean {
+  get isValidated(): boolean {
     for (const field of this.fieldsByPath.values()) {
       if (!field.validated) {
         return false
@@ -164,7 +159,7 @@ export class Form<TSchema = any> {
     } else {
       for (const [path, value] of this.lastSavedData.entries()) {
         const field = this.fieldsByPath.get(path)
-        field?.setValue(value)
+        field!.setValue(value)
       }
     }
   }
