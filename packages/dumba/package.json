@@ -46,7 +46,7 @@
     "deep-for-each": "^3.0.0",
     "p-is-promise": "^3",
     "set-value": "^3.0.2",
-    "unique-random": "^2"
+    "unique-random": "^3.0.0"
   },
   "devDependencies": {
     "mobx": "^6.2.0",
