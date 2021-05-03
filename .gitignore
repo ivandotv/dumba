@@ -1,7 +1,7 @@
 node_modules
 coverage
 dist
-/.buildcache
+.buildcache
 /.vscode/settings.json
 scratch
 reports

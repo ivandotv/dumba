@@ -1,18 +1,6 @@
 {
-  "packages/*/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-    "eslint --fix",
-    "prettier --write"
-  ],
-  "pacakges/*/tests/**/*.{js,jsx,ts,tsx,json}": [
-    "eslint --fix",
-    "prettier --write"
-  ],
-  "demo/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-    "eslint --fix",
-    "prettier --write"
-  ],
-  "demo/tests/**/*.{js,jsx,ts,tsx,json}": [
-    "eslint --fix",
-    "prettier --write"
-  ]
+  "packages/*/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": ["eslint --fix"],
+  "pacakges/*/tests/**/*.{js,jsx,ts,tsx,json}": ["eslint --fix"],
+  "demo/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": ["eslint --fix"],
+  "demo/tests/**/*.{js,jsx,ts,tsx,json}": ["eslint --fix"]
 }
