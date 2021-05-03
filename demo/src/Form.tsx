@@ -28,8 +28,8 @@ const Form = observer(function Form() {
   const classes = useStyles()
   const formStore = useForm()
 
-  console.log('all validated ', formStore.allValidated)
-  console.log('all dirty ', formStore.allDirty)
+  console.log('all validated ', formStore.isValidated)
+  console.log('all dirty ', formStore.isDirty)
   return (
     <div>
       <form autoComplete="off" noValidate className={classes.root}>
@@ -46,7 +46,7 @@ const Form = observer(function Form() {
             formStore.isSubmitting ||
             formStore.isValidating ||
             !formStore.isValid ||
-            !formStore.allValidated
+            !formStore.isValidated
           }
         >
           Submit

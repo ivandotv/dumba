@@ -16,7 +16,7 @@ const Email = observer(function Email() {
         disabled={formStore.isSubmitting}
         value={formStore.fields.email.value}
         onChange={formStore.fields.email.onChange}
-        onBlur={formStore.fields.email.onBlur}
+        onBlur={formStore.fields.email.validateAsync}
         error={!!formStore.fields.email.errors.length}
         helperText={<DisplayErrors errors={formStore.fields.email.errors} />}
         autoComplete="off"

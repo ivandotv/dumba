@@ -19,7 +19,7 @@ const Dependent = observer(function Dependent() {
         size="small"
         disabled={formStore.isSubmitting}
         onChange={formStore.fields.numberOrString.onChange}
-        onBlur={formStore.fields.numberOrString.onBlur}
+        onBlur={formStore.fields.numberOrString.validateAsync}
         label={
           formStore.fields.types.value === 'letter'
             ? 'Letters only'

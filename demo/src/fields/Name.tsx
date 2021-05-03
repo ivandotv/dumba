@@ -21,7 +21,7 @@ const Name = observer(function Name() {
         name="name"
         autoComplete="off"
         helperText={<DisplayErrors errors={formStore.fields.name.errors} />}
-        onBlur={formStore.fields.name.onBlur}
+        onBlur={formStore.fields.name.validateAsync}
         onChange={formStore.fields.name.onChange}
       />
     </FormControl>
