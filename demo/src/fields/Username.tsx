@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { DisplayErrors } from '../DisplayErrors'
 import { useForm } from '../formStore'
 
-const Name = observer(function Name() {
+const Username = observer(function Username() {
   const formStore = useForm()
   return (
     <FormControl>
@@ -14,18 +14,18 @@ const Name = observer(function Name() {
         type="text"
         size="small"
         variant="filled"
-        label="Name"
+        label="Username"
         disabled={formStore.isSubmitting}
-        error={!!formStore.fields.name.errors.length}
-        id="name"
-        name="name"
+        error={!!formStore.fields.username.errors.length}
+        id="username"
+        name="username"
         autoComplete="off"
-        value={formStore.fields.name.value}
-        helperText={<DisplayErrors errors={formStore.fields.name.errors} />}
-        onBlur={formStore.fields.name.validateAsync}
-        onChange={formStore.fields.name.onChange}
+        value={formStore.fields.username.value}
+        helperText={<DisplayErrors errors={formStore.fields.username.errors} />}
+        onBlur={formStore.fields.username.validateAsync}
+        onChange={formStore.fields.username.onChange}
       />
     </FormControl>
   )
 })
-export default Name
+export default Username

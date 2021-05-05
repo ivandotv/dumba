@@ -6,7 +6,7 @@ import isEmail from 'validator/lib/isEmail'
 import isNumeric from 'validator/lib/isNumeric'
 
 export const schema = {
-  name: createField({
+  username: createField({
     value: '',
     validations: [
       createValidation(

@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite'
 import Dependent from './fields/Dependent'
 import Email from './fields/Email'
 import Masked from './fields/Masked'
-import Name from './fields/Name'
+import Username from './fields/Username'
 import Superhero from './fields/Superhero'
 import Types from './fields/Types'
 import { useForm } from './formStore'
@@ -56,7 +56,7 @@ const FormPanel = observer(function FormPanel() {
   return (
     <Paper elevation={2} className={classes.wrap}>
       <form autoComplete="off" noValidate className={classes.form}>
-        <Name />
+        <Username />
         <Email />
         <Masked />
         <Types />
