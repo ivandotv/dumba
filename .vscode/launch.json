@@ -10,14 +10,12 @@
       "request": "launch",
       "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}/src",
-      "trace": "verbose",
+      // "trace": "verbose",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
         "webpack:///src/*": "${webRoot}/*"
-      }
-      // "runtimeArgs": ["--preserve-symlinks"]
-      // "resolveSourceMapLocations": ["**", "!**/node_modules/**"]
-      // "resolveSourceMapLocations": null
+      },
+      "runtimeArgs": ["--preserve-symlinks", "--experimental-modules"]
     },
     {
       "name": "Current test file",
@@ -25,6 +23,7 @@
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
+      // "trace": "verbose",
       "args": [
         "${relativeFile}",
         "--no-cache",
