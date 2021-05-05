@@ -1,11 +1,22 @@
-import { createField, createValidation, Form } from 'dumba'
+import { createField, createValidation, Field, Form } from 'dumba'
 import React from 'react'
 import isAlpha from 'validator/es/lib/isAlpha'
 import isLength from 'validator/es/lib/isLength'
 import isEmail from 'validator/lib/isEmail'
 import isNumeric from 'validator/lib/isNumeric'
 
-export const schema = {
+type SchemaType = {
+  username: Field<string>
+  email: Field<string>
+  masked: Field<string>
+  superhero: Field<string>
+  typeOptions: {
+    types: Field<string>
+    numberOrString: Field<string>
+  }
+}
+
+export const schema: SchemaType = {
   username: createField({
     value: '',
     validations: [
@@ -60,31 +71,27 @@ export const schema = {
       dependsOn: 'typeOptions.types',
       validations: [
         createValidation(
-          (str: string) => isLength(str, { min: 1 }),
+          (str: string, form: Form, field: Field<string>) =>
+            isLength(str, { min: 1 }),
           "Can't be empty"
         ),
-        createValidation((value: string, form: Form) => {
-          const typesValue = form.fields.typeOptions.types.value
-
-          // debugger
-          //only handle the case when dropdown value is string
-          if ('letter' === typesValue) {
-            // check if only letters
-            return isAlpha(value)
-          }
-          return true
-        }, 'Must be letters'),
-        createValidation((value: string, form: Form) => {
-          const typesValue = form.fields.typeOptions.types.value
-
-          //only handle the case when dropdown value is number
-          if ('number' === typesValue) {
-            // check if number
+        createValidation((value: string, form: Form<SchemaType>) => {
+          // this validation only tests for numeric values
+          if (form.fields.typeOptions.types.value === 'number') {
             return isNumeric(value)
           }
 
           return true
-        }, 'Must be numeric')
+        }, 'Not a number'),
+        createValidation((value: string, form: Form<any>) => {
+          // this validation only tests for letters
+          if (form.fields.typeOptions.types.value === 'letter') {
+            // @ts-expect-error - typings from validator.js are wrong
+            return isAlpha(value, undefined, { ignore: ' ' })
+          }
+
+          return true
+        }, 'Not a letter')
       ]
     })
   },

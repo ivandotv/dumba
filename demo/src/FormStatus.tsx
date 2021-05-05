@@ -7,8 +7,6 @@ import Button from '@material-ui/core/Button'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     wrap: {
-      // display: 'flex',
-      // justifyContent: 'space-around'
       padding: theme.spacing(2),
       overflow: 'hidden',
       maxWidth: '45ch'
@@ -24,8 +22,6 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 const FormStatus = observer(function FormStatus() {
   const formStore = useForm()
-
-  console.log('last data -', formStore.lastSavedData)
 
   const classes = useStyles()
 
