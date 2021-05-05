@@ -299,7 +299,12 @@ describe('Field', () => {
       expect(field.isValidating).toBe(false)
 
       expect(validationFn).toBeCalledTimes(1)
-      expect(validationFn).toBeCalledWith(eventThree.currentTarget.value, form)
+      expect(validationFn).toBeCalledWith(
+        eventThree.currentTarget.value,
+        form,
+        field,
+        undefined
+      )
     })
 
     test('Validate successfully', async () => {
@@ -483,7 +488,7 @@ describe('Field', () => {
 
       field.reset()
 
-      expect(field.validated).toBe(false)
+      expect(field.isValidated).toBe(false)
     })
     test('When field is reset, if field is "alwaysValid", "validated" property is "true"', async () => {
       const event = fixtures.onChangeEvent([1])
@@ -500,7 +505,7 @@ describe('Field', () => {
 
       field.reset()
 
-      expect(field.validated).toBe(true)
+      expect(field.isValidated).toBe(true)
     })
   })
 
@@ -515,6 +520,7 @@ describe('Field', () => {
         levelOne: {
           b: createField({
             value: 'b',
+            dependsOn: 'a',
             validations: bValidation
           }),
           levelTwo: {
@@ -529,15 +535,13 @@ describe('Field', () => {
 
       const form = new Form(schema)
 
-      expect(form.fields.a.dependants.size).toBe(1)
-      expect([...form.fields.a.dependants.values()]).toStrictEqual([
-        form.fields.levelOne.levelTwo.c
-      ])
-
-      expect(form.fields.levelOne.b.dependants.size).toBe(1)
-      expect([...form.fields.levelOne.b.dependants.values()]).toStrictEqual([
-        form.fields.levelOne.levelTwo.c
-      ])
+      expect(form.fields.a.dependants.size).toBe(2)
+      expect([...form.fields.a.dependants.values()]).toStrictEqual(
+        expect.arrayContaining([
+          form.fields.levelOne.levelTwo.c,
+          form.fields.levelOne.b
+        ])
+      )
     })
 
     test('If field to be depended upon is not present,throw error', () => {
@@ -548,6 +552,7 @@ describe('Field', () => {
         }),
         b: createField({ value: 'b', dependsOn: notPresentField })
       }
+
       expect.assertions(1)
       try {
         new Form(schema)
@@ -561,8 +566,8 @@ describe('Field', () => {
     test('When field is changed, all dependant field validations are run', async () => {
       const cFnSpy = jest.fn().mockReturnValueOnce(true)
       const cValidation = createValidation(cFnSpy, '')
-      const newFieldValue = 'new value'
-      const fieldEvent = { currentTarget: { value: newFieldValue } }
+      const cValue = 'c'
+      const fieldEvent = { currentTarget: { value: 'new value' } }
       const schema = {
         a: createField({
           value: 'a'
@@ -573,8 +578,8 @@ describe('Field', () => {
           }),
           levelTwo: {
             c: createField({
-              dependsOn: ['a', 'levelOne.b'],
-              value: 'c',
+              dependsOn: ['a'],
+              value: cValue,
               validations: cValidation
             })
           }
@@ -586,11 +591,47 @@ describe('Field', () => {
       await form.fields.a.onChange(fieldEvent)
 
       expect(cFnSpy).toBeCalledTimes(1)
-      expect(cFnSpy).toBeCalledWith(form.fields.levelOne.levelTwo.c.value, form)
+      expect(cFnSpy).toBeCalledWith(
+        cValue,
+        form,
+        form.fields.levelOne.levelTwo.c,
+        form.fields.a
+      )
     })
+
+    test('Field with dependencies validates unsuccessfully', async () => {
+      const validationMessage = 'failed'
+      const bValidation = createValidation(() => {
+        return false
+      }, validationMessage)
+      const schema = {
+        levelOne: {
+          b: createField({
+            value: 'b',
+            dependsOn: ['levelOne.levelTwo.c'],
+            validations: bValidation
+          }),
+          levelTwo: {
+            c: createField({
+              value: 'c'
+            })
+          }
+        }
+      }
+
+      const form = new Form(schema)
+
+      await form.fields.levelOne.levelTwo.c.setValueAsync('number')
+
+      expect(form.fields.levelOne.b.errors).toEqual([validationMessage])
+      expect(form.fields.levelOne.b.isValid).toBe(false)
+      expect(form.fields.levelOne.b.isValidated).toBe(true)
+    })
+
     test('When field value is set, all dependant field validations are run', () => {
       const cFnSpy = jest.fn().mockReturnValueOnce(true)
       const cValidation = createValidation(cFnSpy, '')
+      const cValue = 'c'
       const newFieldValue = 'new value'
       const schema = {
         a: createField({
@@ -603,7 +644,7 @@ describe('Field', () => {
           levelTwo: {
             c: createField({
               dependsOn: ['a', 'levelOne.b'],
-              value: 'c',
+              value: cValue,
               validations: cValidation
             })
           }
@@ -614,13 +655,19 @@ describe('Field', () => {
       form.fields.a.setValue(newFieldValue)
 
       expect(cFnSpy).toBeCalledTimes(1)
-      expect(cFnSpy).toBeCalledWith(form.fields.levelOne.levelTwo.c.value, form)
+      expect(cFnSpy).toBeCalledWith(
+        cValue,
+        form,
+        form.fields.levelOne.levelTwo.c,
+        form.fields.a
+      )
     })
     test('Can depend on deeply nested fields', () => {
       const newFieldValue = 'new value'
 
       const cFnSpy = jest.fn().mockReturnValueOnce(true)
       const cValidation = createValidation(cFnSpy, '')
+      const cValue = 'c'
       const schema = {
         a: createField({
           value: 'a'
@@ -632,7 +679,7 @@ describe('Field', () => {
           levelTwo: {
             c: createField({
               dependsOn: ['a', 'levelOne.b'],
-              value: 'c',
+              value: cValue,
               validations: cValidation
             })
           }
@@ -643,7 +690,12 @@ describe('Field', () => {
       form.fields.levelOne.b.setValue(newFieldValue)
 
       expect(cFnSpy).toBeCalledTimes(1)
-      expect(cFnSpy).toBeCalledWith(form.fields.levelOne.levelTwo.c.value, form)
+      expect(cFnSpy).toBeCalledWith(
+        cValue,
+        form,
+        form.fields.levelOne.levelTwo.c,
+        form.fields.levelOne.b
+      )
     })
   })
 })

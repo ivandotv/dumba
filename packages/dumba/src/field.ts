@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { Form } from '.'
+import { Form } from './form'
 import { Runner } from './runner'
 import { equals } from './utils'
 import { Validation } from './validation'
@@ -54,6 +54,8 @@ export function createField<T>(data: CreateFieldData<T>) {
 export class Field<T> {
   isValidating = false
 
+  isValidated = false
+
   errors: string[] = []
 
   form!: Form<any>
@@ -63,8 +65,6 @@ export class Field<T> {
   path!: string
 
   initialValue: T
-
-  validated = false
 
   onChange: (...args: any[]) => Promise<FieldResult<T>>
 
@@ -83,7 +83,7 @@ export class Field<T> {
     this.initialValue = this.value
 
     if (this.alwaysValid) {
-      this.validated = true
+      this.isValidated = true
     }
 
     this.onChange = async (evt: any) => {
@@ -101,15 +101,15 @@ export class Field<T> {
             clearTimeout(this.timeoutId)
           }
           this.timeoutId = window.setTimeout(() => {
-            resolve(this.validateAsync())
+            resolve(this.__validateAsync())
           }, this.delay)
         } else {
-          resolve(this.validateAsync())
+          resolve(this.__validateAsync())
         }
       })
       const result = await validationTest
 
-      this.processDependants()
+      await this.validateDependants()
 
       return result
     }
@@ -124,7 +124,7 @@ export class Field<T> {
       isValidating: observable,
       errors: observable,
       value: observable,
-      validated: observable,
+      isValidated: observable,
       onChange: action,
       setValue: action,
       setValueAsync: action,
@@ -146,11 +146,21 @@ export class Field<T> {
     })
   }
 
-  protected processDependants() {
+  protected async validateDependants() {
+    const results = []
     for (const field of this._dependants.values()) {
-      field.validateAsync()
+      //field is a dependant field (not this)
+      results.push(field.__validateAsync(this))
     }
+
+    return await Promise.all(results)
   }
+
+  // protected resetDependants() {
+  //   for (const field of this._dependants.values()) {
+  //     field.reset()
+  //   }
+  // }
 
   get dependants(): Pick<
     Field<any>['_dependants'],
@@ -159,22 +169,30 @@ export class Field<T> {
     return this._dependants
   }
 
-  setValue(value: T): FieldResult<T> {
+  setValue(value: T, validateDependants = true): FieldResult<T> {
     this.checkForNull(value)
     this.value = value
 
     const result = this.validate()
-    this.processDependants()
+    if (validateDependants) {
+      this.validateDependants()
+    }
 
     return result
   }
 
-  async setValueAsync(value: T): Promise<FieldResult<T>> {
+  async setValueAsync(
+    value: T,
+    validateDependants = true
+  ): Promise<FieldResult<T>> {
     this.checkForNull(value)
     this.value = value
 
-    const result = await this.validateAsync()
-    this.processDependants()
+    const result = await this.__validateAsync()
+
+    if (validateDependants) {
+      await this.validateDependants()
+    }
 
     return result
   }
@@ -187,11 +205,11 @@ export class Field<T> {
   }
 
   validate(): FieldResult<T> {
-    const result = this.runner.validate(this.value, this.form)
+    const result = this.runner.validate(this.value, this.form, this)
 
     this.errors = result.errors ?? []
 
-    this.validated = true
+    this.isValidated = true
 
     return {
       name: this.name,
@@ -201,13 +219,26 @@ export class Field<T> {
   }
 
   async validateAsync(): Promise<FieldResult<T>> {
-    this.isValidating = true
-    const result = await this.runner.validateAsync(this.value, this.form)
+    return this.__validateAsync()
+  }
+
+  protected async __validateAsync(
+    dependancy?: Field<any>
+  ): Promise<FieldResult<T>> {
+    runInAction(() => {
+      this.isValidating = true
+    })
+    const result = await this.runner.validateAsync(
+      this.value,
+      this.form,
+      this,
+      dependancy
+    )
     runInAction(() => {
       this.isValidating = false
 
       this.errors = result.errors ?? []
-      this.validated = true
+      this.isValidated = true
     })
 
     return {
@@ -217,6 +248,30 @@ export class Field<T> {
     }
   }
 
+  // async validateBecauseOfDependency(
+  //   dependency?: Field<any>
+  // ): Promise<FieldResult<T>> {
+  //   this.isValidating = true
+  //   const result = await this.runner.validateAsync(
+  //     this.value,
+  //     this.form,
+  //     this,
+  //     dependency
+  //   )
+  //   runInAction(() => {
+  //     this.isValidating = false
+
+  //     this.errors = result.errors ?? []
+  //     this.validated = true
+  //   })
+
+  //   return {
+  //     name: this.name,
+  //     path: this.path,
+  //     ...result
+  //   }
+  // }
+
   get isValid(): boolean {
     return !this.errors.length
   }
@@ -225,12 +280,16 @@ export class Field<T> {
     return !equals(this.initialValue, this.value)
   }
 
-  reset(): void {
+  reset(validateDependants = true): void {
     this.value = this.initialValue
     if (!this.alwaysValid) {
-      this.validated = false
+      this.isValidated = false
     }
     this.errors = []
+
+    if (validateDependants) {
+      this.validateDependants()
+    }
   }
 
   protected checkForNull(value: any): void {

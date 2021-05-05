@@ -1,5 +1,5 @@
 import { configure } from 'mobx'
-import { createField, Field } from '..'
+import { createField, Field } from '../field'
 import { Form } from '../form'
 import {
   asyncValidationError,
@@ -64,7 +64,7 @@ describe('Form Validator', () => {
       const result = form.validate()
 
       expect(result).toEqual(expectedResult)
-      expect(form.getData()).toEqual(expectedPayload)
+      expect(form.data).toEqual(expectedPayload)
       expect(form.isValid).toBe(true)
     })
     test('Validate unsuccessfully', () => {
@@ -131,7 +131,7 @@ describe('Form Validator', () => {
       const result = form.validate()
 
       expect(result).toEqual(expectedResult)
-      expect(form.getData()).toEqual(expectedPayload)
+      expect(form.data).toEqual(expectedPayload)
       expect(form.isValid).toBe(false)
     })
   })
@@ -176,7 +176,7 @@ describe('Form Validator', () => {
       const result = await form.validateAsync()
 
       expect(result).toEqual(expectedResult)
-      expect(form.getData()).toEqual(expectedPayload)
+      expect(form.data).toEqual(expectedPayload)
       expect(form.isValid).toBe(true)
     })
     test('Validate unsuccessfully', async () => {
@@ -243,7 +243,7 @@ describe('Form Validator', () => {
       const result = await form.validateAsync()
 
       expect(result).toEqual(expectedResult)
-      expect(form.getData()).toEqual(expectedPayload)
+      expect(form.data).toEqual(expectedPayload)
       expect(form.isValid).toBe(false)
     })
   })
@@ -293,7 +293,7 @@ describe('Form Validator', () => {
 
     form.fields.info.b.setValueAsync(newValue)
 
-    const newPayload = form.getData()
+    const newPayload = form.data
 
     expect(newPayload.info.b).toBe(newValue)
   })
@@ -312,9 +312,16 @@ describe('Form Validator', () => {
       const form = new Form(getSchema())
       const submitFn = jest.fn().mockResolvedValueOnce(true)
 
-      await form.handleSubmit(submitFn)
+      form.handleSubmit(submitFn)
+      expect(submitFn).toBeCalledWith(form.data, form)
+    })
+    test('Handle submit returns the response', async () => {
+      const form = new Form(getSchema())
+      const submitResponse = { data: 'success', code: 200 }
+      const submitFn = jest.fn().mockResolvedValueOnce(submitResponse)
 
-      expect(submitFn).toBeCalledWith(form.getData(), form)
+      const result = await form.handleSubmit(submitFn)
+      expect(result).toEqual(submitResponse)
     })
     test('When submit process starts, "isSubmitting" property is true', () => {
       const form = new Form(getSchema())
@@ -348,14 +355,14 @@ describe('Form Validator', () => {
         const form = new Form(getSchema())
         const submitFn = jest.fn().mockResolvedValueOnce(true)
 
-        const dataBeforeSave = form.getData()
+        const dataBeforeSave = form.data
         await form.handleSubmit(submitFn)
 
         //change field value
         await form.fields.info.b.setValueAsync('new value')
 
         expect(form.lastSavedData).toEqual(dataBeforeSave)
-        expect(form.lastSavedData).not.toEqual(form.getData())
+        expect(form.lastSavedData).not.toEqual(form.data)
       })
 
       test('If the form hasn\'t been submitted, "lastSavedData" is null', async () => {
@@ -399,13 +406,13 @@ describe('Form Validator', () => {
         const form = new Form(getSchema())
         const newValue = 'new b'
 
-        const initialPayload = form.getData()
+        const initialPayload = form.data
         //change value on one field
         form.fields.info.b.setValueAsync(newValue)
 
         form.reset()
 
-        const afterResetPayload = form.getData()
+        const afterResetPayload = form.data
 
         expect(afterResetPayload.info.b).not.toBe(newValue)
         expect(initialPayload).toEqual(afterResetPayload)
@@ -420,17 +427,17 @@ describe('Form Validator', () => {
         form.fields.name.setValue('new name')
         form.fields.info.b.setValue('new value')
 
-        expect(form.getData()).not.toEqual(form.lastSavedData)
+        expect(form.data).not.toEqual(form.lastSavedData)
 
         form.resetToLastSaved()
 
-        expect(form.getData()).toEqual(form.lastSavedData)
+        expect(form.data).toEqual(form.lastSavedData)
       })
 
       test('If there is no last saved data, reset to initial value', async () => {
         const form = new Form(getSchema())
 
-        const initialData = form.getData()
+        const initialData = form.data
 
         form.fields.name.setValue('new name')
         form.fields.info.b.setValue('new value')
@@ -439,7 +446,7 @@ describe('Form Validator', () => {
 
         form.resetToLastSaved()
 
-        expect(form.getData()).toEqual(initialData)
+        expect(form.data).toEqual(initialData)
       })
     })
   })

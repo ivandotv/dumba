@@ -28,7 +28,8 @@
     "type:check": "del .buildcache/check-types.tsbuildinfo  && tsc -p tsconfig.check-types.json",
     "type:build": "del dist/types && del .buildcache/build-types.tsbuildinfo && tsc -p tsconfig.build-types.json",
     "type:watch": "yarn type:check --watch",
-    "build": "yarn type:build && node ../../scripts/build-browser --bundle=cjs,esm,umd",
+    "build:old": "yarn type:build && node ../../scripts/build-browser --bundle=cjs,esm,umd",
+    "build": "node ../../scripts/build-browser --bundle=esm",
     "build:watch": "del dist/cjs && cross-env BABEL_ENV=cjsWatch NODE_ENV=development babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps --watch",
     "prepublishOnly": "yarn build"
   },

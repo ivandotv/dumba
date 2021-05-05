@@ -1,11 +1,11 @@
 // @ts-expect-error no typings
 import deepForEach from 'deep-for-each'
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 // @ts-expect-error no typings
 import setValue from 'set-value'
 import { Field, FieldResult } from './field'
-import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 
-type SchemaValues<T> = T extends Record<string, any>
+export type SchemaValues<T> = T extends Record<string, any>
   ? {
       [key in keyof T]: T[key] extends { value: any }
         ? T[key]['value' & keyof T[key]]
@@ -13,7 +13,7 @@ type SchemaValues<T> = T extends Record<string, any>
     }
   : T
 
-type SchemaResults<T> = T extends Record<string, any>
+export type SchemaResults<T> = T extends Record<string, any>
   ? {
       [key in keyof T]: T[key] extends { value: any }
         ? FieldResult<T[key]['value' & keyof T[key]]>
@@ -37,23 +37,9 @@ export class Form<TSchema = any> {
     // @ts-expect-error - must be initialized with empty object
     this.fields = {}
 
-    deepForEach(
-      schema,
-      (formField: Field<any>, key: string, _subject: any, path: string) => {
-        if (!(formField instanceof Field)) {
-          return
-        }
-
-        formField.attachToPath(key, path, this)
-
-        setValue(this.fields, path, formField)
-        this.fieldsByPath.set(path, formField)
-      }
-    )
-
-    for (const field of this.fieldsByPath.values()) {
-      field.initDependencies()
-    }
+    this.fieldsByPath = new Map()
+    this.reset = this.reset.bind(this)
+    this.resetToLastSaved = this.resetToLastSaved.bind(this)
 
     // initMobx(this)
     makeObservable<Form<any>, 'lastSavedDataByPath'>(this, {
@@ -61,12 +47,33 @@ export class Form<TSchema = any> {
       submitError: observable,
       isSubmitting: observable,
       lastSavedDataByPath: observable,
+      fieldsByPath: observable,
       isValid: computed,
       isValidating: computed,
       lastSavedData: computed,
+      data: computed,
       isDirty: computed,
       handleSubmit: action
     })
+
+    deepForEach(
+      schema,
+      (formField: Field<any>, key: string, _subject: any, path: string) => {
+        if (!(formField instanceof Field)) {
+          return
+        }
+
+        runInAction(() => {
+          formField.attachToPath(key, path, this)
+          setValue(this.fields, path, formField)
+          this.fieldsByPath.set(path, formField)
+        })
+      }
+    )
+
+    for (const field of this.fieldsByPath.values()) {
+      field.initDependencies()
+    }
   }
 
   validate(): SchemaResults<TSchema> {
@@ -87,23 +94,10 @@ export class Form<TSchema = any> {
     return result as SchemaResults<TSchema>
   }
 
-  getData(): SchemaValues<TSchema> {
+  get data(): SchemaValues<TSchema> {
     const data = {}
     for (const [path, field] of this.fieldsByPath.entries()) {
       setValue(data, path, field.value)
-    }
-
-    return data as SchemaValues<TSchema>
-  }
-
-  get lastSavedData(): SchemaValues<TSchema> | null {
-    if (this.lastSavedDataByPath.size === 0) {
-      return null
-    }
-
-    const data = {}
-    for (const [path, value] of this.lastSavedDataByPath.entries()) {
-      setValue(data, path, value)
     }
 
     return data as SchemaValues<TSchema>
@@ -141,12 +135,24 @@ export class Form<TSchema = any> {
 
   get isValidated(): boolean {
     for (const field of this.fieldsByPath.values()) {
-      if (!field.validated) {
+      if (!field.isValidated) {
         return false
       }
     }
 
     return true
+  }
+
+  get lastSavedData(): SchemaValues<TSchema> | null {
+    if (this.lastSavedDataByPath.size === 0) {
+      return null
+    }
+    const data = {}
+    for (const [path, value] of this.lastSavedDataByPath.entries()) {
+      setValue(data, path, value)
+    }
+
+    return data as SchemaValues<TSchema>
   }
 
   reset(): void {
@@ -161,24 +167,32 @@ export class Form<TSchema = any> {
     } else {
       for (const [path, value] of this.lastSavedDataByPath.entries()) {
         const field = this.fieldsByPath.get(path)
-        field!.setValue(value)
+        field!.setValueAsync(value)
       }
     }
   }
 
-  async handleSubmit<T extends (payload: any, form: this) => Promise<any>>(
-    fn: T
-  ): Promise<ReturnType<typeof fn>> {
+  async handleSubmit<
+    T extends (payload: SchemaValues<TSchema>, form: this) => Promise<any>
+  >(fn: T): Promise<ReturnType<typeof fn>> {
     try {
       this.isSubmitting = true
       this.submitError = null
 
       const dataBeforeSave = new Map()
+
       for (const [path, field] of this.fieldsByPath.entries()) {
-        dataBeforeSave.set(path, field.value)
+        let value = field.value
+        if (Array.isArray(value)) {
+          value = [...value]
+        } else if (typeof value === 'object') {
+          value = { ...value }
+        }
+
+        dataBeforeSave.set(path, value)
       }
 
-      const result = await fn(this.getData(), this)
+      const result = await fn(this.data, this)
 
       runInAction(() => {
         this.lastSavedDataByPath = dataBeforeSave

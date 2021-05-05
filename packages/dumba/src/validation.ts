@@ -1,15 +1,17 @@
+import { Field } from './field'
 import { Form } from './form'
 
-export function createValidation(
-  fn: (value: any, ctx: Form) => boolean | Promise<boolean>,
-  msg: string
-) {
+type ValidationFn = (
+  value: any,
+  ctx: Form,
+  field: Field<any>,
+  dependency?: Field<any>
+) => boolean | Promise<boolean>
+
+export function createValidation(fn: ValidationFn, msg: string) {
   return new Validation(fn, msg)
 }
 
 export class Validation {
-  constructor(
-    public fn: (value: any, ctx: any) => boolean | Promise<boolean>,
-    public msg: string
-  ) {}
+  constructor(public fn: ValidationFn, public msg: string) {}
 }
