@@ -169,30 +169,24 @@ export class Field<T> {
     return this._dependants
   }
 
-  setValue(value: T, validateDependants = true): FieldResult<T> {
+  setValue(value: T): FieldResult<T> {
     this.checkForNull(value)
     this.value = value
 
     const result = this.validate()
-    if (validateDependants) {
-      this.validateDependants()
-    }
+
+    this.validateDependants()
 
     return result
   }
 
-  async setValueAsync(
-    value: T,
-    validateDependants = true
-  ): Promise<FieldResult<T>> {
+  async setValueAsync(value: T): Promise<FieldResult<T>> {
     this.checkForNull(value)
     this.value = value
 
     const result = await this.__validateAsync()
 
-    if (validateDependants) {
-      await this.validateDependants()
-    }
+    await this.validateDependants()
 
     return result
   }
@@ -280,16 +274,14 @@ export class Field<T> {
     return !equals(this.initialValue, this.value)
   }
 
-  reset(validateDependants = true): void {
+  reset(): void {
     this.value = this.initialValue
     if (!this.alwaysValid) {
       this.isValidated = false
     }
     this.errors = []
 
-    if (validateDependants) {
-      this.validateDependants()
-    }
+    this.validateDependants()
   }
 
   protected checkForNull(value: any): void {
