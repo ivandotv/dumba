@@ -156,12 +156,6 @@ export class Field<T> {
     return await Promise.all(results)
   }
 
-  // protected resetDependants() {
-  //   for (const field of this._dependants.values()) {
-  //     field.reset()
-  //   }
-  // }
-
   get dependants(): Pick<
     Field<any>['_dependants'],
     'entries' | 'forEach' | 'get' | 'keys' | 'size' | 'values'
