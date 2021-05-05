@@ -1,44 +1,67 @@
+import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import type { Form } from 'dumba'
 import { observer } from 'mobx-react-lite'
-import Async from './fields/Async'
 import Dependent from './fields/Dependent'
 import Email from './fields/Email'
 import Masked from './fields/Masked'
 import Name from './fields/Name'
+import Superhero from './fields/Superhero'
 import Types from './fields/Types'
-import Button from '@material-ui/core/Button'
 import { useForm } from './formStore'
+import { schema } from './schema'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
+    wrap: {
+      display: 'flex',
+      maxWidth: '45ch'
+    },
+    form: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      // maxWidth: '600px',
-      // width: '600px',
+      padding: theme.spacing(2),
       '& > *': {
-        margin: theme.spacing(1),
-        width: '40ch'
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        width: '100%'
       }
     }
   })
 )
-const Form = observer(function Form() {
+
+type SchemaValues<T> = T extends Record<string, any>
+  ? {
+      [key in keyof T]: T[key] extends { value: any }
+        ? T[key]['value' & keyof T[key]]
+        : SchemaValues<T[key]>
+    }
+  : T
+
+function fakeSubmit(
+  payload: SchemaValues<typeof schema>,
+  form: Form<typeof schema>
+) {
+  return new Promise((resolve, _reject) => {
+    setTimeout(resolve, 1500)
+  })
+}
+
+const FormPanel = observer(function FormPanel() {
   const classes = useStyles()
   const formStore = useForm()
 
-  console.log('all validated ', formStore.isValidated)
-  console.log('all dirty ', formStore.isDirty)
   return (
-    <div>
-      <form autoComplete="off" noValidate className={classes.root}>
+    <Paper elevation={2} className={classes.wrap}>
+      <form autoComplete="off" noValidate className={classes.form}>
         <Name />
         <Email />
         <Masked />
         <Types />
         <Dependent />
-        <Async />
+        <Superhero />
         <Button
           variant="contained"
           color="primary"
@@ -48,12 +71,16 @@ const Form = observer(function Form() {
             !formStore.isValid ||
             !formStore.isValidated
           }
+          onClick={async () => {
+            const r = await formStore.handleSubmit(fakeSubmit)
+            console.log(r)
+          }}
         >
           Submit
         </Button>
       </form>
-    </div>
+    </Paper>
   )
 })
 
-export { Form }
+export default FormPanel

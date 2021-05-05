@@ -20,6 +20,7 @@ const Name = observer(function Name() {
         id="name"
         name="name"
         autoComplete="off"
+        value={formStore.fields.name.value}
         helperText={<DisplayErrors errors={formStore.fields.name.errors} />}
         onBlur={formStore.fields.name.validateAsync}
         onChange={formStore.fields.name.onChange}

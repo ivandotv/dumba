@@ -15,9 +15,9 @@ const Types = observer(function Types() {
         aria-label="types"
         name="types"
         row={true}
-        value={formStore.fields.types.value}
-        onBlur={formStore.fields.types.validateAsync}
-        onChange={formStore.fields.types.onChange}
+        value={formStore.fields.typeOptions.types.value}
+        onBlur={formStore.fields.typeOptions.types.validateAsync}
+        onChange={formStore.fields.typeOptions.types.onChange}
       >
         <FormControlLabel
           disabled={formStore.isSubmitting}

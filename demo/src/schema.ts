@@ -50,46 +50,45 @@ export const schema = {
       return newValue
     }
   }),
-  types: createField({
-    value: 'letter',
-    validations: createValidation((value: string, form: Form) => {
-      // when the dropdown changes, validate numberOrString
-      form.fields.numberOrString.validate()
+  typeOptions: {
+    types: createField({
+      // radio buttons don't need validation
+      value: 'letter'
+    }),
+    numberOrString: createField({
+      value: '',
+      dependsOn: 'typeOptions.types',
+      validations: [
+        createValidation(
+          (str: string) => isLength(str, { min: 1 }),
+          "Can't be empty"
+        ),
+        createValidation((value: string, form: Form) => {
+          const typesValue = form.fields.typeOptions.types.value
 
-      return true // this is always valid
-    }, '') //always valid, no need for the error message
-  }),
-  numberOrString: createField({
-    value: '',
-    validations: [
-      createValidation(
-        (str: string) => isLength(str, { min: 1 }),
-        "Can't be empty"
-      ),
-      createValidation((value: string, form: Form) => {
-        const dropdownValue = form.fields.types.value
+          // debugger
+          //only handle the case when dropdown value is string
+          if ('letter' === typesValue) {
+            // check if only letters
+            return isAlpha(value)
+          }
+          return true
+        }, 'Must be letters'),
+        createValidation((value: string, form: Form) => {
+          const typesValue = form.fields.typeOptions.types.value
 
-        //only handle the case when dropdown value is string
-        if ('letter' === dropdownValue && form.fields.numberOrString.isDirty) {
-          // check if only letters
-          return isAlpha(value)
-        }
-        return true
-      }, 'Must be letters'),
-      createValidation((value: string, form: Form) => {
-        const dropdownValue = form.fields.types.value
+          //only handle the case when dropdown value is number
+          if ('number' === typesValue) {
+            // check if number
+            return isNumeric(value)
+          }
 
-        //only handle the case when dropdown value is number
-        if ('number' === dropdownValue && form.fields.numberOrString.isDirty) {
-          // check if is number
-          return isNumeric(value)
-        }
-
-        return true
-      }, 'Must be numeric')
-    ]
-  }),
-  username: createField({
+          return true
+        }, 'Must be numeric')
+      ]
+    })
+  },
+  superhero: createField({
     value: '',
     delay: 400,
     bailEarly: true,
@@ -106,7 +105,7 @@ export const schema = {
         })
 
         return p as Promise<boolean>
-      }, 'user name taken')
+      }, 'Superhero not found')
     ]
   })
 }

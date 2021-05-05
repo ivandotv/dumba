@@ -9,25 +9,31 @@ const Dependent = observer(function Dependent() {
   const formStore = useForm()
   return (
     <FormControl>
-      <FormLabel component="legend">Type depended field</FormLabel>
-      <small>Allow letters or numbers, depending on types above</small>
+      <FormLabel component="legend">Dependency field</FormLabel>
+      <small>
+        Allow letters or numbers, depending on the value of the{' '}
+        <strong>type</strong> above.
+      </small>
       <TextField
         type="text"
         id="numberOrString"
         name="numberOrString"
         variant="filled"
         size="small"
+        value={formStore.fields.typeOptions.numberOrString.value}
         disabled={formStore.isSubmitting}
-        onChange={formStore.fields.numberOrString.onChange}
-        onBlur={formStore.fields.numberOrString.validateAsync}
+        onChange={formStore.fields.typeOptions.numberOrString.onChange}
+        onBlur={formStore.fields.typeOptions.numberOrString.validateAsync}
         label={
-          formStore.fields.types.value === 'letter'
+          formStore.fields.typeOptions.types.value === 'letter'
             ? 'Letters only'
             : 'Numbers only'
         }
-        error={!!formStore.fields.numberOrString.errors.length}
+        error={!!formStore.fields.typeOptions.numberOrString.errors.length}
         helperText={
-          <DisplayErrors errors={formStore.fields.numberOrString.errors} />
+          <DisplayErrors
+            errors={formStore.fields.typeOptions.numberOrString.errors}
+          />
         }
       />
     </FormControl>
