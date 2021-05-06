@@ -37,7 +37,7 @@ let tasks = [
         '-c',
         `${path.resolve(`${__dirname}/..`)}/rollup.config.js`,
         argv.w ? '--watch' : undefined,
-        '--no-watch.clearScreen'
+        argv.w ? '--no-watch.clearScreen' : undefined
       ],
 
       {

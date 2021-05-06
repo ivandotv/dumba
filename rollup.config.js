@@ -132,9 +132,11 @@ const umdWithPolyfill = {
 // build for browser as module
 const esm = {
   input,
-  watch: {
-    chokidar: false
-  },
+  watch: argv.watch
+    ? {
+        chokidar: false
+      }
+    : undefined,
   output: [
     {
       file: esmFilePath('.esm.js'),
