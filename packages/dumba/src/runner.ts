@@ -1,5 +1,4 @@
-import isPromise from 'p-is-promise'
-import { Field } from '.'
+import { Field } from './field'
 import { Form } from './form'
 import { Validation } from './validation'
 
@@ -11,35 +10,7 @@ export type RunnerResult = {
 export class Runner {
   constructor(public validations: Validation[], protected bailEarly = false) {}
 
-  validate(
-    value: any,
-    ctx: Form<any>,
-    field: Field<any>,
-    dependency?: Field<any>
-  ): RunnerResult {
-    if (!this.validations.length) {
-      return { errors: null, value }
-    }
-    const errors = []
-
-    for (const validation of this.validations) {
-      const result = validation.fn(value, ctx, field, dependency)
-      if (isPromise(result)) {
-        throw new Error(`runner has async validations`)
-      }
-      if (!result) {
-        errors.push(validation.msg)
-      }
-
-      if (this.bailEarly) {
-        return errors.length ? { errors, value } : { errors: null, value }
-      }
-    }
-
-    return errors.length ? { errors, value } : { errors: null, value }
-  }
-
-  async validateAsync(
+  async validate(
     value: any,
     ctx: Form<any>,
     field: Field<any>,
@@ -49,7 +20,7 @@ export class Runner {
       return { errors: null, value }
     }
     if (this.bailEarly) {
-      return await this.bailEarlyAsync(value, ctx, field, dependency)
+      return await this.bailEarlyValidation(value, ctx, field, dependency)
     }
 
     const errors: string[] = []
@@ -79,7 +50,7 @@ export class Runner {
     return errors.length ? { errors, value } : { errors: null, value }
   }
 
-  async bailEarlyAsync(
+  async bailEarlyValidation(
     value: any,
     ctx: Form<any>,
     field: Field<any>,

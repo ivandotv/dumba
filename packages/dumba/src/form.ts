@@ -4,6 +4,7 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 // @ts-expect-error no typings
 import setValue from 'set-value'
 import { Field, FieldResult } from './field'
+import type React from 'react'
 
 export type SchemaValues<T> = T extends Record<string, any>
   ? {
@@ -76,22 +77,27 @@ export class Form<TSchema = any> {
     }
   }
 
-  validate(): SchemaResults<TSchema> {
-    const result = {}
-    for (const [path, field] of this.fieldsByPath.entries()) {
-      setValue(result, path, field.validate())
+  // validate(): SchemaResults<TSchema> {
+  //   const result = {}
+  //   for (const [path, field] of this.fieldsByPath.entries()) {
+  //     setValue(result, path, field.validate())
+  //   }
+
+  //   return result as SchemaResults<TSchema>
+  // }
+
+  async validate(cb?: (form: Form<TSchema>) => void): Promise<void> {
+    // const result = {} as SchemaResults<TSchema>
+    for (const field of this.fieldsByPath.values()) {
+      // setValue(result, path, await field.validateAsync())
+      await field.validate()
     }
 
-    return result as SchemaResults<TSchema>
-  }
-
-  async validateAsync(): Promise<SchemaResults<TSchema>> {
-    const result = {}
-    for (const [path, field] of this.fieldsByPath.entries()) {
-      setValue(result, path, await field.validateAsync())
+    if (cb) {
+      cb(this)
     }
 
-    return result as SchemaResults<TSchema>
+    // return result
   }
 
   get data(): SchemaValues<TSchema> {
@@ -167,17 +173,20 @@ export class Form<TSchema = any> {
     } else {
       for (const [path, value] of this.lastSavedDataByPath.entries()) {
         const field = this.fieldsByPath.get(path)
-        field!.setValueAsync(value)
+        field!.setValue(value)
       }
     }
   }
 
-  async handleSubmit<
-    T extends (payload: SchemaValues<TSchema>, form: this) => Promise<any>
-  >(fn: T): Promise<ReturnType<typeof fn>> {
-    try {
-      this.isSubmitting = true
-      this.submitError = null
+  handleSubmit(
+    fn: (payload: SchemaValues<TSchema>, form: this) => Promise<any>
+  ): React.FormEventHandler<HTMLFormElement> {
+    return (event?: React.FormEvent<HTMLFormElement>) => {
+      event && event.preventDefault()
+      runInAction(() => {
+        this.isSubmitting = true
+        this.submitError = null
+      })
 
       const dataBeforeSave = new Map()
 
@@ -192,23 +201,22 @@ export class Form<TSchema = any> {
         dataBeforeSave.set(path, value)
       }
 
-      const result = await fn(this.data, this)
-
-      runInAction(() => {
-        this.lastSavedDataByPath = dataBeforeSave
-      })
-
-      return result
-    } catch (err) {
-      runInAction(() => {
-        this.submitError = err
-      })
-
-      throw err
-    } finally {
-      runInAction(() => {
-        this.isSubmitting = false
-      })
+      fn(this.data, this)
+        .then((_result: any) => {
+          runInAction(() => {
+            this.lastSavedDataByPath = dataBeforeSave
+          })
+        })
+        .catch((err) => {
+          runInAction(() => {
+            this.submitError = err
+          })
+        })
+        .finally(() => {
+          runInAction(() => {
+            this.isSubmitting = false
+          })
+        })
     }
   }
 }

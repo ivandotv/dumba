@@ -66,7 +66,7 @@ export class Field<T> {
 
   initialValue: T
 
-  onChange: (...args: any[]) => Promise<FieldResult<T>>
+  onChange: (...args: any[]) => Promise<void>
 
   protected timeoutId?: number
 
@@ -95,28 +95,26 @@ export class Field<T> {
 
       this.checkForNull(this.value)
 
-      const validationTest = new Promise<FieldResult<T>>((resolve) => {
+      const validationTest = new Promise<void>((resolve) => {
         if (typeof this.delay !== 'undefined') {
           if (this.timeoutId) {
             clearTimeout(this.timeoutId)
           }
           this.timeoutId = window.setTimeout(() => {
-            resolve(this.__validateAsync())
+            resolve(this.validateAsync())
           }, this.delay)
         } else {
-          resolve(this.__validateAsync())
+          resolve(this.validateAsync())
         }
       })
-      const result = await validationTest
+      await validationTest
 
       await this.validateDependants()
-
-      return result
     }
 
     this.onChange = this.onChange.bind(this)
     this.validate = this.validate.bind(this)
-    this.validateAsync = this.validateAsync.bind(this)
+    // this.validate = this.validate.bind(this)
 
     makeObservable(this, {
       isValid: computed,
@@ -127,9 +125,9 @@ export class Field<T> {
       isValidated: observable,
       onChange: action,
       setValue: action,
-      setValueAsync: action,
+      // setValueAsync: action,
       validate: action,
-      validateAsync: action,
+      // validateAsync: action,
       reset: action
     })
   }
@@ -150,7 +148,7 @@ export class Field<T> {
     const results = []
     for (const field of this._dependants.values()) {
       //field is a dependant field (not this)
-      results.push(field.__validateAsync(this))
+      results.push(field.validateAsync(this))
     }
 
     return await Promise.all(results)
@@ -163,26 +161,25 @@ export class Field<T> {
     return this._dependants
   }
 
-  setValue(value: T): FieldResult<T> {
+  // setValue(value: T): FieldResult<T> {
+  //   this.checkForNull(value)
+  //   this.value = value
+
+  //   const result = this.validate()
+
+  //   this.validateDependants()
+
+  //   return result
+  // }
+
+  async setValue(value: T, cb?: (field: Field<T>) => void): Promise<void> {
     this.checkForNull(value)
     this.value = value
 
-    const result = this.validate()
-
-    this.validateDependants()
-
-    return result
-  }
-
-  async setValueAsync(value: T): Promise<FieldResult<T>> {
-    this.checkForNull(value)
-    this.value = value
-
-    const result = await this.__validateAsync()
-
+    await this.validateAsync()
     await this.validateDependants()
 
-    return result
+    cb && cb(this)
   }
 
   //todo @internal
@@ -192,31 +189,30 @@ export class Field<T> {
     this.form = form
   }
 
-  validate(): FieldResult<T> {
-    const result = this.runner.validate(this.value, this.form, this)
+  // validate(): FieldResult<T> {
+  //   const result = this.runner.validate(this.value, this.form, this)
 
-    this.errors = result.errors ?? []
+  //   this.errors = result.errors ?? []
 
-    this.isValidated = true
+  //   this.isValidated = true
 
-    return {
-      name: this.name,
-      path: this.path,
-      ...result
-    }
+  //   return {
+  //     name: this.name,
+  //     path: this.path,
+  //     ...result
+  //   }
+  // }
+
+  async validate(cb?: (field: Field<T>) => void): Promise<void> {
+    await this.validateAsync()
+    cb && cb(this)
   }
 
-  async validateAsync(): Promise<FieldResult<T>> {
-    return this.__validateAsync()
-  }
-
-  protected async __validateAsync(
-    dependancy?: Field<any>
-  ): Promise<FieldResult<T>> {
+  protected async validateAsync(dependancy?: Field<any>): Promise<void> {
     runInAction(() => {
       this.isValidating = true
     })
-    const result = await this.runner.validateAsync(
+    const result = await this.runner.validate(
       this.value,
       this.form,
       this,
@@ -228,12 +224,6 @@ export class Field<T> {
       this.errors = result.errors ?? []
       this.isValidated = true
     })
-
-    return {
-      name: this.name,
-      path: this.path,
-      ...result
-    }
   }
 
   // async validateBecauseOfDependency(

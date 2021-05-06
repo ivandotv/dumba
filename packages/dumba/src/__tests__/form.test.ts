@@ -5,7 +5,6 @@ import {
   asyncValidationError,
   getAsyncSchema,
   getSchema,
-  validationError,
   validationOk
 } from './__fixtures__/fixtures'
 
@@ -24,119 +23,7 @@ describe('Form', () => {
     expect(form.fields.info.c.c1).toBeInstanceOf(Field)
   })
 
-  describe('Validate synchronously', () => {
-    test('Validate successfully', () => {
-      const form = new Form(getSchema())
-      const expectedPayload = {
-        name: 'name',
-        info: {
-          b: 'b',
-          c: {
-            c1: 'c1'
-          }
-        }
-      }
-      const expectedResult = {
-        name: {
-          name: 'name',
-          path: 'name',
-          value: 'name',
-          errors: null
-        },
-        info: {
-          b: {
-            name: 'b',
-            path: 'info.b',
-            value: 'b',
-            errors: null
-          },
-          c: {
-            c1: {
-              name: 'c1',
-              path: 'info.c.c1',
-              value: 'c1',
-              errors: null
-            }
-          }
-        }
-      }
-
-      const result = form.validate()
-
-      expect(result).toEqual(expectedResult)
-      expect(form.data).toEqual(expectedPayload)
-      expect(form.isValid).toBe(true)
-    })
-    test('Validate unsuccessfully', () => {
-      const bFieldErrorOne = 'b field error one'
-      const bFieldErrorTwo = 'b field error two'
-      const cFieldError = 'c field error'
-
-      const schema = {
-        name: createField({
-          value: 'name',
-          validations: validationOk()
-        }),
-        info: {
-          b: createField({
-            value: 'b',
-            validations: [
-              validationError(bFieldErrorOne),
-              validationError(bFieldErrorTwo)
-            ]
-          }),
-          c: {
-            c1: createField({
-              value: 'c1',
-              validations: validationError(cFieldError)
-            })
-          }
-        }
-      }
-      const expectedResult = {
-        name: {
-          name: 'name',
-          path: 'name',
-          value: 'name',
-          errors: null
-        },
-        info: {
-          b: {
-            name: 'b',
-            path: 'info.b',
-            value: 'b',
-            errors: [bFieldErrorOne, bFieldErrorTwo]
-          },
-          c: {
-            c1: {
-              name: 'c1',
-              path: 'info.c.c1',
-              value: 'c1',
-              errors: [cFieldError]
-            }
-          }
-        }
-      }
-      const expectedPayload = {
-        name: 'name',
-        info: {
-          b: 'b',
-          c: {
-            c1: 'c1'
-          }
-        }
-      }
-
-      const form = new Form(schema)
-      const result = form.validate()
-
-      expect(result).toEqual(expectedResult)
-      expect(form.data).toEqual(expectedPayload)
-      expect(form.isValid).toBe(false)
-    })
-  })
-
-  describe('Validate async', () => {
+  describe('Validate', () => {
     test('Validate successfully', async () => {
       const form = new Form(getAsyncSchema())
       const expectedPayload = {
@@ -148,34 +35,13 @@ describe('Form', () => {
           }
         }
       }
-      const expectedResult = {
-        name: {
-          name: 'name',
-          path: 'name',
-          value: 'name',
-          errors: null
-        },
-        info: {
-          b: {
-            name: 'b',
-            path: 'info.b',
-            value: 'b',
-            errors: null
-          },
-          c: {
-            c1: {
-              name: 'c1',
-              path: 'info.c.c1',
-              value: 'c1',
-              errors: null
-            }
-          }
-        }
-      }
 
-      const result = await form.validateAsync()
+      const callback = jest.fn()
+      await form.validate(callback)
 
-      expect(result).toEqual(expectedResult)
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback).toHaveBeenCalledWith(form)
+
       expect(form.data).toEqual(expectedPayload)
       expect(form.isValid).toBe(true)
     })
@@ -205,30 +71,6 @@ describe('Form', () => {
           }
         }
       }
-      const expectedResult = {
-        name: {
-          name: 'name',
-          path: 'name',
-          value: 'name',
-          errors: null
-        },
-        info: {
-          b: {
-            name: 'b',
-            path: 'info.b',
-            value: 'b',
-            errors: [bFieldErrorOne, bFieldErrorTwo]
-          },
-          c: {
-            c1: {
-              name: 'c1',
-              path: 'info.c.c1',
-              value: 'c1',
-              errors: [cFieldError]
-            }
-          }
-        }
-      }
       const expectedPayload = {
         name: 'name',
         info: {
@@ -240,9 +82,12 @@ describe('Form', () => {
       }
 
       const form = new Form(schema)
-      const result = await form.validateAsync()
+      const callback = jest.fn()
+      await form.validate(callback)
 
-      expect(result).toEqual(expectedResult)
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback).toHaveBeenCalledWith(form)
+
       expect(form.data).toEqual(expectedPayload)
       expect(form.isValid).toBe(false)
     })
@@ -253,7 +98,7 @@ describe('Form', () => {
 
     expect(form.isValidating).toBe(false)
 
-    const result = form.validateAsync()
+    const result = form.validate()
 
     expect(form.isValidating).toBe(true)
 
@@ -267,7 +112,7 @@ describe('Form', () => {
 
     expect(form.isDirty).toBe(false)
 
-    form.fields.info.c.c1.setValueAsync('new value')
+    form.fields.info.c.c1.setValue('new value')
 
     expect(form.isDirty).toBe(true)
   })
@@ -281,7 +126,7 @@ describe('Form', () => {
   test('When field values are  validated, "isValidated" is true', async () => {
     const form = new Form(getSchema())
 
-    await form.validateAsync()
+    await form.validate()
 
     expect(form.isValidated).toBe(true)
   })
@@ -291,7 +136,7 @@ describe('Form', () => {
     // const bValue = form.fields.info.b.value
     const newValue = 'new b'
 
-    form.fields.info.b.setValueAsync(newValue)
+    form.fields.info.b.setValue(newValue)
 
     const newPayload = form.data
 
@@ -359,7 +204,7 @@ describe('Form', () => {
         await form.handleSubmit(submitFn)
 
         //change field value
-        await form.fields.info.b.setValueAsync('new value')
+        await form.fields.info.b.setValue('new value')
 
         expect(form.lastSavedData).toEqual(dataBeforeSave)
         expect(form.lastSavedData).not.toEqual(form.data)
@@ -398,7 +243,7 @@ describe('Form', () => {
 
           const initialPayload = form.data
           //change value on one field
-          form.fields.info.b.setValueAsync(newValue)
+          form.fields.info.b.setValue(newValue)
 
           form.reset()
 

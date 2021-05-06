@@ -10,7 +10,7 @@
   "unpkg": "dist/unpkg/dumba.min.js",
   "jsdelivr": "dist/unpkg/dumba.min.js",
   "sideEffects": false,
-  "types": "dist/types/",
+  "types": "dist/types",
   "files": [
     "dist",
     "src"
@@ -45,12 +45,11 @@
   "keywords": [],
   "dependencies": {
     "deep-for-each": "^3.0.0",
-    "p-is-promise": "^3",
-    "set-value": "^3.0.2",
-    "unique-random": "^2"
+    "set-value": "^3.0.2"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
+    "@types/react": "^17.0.5",
     "mobx": "^6.2.0"
   },
   "peerDependencies": {

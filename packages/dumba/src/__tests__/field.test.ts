@@ -11,7 +11,7 @@ configure({
 
 describe('Field', () => {
   describe('Create', () => {
-    test('If there are no tests, pass sync validation', () => {
+    test('Attach to path', () => {
       const value = 'A'
       const path = '/path'
       const name = 'lastName'
@@ -19,11 +19,12 @@ describe('Field', () => {
       const field = createField({
         value
       })
+
       field.attachToPath(name, path, form)
 
-      const result = field.validate()
-
-      expect(result).toEqual({ name, path, value, errors: null })
+      expect(field.name).toBe(name)
+      expect(field.path).toBe(path)
+      expect(field.form).toBe(form)
     })
     test('If there are no tests, pass async validation', async () => {
       const value = 'A'
@@ -33,13 +34,14 @@ describe('Field', () => {
       const field = createField({
         value
       })
+
       field.attachToPath(name, path, form)
 
-      const result = await field.validate()
+      await field.validate()
 
-      expect(result).toEqual({ name, path, value, errors: null })
+      expect(field.errors).toHaveLength(0)
     })
-    test('Use single test', () => {
+    test('Use single validation', async () => {
       const value = 'A'
       const path = '/path'
       const name = 'lastName'
@@ -49,15 +51,15 @@ describe('Field', () => {
         value,
         validations: fixtures.validationError(message)
       })
-
       field.attachToPath(name, path, form)
 
-      const result = field.validate()
+      await field.validate()
 
-      expect(result).toEqual({ name, path, value, errors: [message] })
+      expect(field.isValid).toBe(false)
+      expect(field.errors).toEqual([message])
     })
 
-    test('Use array of validations', () => {
+    test('Use array of validations', async () => {
       const value = 'A'
       const path = '/path'
       const name = 'lastName'
@@ -74,83 +76,13 @@ describe('Field', () => {
 
       field.attachToPath(name, path, form)
 
-      const result = field.validate()
+      await field.validate()
 
-      expect(result).toEqual({
-        name,
-        path,
-        value,
-        errors: [message, messageTwo]
-      })
+      expect(field.isValid).toBe(false)
+      expect(field.errors).toEqual([message, messageTwo])
     })
   })
 
-  describe('Validate', () => {
-    test('Pass validation', () => {
-      const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
-      const field = createField({
-        value,
-        validations: [fixtures.validationOk()]
-      })
-      field.attachToPath(name, path, form)
-
-      const result = field.validate()
-
-      expect(result).toEqual({ name, path, value, errors: null })
-    })
-    test('Pass async validation', async () => {
-      const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
-      const field = createField({
-        value,
-        validations: [fixtures.asyncValidationOk()]
-      })
-      field.attachToPath(name, path, form)
-
-      const result = await field.validateAsync()
-
-      expect(result).toEqual({ name, path, value, errors: null })
-    })
-
-    test('Fail validation', () => {
-      const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
-      const message = 'failed validation'
-      const field = createField({
-        value,
-        validations: [fixtures.validationError(message)]
-      })
-      field.attachToPath(name, path, form)
-
-      const result = field.validate()
-
-      expect(result).toEqual({ name, path, value, errors: [message] })
-    })
-
-    test('Fail async validation', async () => {
-      const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
-      const message = 'failed validation'
-      const field = createField({
-        value,
-        validations: [fixtures.asyncValidationError(message)]
-      })
-      field.attachToPath(name, path, form)
-
-      const result = await field.validateAsync()
-
-      expect(result).toEqual({ name, path, value, errors: [message] })
-    })
-  })
   describe('On Change', () => {
     describe('Parse change object', () => {
       test('Throw if onChange value is null', async () => {
@@ -244,13 +176,32 @@ describe('Field', () => {
 
       expect(field.isValidating).toBe(false)
 
-      const result = field.setValueAsync(value)
+      const result = field.setValue(value)
 
       expect(field.isValidating).toBe(true)
 
       await result
 
       expect(field.isValidating).toBe(false)
+    })
+    test('When value is set, callback is called', async () => {
+      const value = 123
+      const path = '/path'
+      const name = 'lastName'
+      const form = fixtures.getForm()
+      const field = createField({
+        value,
+        validations: [fixtures.validationOk()]
+      })
+
+      field.attachToPath(name, path, form)
+
+      const callback = jest.fn()
+
+      await field.setValue(value, callback)
+
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback).toHaveBeenCalledWith(field)
     })
 
     test('If initialized with a delay, validation process will be delayed', async () => {
@@ -361,7 +312,7 @@ describe('Field', () => {
       })
       field.attachToPath(name, path, form)
 
-      const result = field.setValueAsync(newValue)
+      const result = field.setValue(newValue)
 
       await result
 
@@ -397,7 +348,7 @@ describe('Field', () => {
       })
       field.attachToPath(name, path, form)
 
-      const result = field.setValueAsync(newValue)
+      const result = field.setValue(newValue)
 
       await result
 
@@ -601,14 +552,14 @@ describe('Field', () => {
 
       const form = new Form(schema)
 
-      await form.fields.levelOne.levelTwo.c.setValueAsync('number')
+      await form.fields.levelOne.levelTwo.c.setValue('number')
 
       expect(form.fields.levelOne.b.errors).toEqual([validationMessage])
       expect(form.fields.levelOne.b.isValid).toBe(false)
       expect(form.fields.levelOne.b.isValidated).toBe(true)
     })
 
-    test('When field value is set, all dependant field validations are run', () => {
+    test('When field value is set, all dependant field validations are run', async () => {
       const cFnSpy = jest.fn().mockReturnValueOnce(true)
       const cValidation = createValidation(cFnSpy, '')
       const cValue = 'c'
@@ -632,7 +583,7 @@ describe('Field', () => {
       }
       const form = new Form(schema)
 
-      form.fields.a.setValue(newFieldValue)
+      await form.fields.a.setValue(newFieldValue)
 
       expect(cFnSpy).toHaveBeenCalledTimes(1)
       expect(cFnSpy).toHaveBeenCalledWith(
@@ -642,7 +593,7 @@ describe('Field', () => {
         form.fields.a
       )
     })
-    test('Can depend on deeply nested fields', () => {
+    test('Can depend on deeply nested fields', async () => {
       const newFieldValue = 'new value'
 
       const cFnSpy = jest.fn().mockReturnValueOnce(true)
@@ -667,7 +618,7 @@ describe('Field', () => {
       }
       const form = new Form(schema)
 
-      form.fields.levelOne.b.setValue(newFieldValue)
+      await form.fields.levelOne.b.setValue(newFieldValue)
 
       expect(cFnSpy).toHaveBeenCalledTimes(1)
       expect(cFnSpy).toHaveBeenCalledWith(
