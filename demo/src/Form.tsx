@@ -3,6 +3,7 @@ import Paper from '@material-ui/core/Paper'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import type { Form } from 'dumba'
 import { observer } from 'mobx-react-lite'
+import { useMemo } from 'react'
 import Dependent from './fields/Dependent'
 import Email from './fields/Email'
 import Masked from './fields/Masked'
@@ -53,9 +54,16 @@ const FormPanel = observer(function FormPanel() {
   const classes = useStyles()
   const formStore = useForm()
 
+  const memo = useMemo(() => formStore.handleSubmit(fakeSubmit), [formStore])
+
   return (
     <Paper elevation={2} className={classes.wrap}>
-      <form autoComplete="off" noValidate className={classes.form}>
+      <form
+        onSubmit={memo}
+        autoComplete="off"
+        noValidate
+        className={classes.form}
+      >
         <Username />
         <Email />
         <Masked />
@@ -65,16 +73,13 @@ const FormPanel = observer(function FormPanel() {
         <Button
           variant="contained"
           color="primary"
+          type="submit"
           disabled={
             formStore.isSubmitting ||
             formStore.isValidating ||
             !formStore.isValid ||
             !formStore.isValidated
           }
-          onClick={async () => {
-            const r = await formStore.handleSubmit(fakeSubmit)
-            console.log(r)
-          }}
         >
           Submit
         </Button>

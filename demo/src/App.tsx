@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
       '& > * ': {
-        // backgroundColor: 'red'
         margin: theme.spacing(2)
       }
     }
