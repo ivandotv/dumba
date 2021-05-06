@@ -4,7 +4,10 @@ import resolve from '@rollup/plugin-node-resolve'
 import filesize from 'rollup-plugin-filesize'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import { terser } from 'rollup-plugin-terser'
+import minimist from 'minimist'
 // import visualizer from 'rollup-plugin-visualizer'
+
+const argv = minimist(process.argv.slice(2))
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
@@ -22,7 +25,7 @@ function defaultPlugins(config = {}) {
     peerDepsExternal(),
     babel(config.babel || { babelHelpers: 'bundled' }),
     commonjs(),
-    filesize()
+    argv.watch ? undefined : filesize()
     // visualizer({ template: 'treemap' })
   ]
 }
@@ -129,18 +132,23 @@ const umdWithPolyfill = {
 // build for browser as module
 const esm = {
   input,
+  watch: {
+    chokidar: false
+  },
   output: [
     {
       file: esmFilePath('.esm.js'),
       format: 'esm',
       sourcemap: true
     },
-    {
-      file: esmFilePath('.esm.min.js'),
-      format: 'esm',
-      sourcemap: true,
-      plugins: [terser()]
-    }
+    argv.watch
+      ? undefined
+      : {
+          file: esmFilePath('.esm.min.js'),
+          format: 'esm',
+          sourcemap: true,
+          plugins: [terser()]
+        }
   ],
   plugins: defaultPlugins({
     babel: {

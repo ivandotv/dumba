@@ -35,7 +35,9 @@ let tasks = [
         process.cwd(),
         'rollup',
         '-c',
-        `${path.resolve(`${__dirname}/..`)}/rollup.config.js`
+        `${path.resolve(`${__dirname}/..`)}/rollup.config.js`,
+        argv.w ? '--watch' : undefined,
+        '--no-watch.clearScreen'
       ],
 
       {
