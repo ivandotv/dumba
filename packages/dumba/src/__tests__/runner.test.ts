@@ -8,7 +8,7 @@ describe('Runner', () => {
 
       const runner = new Runner([validation])
 
-      expect(runner.validations.length).toBe(1)
+      expect(runner.validations).toHaveLength(1)
       expect(runner.validations[0]).toBe(validation)
       expect(runner.validations).toStrictEqual(
         expect.arrayContaining([validation])
@@ -21,7 +21,7 @@ describe('Runner', () => {
 
       const runner = new Runner([validationOne, validationTwo])
 
-      expect(runner.validations.length).toBe(2)
+      expect(runner.validations).toHaveLength(2)
       expect(runner.validations[0]).toBe(validationOne)
       expect(runner.validations[1]).toBe(validationTwo)
     })
@@ -79,7 +79,7 @@ describe('Runner', () => {
       const result = runner.validate(expectedValue, form, field)
 
       expect(result).toEqual(expectedResult)
-      expect(secondValidation).not.toBeCalled()
+      expect(secondValidation).not.toHaveBeenCalled()
     })
     test('Bail early - with success', () => {
       const expectedValue = 'A'
@@ -98,19 +98,15 @@ describe('Runner', () => {
     })
 
     test('Throw if there is an asynchronous validation', () => {
-      expect.assertions(1)
       const { field } = fixtures.getField()
-      try {
+
+      expect(() =>
         new Runner([fixtures.asyncValidationOk()]).validate(
           'A',
           fixtures.getForm(),
           field
         )
-      } catch (e) {
-        expect(e.message).toEqual(
-          expect.stringMatching(/runner has async validations/)
-        )
-      }
+      ).toThrow(/runner has async validations/)
     })
   })
 
@@ -177,8 +173,8 @@ describe('Runner', () => {
 
       expect(result).toEqual(expectedResult)
 
-      expect(firstSpy).toBeCalled()
-      expect(secondSpy).toBeCalled()
+      expect(firstSpy).toHaveBeenCalled()
+      expect(secondSpy).toHaveBeenCalled()
     })
 
     test('Bail early with failure', async () => {
@@ -201,7 +197,7 @@ describe('Runner', () => {
       const result = await runner.validateAsync(expectedValue, form, field)
 
       expect(result).toEqual(expectedResult)
-      expect(secondValidation).not.toBeCalled()
+      expect(secondValidation).not.toHaveBeenCalled()
     })
 
     test('Failure with asyncsynchronous validation', async () => {
@@ -235,10 +231,20 @@ describe('Runner', () => {
 
       await runner.validateAsync(expectedValue, form, field)
 
-      expect(fnOneSpy).toBeCalledTimes(1)
-      expect(fnOneSpy).toBeCalledWith(expectedValue, form, field, undefined)
-      expect(fnTwoSpy).toBeCalledTimes(1)
-      expect(fnTwoSpy).toBeCalledWith(expectedValue, form, field, undefined)
+      expect(fnOneSpy).toHaveBeenCalledTimes(1)
+      expect(fnOneSpy).toHaveBeenCalledWith(
+        expectedValue,
+        form,
+        field,
+        undefined
+      )
+      expect(fnTwoSpy).toHaveBeenCalledTimes(1)
+      expect(fnTwoSpy).toHaveBeenCalledWith(
+        expectedValue,
+        form,
+        field,
+        undefined
+      )
     })
 
     test('Run multiple asyncsynchronous validations', async () => {
@@ -253,10 +259,20 @@ describe('Runner', () => {
 
       await runner.validateAsync(expectedValue, form, field)
 
-      expect(fnOneSpy).toBeCalledTimes(1)
-      expect(fnOneSpy).toBeCalledWith(expectedValue, form, field, undefined)
-      expect(fnTwoSpy).toBeCalledTimes(1)
-      expect(fnTwoSpy).toBeCalledWith(expectedValue, form, field, undefined)
+      expect(fnOneSpy).toHaveBeenCalledTimes(1)
+      expect(fnOneSpy).toHaveBeenCalledWith(
+        expectedValue,
+        form,
+        field,
+        undefined
+      )
+      expect(fnTwoSpy).toHaveBeenCalledTimes(1)
+      expect(fnTwoSpy).toHaveBeenCalledWith(
+        expectedValue,
+        form,
+        field,
+        undefined
+      )
     })
 
     test('Run mix of synchronous and asyncsynchronous validations', async () => {
@@ -277,22 +293,32 @@ describe('Runner', () => {
 
       await runner.validateAsync(expectedValue, form, field)
 
-      expect(fnOneSpy).toBeCalledTimes(1)
-      expect(fnOneSpy).toBeCalledWith(expectedValue, form, field, undefined)
-
-      expect(fnTwoSpy).toBeCalledTimes(1)
-      expect(fnTwoSpy).toBeCalledWith(expectedValue, form, field, undefined)
-
-      expect(fnOneAsyncSpy).toBeCalledTimes(1)
-      expect(fnOneAsyncSpy).toBeCalledWith(
+      expect(fnOneSpy).toHaveBeenCalledTimes(1)
+      expect(fnOneSpy).toHaveBeenCalledWith(
         expectedValue,
         form,
         field,
         undefined
       )
 
-      expect(fnTwoAsyncSpy).toBeCalledTimes(1)
-      expect(fnTwoAsyncSpy).toBeCalledWith(
+      expect(fnTwoSpy).toHaveBeenCalledTimes(1)
+      expect(fnTwoSpy).toHaveBeenCalledWith(
+        expectedValue,
+        form,
+        field,
+        undefined
+      )
+
+      expect(fnOneAsyncSpy).toHaveBeenCalledTimes(1)
+      expect(fnOneAsyncSpy).toHaveBeenCalledWith(
+        expectedValue,
+        form,
+        field,
+        undefined
+      )
+
+      expect(fnTwoAsyncSpy).toHaveBeenCalledTimes(1)
+      expect(fnTwoAsyncSpy).toHaveBeenCalledWith(
         expectedValue,
         form,
         field,

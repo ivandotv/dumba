@@ -199,12 +199,12 @@ export class Form<TSchema = any> {
       })
 
       return result
-    } catch (e) {
+    } catch (err) {
       runInAction(() => {
-        this.submitError = e
+        this.submitError = err
       })
 
-      throw e
+      throw err
     } finally {
       runInAction(() => {
         this.isSubmitting = false

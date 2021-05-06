@@ -13,7 +13,7 @@ configure({
   enforceActions: 'always'
 })
 
-describe('Form Validator', () => {
+describe('Form', () => {
   test('fields are correctly initialized', () => {
     const form = new Form(getSchema())
 
@@ -313,7 +313,7 @@ describe('Form Validator', () => {
       const submitFn = jest.fn().mockResolvedValueOnce(true)
 
       form.handleSubmit(submitFn)
-      expect(submitFn).toBeCalledWith(form.data, form)
+      expect(submitFn).toHaveBeenCalledWith(form.data, form)
     })
     test('Handle submit returns the response', async () => {
       const form = new Form(getSchema())
@@ -378,12 +378,8 @@ describe('Form Validator', () => {
         const responseError = 'response error'
         const submitFn = jest.fn().mockRejectedValueOnce(responseError)
 
-        expect.assertions(1)
-        try {
-          await form.handleSubmit(submitFn)
-        } catch (e) {
-          expect(form.submitError).toEqual(responseError)
-        }
+        await expect(form.handleSubmit(submitFn)).rejects.toBeTruthy()
+        expect(form.submitError).toBe(responseError)
       })
 
       test('submit handler rethrows response error', async () => {
@@ -391,62 +387,57 @@ describe('Form Validator', () => {
         const responseError = 'response error'
         const submitFn = jest.fn().mockRejectedValueOnce(responseError)
 
-        expect.assertions(1)
-        try {
+        await expect(form.handleSubmit(submitFn)).rejects.toEqual(responseError)
+      })
+    })
+    describe('Reset', () => {
+      describe('Rest to initial values', () => {
+        test('After reset, form has initial values', () => {
+          const form = new Form(getSchema())
+          const newValue = 'new b'
+
+          const initialPayload = form.data
+          //change value on one field
+          form.fields.info.b.setValueAsync(newValue)
+
+          form.reset()
+
+          const afterResetPayload = form.data
+
+          expect(afterResetPayload.info.b).not.toBe(newValue)
+          expect(initialPayload).toEqual(afterResetPayload)
+        })
+      })
+      describe('Last saved values', () => {
+        test('After reset, form has last successfully saved values', async () => {
+          const form = new Form(getSchema())
+          const submitFn = jest.fn().mockResolvedValueOnce(true)
           await form.handleSubmit(submitFn)
-        } catch (e) {
-          expect(e).toEqual(responseError)
-        }
-      })
-    })
-  })
-  describe('Reset', () => {
-    describe('Rest to initial values', () => {
-      test('After reset, form has initial values', () => {
-        const form = new Form(getSchema())
-        const newValue = 'new b'
 
-        const initialPayload = form.data
-        //change value on one field
-        form.fields.info.b.setValueAsync(newValue)
+          form.fields.name.setValue('new name')
+          form.fields.info.b.setValue('new value')
 
-        form.reset()
+          expect(form.data).not.toEqual(form.lastSavedData)
 
-        const afterResetPayload = form.data
+          form.resetToLastSaved()
 
-        expect(afterResetPayload.info.b).not.toBe(newValue)
-        expect(initialPayload).toEqual(afterResetPayload)
-      })
-    })
-    describe('Last saved values', () => {
-      test('After reset, form has last successfully saved values', async () => {
-        const form = new Form(getSchema())
-        const submitFn = jest.fn().mockResolvedValueOnce(true)
-        await form.handleSubmit(submitFn)
+          expect(form.data).toEqual(form.lastSavedData)
+        })
 
-        form.fields.name.setValue('new name')
-        form.fields.info.b.setValue('new value')
+        test('If there is no last saved data, reset to initial value', async () => {
+          const form = new Form(getSchema())
 
-        expect(form.data).not.toEqual(form.lastSavedData)
+          const initialData = form.data
 
-        form.resetToLastSaved()
+          form.fields.name.setValue('new name')
+          form.fields.info.b.setValue('new value')
 
-        expect(form.data).toEqual(form.lastSavedData)
-      })
+          expect(form.lastSavedData).toBeNull()
 
-      test('If there is no last saved data, reset to initial value', async () => {
-        const form = new Form(getSchema())
+          form.resetToLastSaved()
 
-        const initialData = form.data
-
-        form.fields.name.setValue('new name')
-        form.fields.info.b.setValue('new value')
-
-        expect(form.lastSavedData).toBe(null)
-
-        form.resetToLastSaved()
-
-        expect(form.data).toEqual(initialData)
+          expect(form.data).toEqual(initialData)
+        })
       })
     })
   })

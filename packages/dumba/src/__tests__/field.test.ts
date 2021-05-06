@@ -1,5 +1,5 @@
-import { Field, Form } from '..'
-import { createField } from '../field'
+import { Form } from '../form'
+import { createField, Field } from '../field'
 import { Runner } from '../runner'
 import { createValidation, Validation } from '../validation'
 import * as fixtures from './__fixtures__/fixtures'
@@ -165,14 +165,9 @@ describe('Field', () => {
 
         field.attachToPath(name, path, form)
 
-        expect.assertions(1)
-        try {
-          await field.onChange(null)
-        } catch (e) {
-          expect(e.message).toEqual(
-            expect.stringMatching(/Test value can't be null or undefined/)
-          )
-        }
+        await expect(field.onChange(null)).rejects.toThrow(
+          "Test value can't be null or undefined"
+        )
       })
       test('Throw if onChange value is undefined', async () => {
         const value = 'A'
@@ -186,14 +181,9 @@ describe('Field', () => {
 
         field.attachToPath(name, path, form)
 
-        expect.assertions(1)
-        try {
-          await field.onChange()
-        } catch (e) {
-          expect(e.message).toEqual(
-            expect.stringMatching(/Test value can't be null or undefined/)
-          )
-        }
+        await expect(field.onChange()).rejects.toThrow(
+          /Test value can't be null or undefined/
+        )
       })
       test('Throw if onChange value is not an object with "currentTarget" property', async () => {
         const value = 'A'
@@ -207,14 +197,9 @@ describe('Field', () => {
 
         field.attachToPath(name, path, form)
 
-        expect.assertions(1)
-        try {
-          await field.onChange({ target: { value: 'test' } })
-        } catch (e) {
-          expect(e.message).toEqual(
-            expect.stringMatching(/Test value can't be null or undefined/)
-          )
-        }
+        await expect(
+          field.onChange({ target: { value: 'test' } })
+        ).rejects.toThrow(/Test value can't be null or undefined/)
       })
 
       test('Currectly parse object with "currentTarget"', async () => {
@@ -288,7 +273,7 @@ describe('Field', () => {
       const last = field.onChange(eventThree)
 
       expect(field.isValidating).toBe(false)
-      expect(validationFn).not.toBeCalled()
+      expect(validationFn).not.toHaveBeenCalled()
 
       jest.runOnlyPendingTimers()
 
@@ -298,8 +283,8 @@ describe('Field', () => {
 
       expect(field.isValidating).toBe(false)
 
-      expect(validationFn).toBeCalledTimes(1)
-      expect(validationFn).toBeCalledWith(
+      expect(validationFn).toHaveBeenCalledTimes(1)
+      expect(validationFn).toHaveBeenCalledWith(
         eventThree.currentTarget.value,
         form,
         field,
@@ -553,14 +538,9 @@ describe('Field', () => {
         b: createField({ value: 'b', dependsOn: notPresentField })
       }
 
-      expect.assertions(1)
-      try {
-        new Form(schema)
-      } catch (e) {
-        expect(e.message).toEqual(
-          expect.stringMatching(new RegExp(`"${notPresentField}" not found`))
-        )
-      }
+      expect(() => new Form(schema)).toThrow(
+        new RegExp(`"${notPresentField}" not found`)
+      )
     })
 
     test('When field is changed, all dependant field validations are run', async () => {
@@ -590,8 +570,8 @@ describe('Field', () => {
 
       await form.fields.a.onChange(fieldEvent)
 
-      expect(cFnSpy).toBeCalledTimes(1)
-      expect(cFnSpy).toBeCalledWith(
+      expect(cFnSpy).toHaveBeenCalledTimes(1)
+      expect(cFnSpy).toHaveBeenCalledWith(
         cValue,
         form,
         form.fields.levelOne.levelTwo.c,
@@ -654,8 +634,8 @@ describe('Field', () => {
 
       form.fields.a.setValue(newFieldValue)
 
-      expect(cFnSpy).toBeCalledTimes(1)
-      expect(cFnSpy).toBeCalledWith(
+      expect(cFnSpy).toHaveBeenCalledTimes(1)
+      expect(cFnSpy).toHaveBeenCalledWith(
         cValue,
         form,
         form.fields.levelOne.levelTwo.c,
@@ -689,8 +669,8 @@ describe('Field', () => {
 
       form.fields.levelOne.b.setValue(newFieldValue)
 
-      expect(cFnSpy).toBeCalledTimes(1)
-      expect(cFnSpy).toBeCalledWith(
+      expect(cFnSpy).toHaveBeenCalledTimes(1)
+      expect(cFnSpy).toHaveBeenCalledWith(
         cValue,
         form,
         form.fields.levelOne.levelTwo.c,
