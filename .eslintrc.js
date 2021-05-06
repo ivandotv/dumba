@@ -11,10 +11,12 @@ module.exports = {
     __COMMIT_SHA__: true,
     __BUILD_DATE__: true
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'prettier'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'jest', 'prettier'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:jest/recommended',
+    'plugin:jest/style',
     // 'plugin:@next/next/recommended',
     // 'plugin:react/recommended',
     // 'plugin:react-hooks/recommended',
