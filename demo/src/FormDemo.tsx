@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     wrap: {
       display: 'flex',
-      maxWidth: '45ch'
+      maxWidth: '40ch'
     },
     form: {
       display: 'flex',
@@ -39,7 +39,7 @@ function fakeSubmit(_form: Form<typeof schema>) {
   })
 }
 
-const FormPanel = observer(function FormPanel() {
+const FormDemo = observer(function FormDemo() {
   const classes = useStyles()
   const formStore = useForm()
 
@@ -77,4 +77,4 @@ const FormPanel = observer(function FormPanel() {
   )
 })
 
-export default FormPanel
+export default FormDemo

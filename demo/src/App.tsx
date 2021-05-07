@@ -1,5 +1,6 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import FormPanel from './Form'
+import FormDemo from './FormDemo'
+import FormExplanation from './FormExplanation'
 import FormStatus from './FormStatus'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -7,6 +8,8 @@ const useStyles = makeStyles((theme: Theme) =>
     app: {
       display: 'flex',
       justifyContent: 'center',
+      alignItems: 'stretch',
+      // marginTop: theme.spacing(2),
       '& > * ': {
         margin: theme.spacing(2)
       }
@@ -18,8 +21,9 @@ function App() {
   const classes = useStyles()
   return (
     <div className={classes.app}>
-      <FormPanel></FormPanel>
-      <FormStatus></FormStatus>
+      <FormDemo />
+      <FormStatus />
+      <FormExplanation />
     </div>
   )
 }
