@@ -33,18 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-type SchemaValues<T> = T extends Record<string, any>
-  ? {
-      [key in keyof T]: T[key] extends { value: any }
-        ? T[key]['value' & keyof T[key]]
-        : SchemaValues<T[key]>
-    }
-  : T
-
-function fakeSubmit(
-  payload: SchemaValues<typeof schema>,
-  form: Form<typeof schema>
-) {
+function fakeSubmit(_form: Form<typeof schema>) {
   return new Promise((resolve, _reject) => {
     setTimeout(resolve, 1500)
   })

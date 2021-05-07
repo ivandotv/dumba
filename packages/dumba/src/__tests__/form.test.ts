@@ -1,4 +1,5 @@
 import { configure } from 'mobx'
+import React from 'react'
 import { createField, Field } from '../field'
 import { Form } from '../form'
 import {
@@ -144,44 +145,70 @@ describe('Form', () => {
   })
 
   describe('Handle submit', () => {
-    test('Submit handler returns response', async () => {
+    test('Submit handler calls transport function', async () => {
       const form = new Form(getSchema())
       const response = 'response'
       const submitFn = jest.fn().mockResolvedValueOnce(response)
 
-      const result = await form.handleSubmit(submitFn)
-
-      expect(result).toEqual(response)
+      const submit = form.handleSubmit(submitFn)
+      await submit()
+      expect(submitFn).toHaveBeenCalledTimes(1)
+      expect(submitFn).toHaveBeenCalledWith(form)
     })
-    test('Submit function should get current payload and refrence to form', async () => {
+
+    test('If event is passed to submit handler, it calls "prevendDefault"', async () => {
+      const form = new Form(getSchema())
+      const response = 'response'
+      const submitFn = jest.fn().mockResolvedValueOnce(response)
+      const preventDefaultSpy = ({
+        preventDefault: jest.fn()
+      } as unknown) as React.FormEvent<HTMLFormElement>
+
+      const submit = form.handleSubmit(submitFn)
+      await submit(preventDefaultSpy)
+      expect(preventDefaultSpy.preventDefault).toHaveBeenCalledTimes(1)
+    })
+
+    test('If success callback is passed in, it is called on success', async () => {
+      const form = new Form(getSchema())
+      const response = 'response'
+      const submitFn = jest.fn().mockResolvedValueOnce(response)
+      const successCallback = jest.fn()
+
+      const submit = form.handleSubmit(submitFn, successCallback)
+      await submit()
+
+      expect(successCallback).toHaveBeenCalledTimes(1)
+      expect(successCallback).toHaveBeenCalledWith(form, response)
+    })
+
+    test('If error callback is passed in, it is called on error', async () => {
+      const form = new Form(getSchema())
+      const response = 'response'
+      const submitFn = jest.fn().mockRejectedValueOnce(response)
+      const errorCallback = jest.fn()
+
+      const submit = form.handleSubmit(submitFn, undefined, errorCallback)
+      await submit()
+
+      expect(errorCallback).toHaveBeenCalledTimes(1)
+      expect(errorCallback).toHaveBeenCalledWith(form, response)
+    })
+
+    test('When submit process starts, "isSubmitting" property is true', async () => {
       const form = new Form(getSchema())
       const submitFn = jest.fn().mockResolvedValueOnce(true)
 
-      form.handleSubmit(submitFn)
-      expect(submitFn).toHaveBeenCalledWith(form.data, form)
-    })
-    test('Handle submit returns the response', async () => {
-      const form = new Form(getSchema())
-      const submitResponse = { data: 'success', code: 200 }
-      const submitFn = jest.fn().mockResolvedValueOnce(submitResponse)
-
-      const result = await form.handleSubmit(submitFn)
-      expect(result).toEqual(submitResponse)
-    })
-    test('When submit process starts, "isSubmitting" property is true', () => {
-      const form = new Form(getSchema())
-      const submitFn = jest.fn().mockResolvedValueOnce(true)
-
-      form.handleSubmit(submitFn)
-
+      const submit = form.handleSubmit(submitFn)
+      submit()
       expect(form.isSubmitting).toBe(true)
     })
     test('When submit process ends, "isSubmitting" property is false', async () => {
       const form = new Form(getSchema())
       const submitFn = jest.fn().mockResolvedValueOnce(true)
 
-      const result = form.handleSubmit(submitFn)
-      await result
+      const submit = form.handleSubmit(submitFn)
+      await submit()
 
       expect(form.isSubmitting).toBe(false)
     })
@@ -191,8 +218,8 @@ describe('Form', () => {
         const form = new Form(getSchema())
         const submitFn = jest.fn().mockResolvedValueOnce(true)
 
-        const result = form.handleSubmit(submitFn)
-        await result
+        const submit = form.handleSubmit(submitFn)
+        await submit()
 
         expect(form.submitError).toBeNull()
       })
@@ -201,8 +228,8 @@ describe('Form', () => {
         const submitFn = jest.fn().mockResolvedValueOnce(true)
 
         const dataBeforeSave = form.data
-        await form.handleSubmit(submitFn)
-
+        const submit = form.handleSubmit(submitFn)
+        await submit()
         //change field value
         await form.fields.info.b.setValue('new value')
 
@@ -222,8 +249,10 @@ describe('Form', () => {
         const form = new Form(getSchema())
         const responseError = 'response error'
         const submitFn = jest.fn().mockRejectedValueOnce(responseError)
+        const submit = form.handleSubmit(submitFn)
 
-        await expect(form.handleSubmit(submitFn)).rejects.toBeTruthy()
+        await submit()
+
         expect(form.submitError).toBe(responseError)
       })
 
@@ -231,8 +260,12 @@ describe('Form', () => {
         const form = new Form(getSchema())
         const responseError = 'response error'
         const submitFn = jest.fn().mockRejectedValueOnce(responseError)
+        const submit = form.handleSubmit(submitFn)
 
-        await expect(form.handleSubmit(submitFn)).rejects.toEqual(responseError)
+        await expect(submit()).resolves.toEqual({
+          status: 'rejected',
+          response: responseError
+        })
       })
     })
     describe('Reset', () => {
@@ -257,7 +290,9 @@ describe('Form', () => {
         test('After reset, form has last successfully saved values', async () => {
           const form = new Form(getSchema())
           const submitFn = jest.fn().mockResolvedValueOnce(true)
-          await form.handleSubmit(submitFn)
+          const submit = form.handleSubmit(submitFn)
+
+          await submit()
 
           form.fields.name.setValue('new name')
           form.fields.info.b.setValue('new value')

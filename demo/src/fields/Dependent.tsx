@@ -23,7 +23,7 @@ const Dependent = observer(function Dependent() {
         value={formStore.fields.typeOptions.numberOrString.value}
         disabled={formStore.isSubmitting}
         onChange={formStore.fields.typeOptions.numberOrString.onChange}
-        onBlur={formStore.fields.typeOptions.numberOrString.validateAsync}
+        onBlur={formStore.fields.typeOptions.numberOrString.onChange}
         label={
           formStore.fields.typeOptions.types.value === 'letter'
             ? 'Letters only'

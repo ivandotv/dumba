@@ -77,27 +77,13 @@ export class Form<TSchema = any> {
     }
   }
 
-  // validate(): SchemaResults<TSchema> {
-  //   const result = {}
-  //   for (const [path, field] of this.fieldsByPath.entries()) {
-  //     setValue(result, path, field.validate())
-  //   }
-
-  //   return result as SchemaResults<TSchema>
-  // }
-
   async validate(cb?: (form: Form<TSchema>) => void): Promise<void> {
-    // const result = {} as SchemaResults<TSchema>
     for (const field of this.fieldsByPath.values()) {
-      // setValue(result, path, await field.validateAsync())
       await field.validate()
     }
-
     if (cb) {
       cb(this)
     }
-
-    // return result
   }
 
   get data(): SchemaValues<TSchema> {
@@ -178,11 +164,14 @@ export class Form<TSchema = any> {
     }
   }
 
-  handleSubmit(
-    fn: (payload: SchemaValues<TSchema>, form: this) => Promise<any>
-  ): React.FormEventHandler<HTMLFormElement> {
+  handleSubmit<T>(
+    fn: (form: this) => Promise<T>,
+    onSuccess?: (form: Form<TSchema>, response: T) => void,
+    onError?: (form: Form<TSchema>, response: any) => void
+  ) {
     return (event?: React.FormEvent<HTMLFormElement>) => {
       event && event.preventDefault()
+
       runInAction(() => {
         this.isSubmitting = true
         this.submitError = null
@@ -201,16 +190,28 @@ export class Form<TSchema = any> {
         dataBeforeSave.set(path, value)
       }
 
-      fn(this.data, this)
-        .then((_result: any) => {
+      return fn(this)
+        .then((response: any) => {
           runInAction(() => {
             this.lastSavedDataByPath = dataBeforeSave
+            onSuccess && onSuccess(this, response)
           })
+
+          return {
+            status: 'fulfilled',
+            response
+          }
         })
-        .catch((err) => {
+        .catch((response) => {
           runInAction(() => {
-            this.submitError = err
+            this.submitError = response
+            onError && onError(this, response)
           })
+
+          return {
+            status: 'rejected',
+            response
+          }
         })
         .finally(() => {
           runInAction(() => {

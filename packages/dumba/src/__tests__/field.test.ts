@@ -26,7 +26,7 @@ describe('Field', () => {
       expect(field.path).toBe(path)
       expect(field.form).toBe(form)
     })
-    test('If there are no tests, pass async validation', async () => {
+    test('If there are no tests, pass validation', async () => {
       const value = 'A'
       const path = '/path'
       const name = 'lastName'
@@ -40,6 +40,23 @@ describe('Field', () => {
       await field.validate()
 
       expect(field.errors).toHaveLength(0)
+    })
+    test('If callback is present, call it', async () => {
+      const value = 'A'
+      const path = '/path'
+      const name = 'lastName'
+      const form = fixtures.getForm()
+      const field = createField({
+        value
+      })
+
+      field.attachToPath(name, path, form)
+      const callback = jest.fn()
+
+      await field.validate(callback)
+
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback).toHaveBeenCalledWith(field)
     })
     test('Use single validation', async () => {
       const value = 'A'

@@ -91,6 +91,8 @@ export class Field<T> {
         ? this.parseValue(evt, this.form)
         : evt?.currentTarget?.value != null
         ? evt.currentTarget.value
+        : evt?.target?.value != null
+        ? evt.target.value
         : null
 
       this.checkForNull(this.value)
@@ -189,20 +191,6 @@ export class Field<T> {
     this.form = form
   }
 
-  // validate(): FieldResult<T> {
-  //   const result = this.runner.validate(this.value, this.form, this)
-
-  //   this.errors = result.errors ?? []
-
-  //   this.isValidated = true
-
-  //   return {
-  //     name: this.name,
-  //     path: this.path,
-  //     ...result
-  //   }
-  // }
-
   async validate(cb?: (field: Field<T>) => void): Promise<void> {
     await this.validateAsync()
     cb && cb(this)
@@ -225,30 +213,6 @@ export class Field<T> {
       this.isValidated = true
     })
   }
-
-  // async validateBecauseOfDependency(
-  //   dependency?: Field<any>
-  // ): Promise<FieldResult<T>> {
-  //   this.isValidating = true
-  //   const result = await this.runner.validateAsync(
-  //     this.value,
-  //     this.form,
-  //     this,
-  //     dependency
-  //   )
-  //   runInAction(() => {
-  //     this.isValidating = false
-
-  //     this.errors = result.errors ?? []
-  //     this.validated = true
-  //   })
-
-  //   return {
-  //     name: this.name,
-  //     path: this.path,
-  //     ...result
-  //   }
-  // }
 
   get isValid(): boolean {
     return !this.errors.length

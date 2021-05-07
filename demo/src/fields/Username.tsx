@@ -22,7 +22,7 @@ const Username = observer(function Username() {
         autoComplete="off"
         value={formStore.fields.username.value}
         helperText={<DisplayErrors errors={formStore.fields.username.errors} />}
-        onBlur={formStore.fields.username.validateAsync}
+        onBlur={formStore.fields.username.onChange}
         onChange={formStore.fields.username.onChange}
       />
     </FormControl>

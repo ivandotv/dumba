@@ -33,6 +33,7 @@ module.exports = {
     }
   },
   rules: {
+    'jest/no-done-callback': 'off',
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off',
     'no-unused-vars': 'off',

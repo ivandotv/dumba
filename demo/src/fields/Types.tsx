@@ -16,8 +16,8 @@ const Types = observer(function Types() {
         name="types"
         row={true}
         value={formStore.fields.typeOptions.types.value}
-        onBlur={formStore.fields.typeOptions.types.validateAsync}
         onChange={formStore.fields.typeOptions.types.onChange}
+        onBlur={formStore.fields.typeOptions.types.onChange}
       >
         <FormControlLabel
           disabled={formStore.isSubmitting}

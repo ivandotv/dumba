@@ -23,7 +23,7 @@ const Superhero = observer(function Superhero() {
         onBlur={() =>
           formStore.fields.superhero.isDirty
             ? null
-            : formStore.fields.superhero.validateAsync()
+            : formStore.fields.superhero.validate()
         }
         label="Superhero name"
         disabled={formStore.isSubmitting}
