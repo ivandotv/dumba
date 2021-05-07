@@ -1,3 +1,7 @@
+/**
+ * Script to generate the browser build by
+ * calling rollup js.
+ */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { series } = require('async')
 const path = require('path')

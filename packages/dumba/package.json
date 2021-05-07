@@ -20,7 +20,7 @@
     "lint:check": "eslint \"src/**/\"",
     "format": "prettier --write src/**",
     "format:check": "prettier --check src/**",
-    "docs": "del docs/api && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --exclude ./src/__tests__ --out docs/api ./src",
+    "docs": "node ../../scripts/generate-docs.js",
     "lint:ci": "yarn lint:check && yarn format:check",
     "test": "cross-env BABEL_ENV=test jest --verbose --coverage --no-cache",
     "test:watch": "cross-env BABEL_ENV=test jest --watch",
@@ -29,8 +29,7 @@
     "type:build": "del dist/types && del .buildcache/build-types.tsbuildinfo && tsc -p tsconfig.build-types.json",
     "type:check:watch": "yarn type:check --watch",
     "type:build:watch": "yarn type:build --watch",
-    "build:old": "yarn type:build && node ../../scripts/build-browser --bundle=cjs,esm,umd",
-    "build": "node ../../scripts/build-browser --bundle=esm",
+    "build": "yarn type:build && node ../../scripts/build-browser --bundle=cjs,esm,umd",
     "build:watch": "node ../../scripts/build-browser --bundle=esm -w",
     "prepublishOnly": "yarn build"
   },
