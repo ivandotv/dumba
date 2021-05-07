@@ -7,7 +7,6 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
       overflow: 'hidden',
       maxWidth: '40ch',
-      //   width: '500px'
       width: '100%'
     },
     title: {
@@ -23,9 +22,10 @@ export default function FormExplanation() {
   const classes = useStyles()
   return (
     <Paper elevation={2} className={classes.wrap}>
-      <h4 className={classes.title}>Dumba.js - Mobx forms made easy</h4>
+      <h4 className={classes.title}>HTML forms made easy</h4>
       <p>
-        Dumba.js is a library to manage HTML forms via Mobx. It weighs less than{' '}
+        Dumba.js is a library for managing HTML forms via Mobx. It weighs less
+        than
         <strong>3Kb</strong> gzipped.
       </p>
       <p>

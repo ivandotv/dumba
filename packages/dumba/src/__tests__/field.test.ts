@@ -20,7 +20,7 @@ describe('Field', () => {
         value
       })
 
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       expect(field.name).toBe(name)
       expect(field.path).toBe(path)
@@ -35,7 +35,7 @@ describe('Field', () => {
         value
       })
 
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       await field.validate()
 
@@ -50,7 +50,7 @@ describe('Field', () => {
         value
       })
 
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
       const callback = jest.fn()
 
       await field.validate(callback)
@@ -68,7 +68,7 @@ describe('Field', () => {
         value,
         validations: fixtures.validationError(message)
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       await field.validate()
 
@@ -91,7 +91,7 @@ describe('Field', () => {
         ]
       })
 
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       await field.validate()
 
@@ -112,7 +112,7 @@ describe('Field', () => {
           validations: [fixtures.asyncValidationOk()]
         })
 
-        field.attachToPath(name, path, form)
+        field.setPathData(name, path, form)
 
         await expect(field.onChange(null)).rejects.toThrow(
           "Test value can't be null or undefined"
@@ -128,7 +128,7 @@ describe('Field', () => {
           validations: [fixtures.asyncValidationOk()]
         })
 
-        field.attachToPath(name, path, form)
+        field.setPathData(name, path, form)
 
         await expect(field.onChange()).rejects.toThrow(
           /Test value can't be null or undefined/
@@ -144,7 +144,7 @@ describe('Field', () => {
           validations: [fixtures.asyncValidationOk()]
         })
 
-        field.attachToPath(name, path, form)
+        field.setPathData(name, path, form)
 
         await expect(
           field.onChange({ noTarget: { value: 'test' } })
@@ -162,7 +162,7 @@ describe('Field', () => {
           validations: [fixtures.asyncValidationOk()]
         })
 
-        field.attachToPath(name, path, form)
+        field.setPathData(name, path, form)
 
         await field.onChange({ currentTarget: { value: newValue } })
         expect(field.value).toBe(newValue)
@@ -189,7 +189,7 @@ describe('Field', () => {
         validations: [fixtures.validationOk()]
       })
 
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       expect(field.isValidating).toBe(false)
 
@@ -211,7 +211,7 @@ describe('Field', () => {
         validations: [fixtures.validationOk()]
       })
 
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const callback = jest.fn()
 
@@ -233,7 +233,7 @@ describe('Field', () => {
 
       const field = new Field(runner, 'A', false, undefined, 100)
       const form = fixtures.getForm()
-      field.attachToPath('', '', form)
+      field.setPathData('', '', form)
 
       field.onChange(eventOne)
       field.onChange(eventTwo)
@@ -270,7 +270,7 @@ describe('Field', () => {
         validations: [fixtures.validationOk()]
       })
 
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const result = field.onChange(event)
       await result
@@ -291,7 +291,7 @@ describe('Field', () => {
           fixtures.asyncValidationError(errorMessage)
         ]
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const result = field.onChange(event)
 
@@ -310,7 +310,7 @@ describe('Field', () => {
       const field = createField({
         value
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const result = field.onChange(event)
 
@@ -329,7 +329,7 @@ describe('Field', () => {
         value: event.currentTarget.value,
         validations: [fixtures.asyncValidationError(errorMessage)]
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const result = field.setValue('A')
       await result
@@ -347,7 +347,7 @@ describe('Field', () => {
       const field = createField({
         value
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const result = field.setValue(newValue)
 
@@ -365,7 +365,7 @@ describe('Field', () => {
       const field = createField({
         value: event.currentTarget.value
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const result = field.onChange(newEvent)
 
@@ -383,7 +383,7 @@ describe('Field', () => {
       const field = createField({
         value
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const result = field.setValue(newValue)
 
@@ -400,7 +400,7 @@ describe('Field', () => {
       const field = createField({
         value: event.currentTarget.value
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       const result = field.onChange(newEvent)
 
@@ -419,7 +419,7 @@ describe('Field', () => {
       const field = createField({
         value: event.currentTarget.value
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
       await field.onChange(newEvent)
 
       field.reset()
@@ -438,7 +438,7 @@ describe('Field', () => {
         value: event.currentTarget.value,
         validations: fixtures.validationError(errorMessage)
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
       await field.onChange(newEvent)
 
       field.reset()
@@ -456,7 +456,7 @@ describe('Field', () => {
         value: event.currentTarget.value,
         validations: fixtures.validationOk()
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
       await field.onChange(newEvent)
 
       field.reset()
@@ -472,7 +472,7 @@ describe('Field', () => {
       const field = createField({
         value: event.currentTarget.value
       })
-      field.attachToPath(name, path, form)
+      field.setPathData(name, path, form)
 
       await field.onChange(newEvent)
 

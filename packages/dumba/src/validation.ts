@@ -1,6 +1,12 @@
 import { Field } from './field'
 import { Form } from './form'
-
+/**
+ * Validation function signature
+ * @param value - value to be validated
+ * @param {@link Form} that will be passed to the function
+ * @param {@link Field} that holds the value that is being validated
+ * @param {@link Field} dependency field that has changed and triggered this validation
+ */
 type ValidationFn = (
   value: any,
   ctx: Form,

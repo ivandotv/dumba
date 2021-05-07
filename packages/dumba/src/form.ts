@@ -6,6 +6,9 @@ import setValue from 'set-value'
 import { Field, FieldResult } from './field'
 import type React from 'react'
 
+/**
+ * Schema structure with values for the fields in the schema
+ */
 export type SchemaValues<T> = T extends Record<string, any>
   ? {
       [key in keyof T]: T[key] extends { value: any }
@@ -14,6 +17,9 @@ export type SchemaValues<T> = T extends Record<string, any>
     }
   : T
 
+/**
+ * Schema structure with validation results for the fields in the schema
+ */
 export type SchemaResults<T> = T extends Record<string, any>
   ? {
       [key in keyof T]: T[key] extends { value: any }
@@ -65,7 +71,7 @@ export class Form<TSchema = any> {
         }
 
         runInAction(() => {
-          formField.attachToPath(key, path, this)
+          formField.setPathData(key, path, this)
           setValue(this.fields, path, formField)
           this.fieldsByPath.set(path, formField)
         })
@@ -77,6 +83,10 @@ export class Form<TSchema = any> {
     }
   }
 
+  /**
+   * Validates form
+   * @param [cb] - Callback function that is called after the validation is complete
+   */
   async validate(cb?: (form: Form<TSchema>) => void): Promise<void> {
     for (const field of this.fieldsByPath.values()) {
       await field.validate()
@@ -86,12 +96,19 @@ export class Form<TSchema = any> {
     }
   }
 
+  /**
+   * Clears errors for all form fields.
+   */
   clearErrors() {
     for (const field of this.fieldsByPath.values()) {
       field.clearErrors()
     }
   }
 
+  /**
+   * Gets form data. This is an object with the same structure as the schema, but it
+   * only holds values, so it could be sent over the wire.
+   */
   get data(): SchemaValues<TSchema> {
     const data = {}
     for (const [path, field] of this.fieldsByPath.entries()) {
@@ -101,6 +118,9 @@ export class Form<TSchema = any> {
     return data as SchemaValues<TSchema>
   }
 
+  /**
+   * Gets whether all fields in the form are valid.
+   */
   get isValid(): boolean {
     for (const field of this.fieldsByPath.values()) {
       if (!field.isValid) {
@@ -111,6 +131,9 @@ export class Form<TSchema = any> {
     return true
   }
 
+  /**
+   * Gets whether any of the fields in the form are currently validating.
+   */
   get isValidating(): boolean {
     for (const field of this.fieldsByPath.values()) {
       if (field.isValidating) {
@@ -121,6 +144,10 @@ export class Form<TSchema = any> {
     return false
   }
 
+  /**
+   * Gets whether any of the fields in the form are dirty. Field is dirty if the current
+   * value of the is different from the value the field was initialized with.
+   */
   get isDirty(): boolean {
     for (const field of this.fieldsByPath.values()) {
       if (field.isDirty) {
@@ -131,6 +158,9 @@ export class Form<TSchema = any> {
     return false
   }
 
+  /**
+   * Gets whether all the fields in the form have been validated at least once.
+   */
   get isValidated(): boolean {
     for (const field of this.fieldsByPath.values()) {
       if (!field.isValidated) {
@@ -141,6 +171,10 @@ export class Form<TSchema = any> {
     return true
   }
 
+  /**
+   * After successful form submission, this field holds the data that the form head when it was submitted.
+   *
+   */
   get lastSavedData(): SchemaValues<TSchema> | null {
     if (this.lastSavedDataByPath.size === 0) {
       return null
@@ -153,12 +187,18 @@ export class Form<TSchema = any> {
     return data as SchemaValues<TSchema>
   }
 
+  /**
+   * Resets form fields to their initial values from the schema
+   */
   reset(): void {
     for (const field of this.fieldsByPath.values()) {
       field.reset()
     }
   }
 
+  /**
+   * Resets form fields to last successfully saved values
+   */
   resetToLastSaved(): void {
     if (this.lastSavedDataByPath.size === 0) {
       this.reset()
@@ -170,8 +210,16 @@ export class Form<TSchema = any> {
     }
   }
 
+  /**
+   * Handles submitting the form
+   * @param submission function that does the actuall submission process. The function will be awaited for, and the result will be returned.
+   * @param [onSuccess] function that is called after a successful submission
+   * @param [onError] function that is called after a unsuccessful submision
+   * @returns object with "status" filed that tells if submission was successful or not and "response" field with
+   * the response from the submission function
+   */
   handleSubmit<T>(
-    fn: (form: this) => Promise<T>,
+    submission: (form: this) => Promise<T>,
     onSuccess?: (form: Form<TSchema>, response: T) => void,
     onError?: (form: Form<TSchema>, response: any) => void
   ) {
@@ -196,7 +244,7 @@ export class Form<TSchema = any> {
         dataBeforeSave.set(path, value)
       }
 
-      return fn(this)
+      return submission(this)
         .then((response: any) => {
           runInAction(() => {
             this.lastSavedDataByPath = dataBeforeSave

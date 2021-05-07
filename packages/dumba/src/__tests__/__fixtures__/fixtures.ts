@@ -89,7 +89,7 @@ export function getField(
 
   const field = createField({ value, parseValue, validations, delay })
 
-  field.attachToPath(name, path, form)
+  field.setPathData(name, path, form)
 
   return {
     field,
