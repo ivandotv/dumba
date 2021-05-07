@@ -127,10 +127,9 @@ export class Field<T> {
       isValidated: observable,
       onChange: action,
       setValue: action,
-      // setValueAsync: action,
       validate: action,
-      // validateAsync: action,
-      reset: action
+      reset: action,
+      clearErrors: action
     })
   }
 
@@ -196,6 +195,10 @@ export class Field<T> {
     cb && cb(this)
   }
 
+  clearErrors() {
+    this.errors = []
+  }
+
   protected async validateAsync(dependancy?: Field<any>): Promise<void> {
     runInAction(() => {
       this.isValidating = true
@@ -227,7 +230,7 @@ export class Field<T> {
     if (!this.alwaysValid) {
       this.isValidated = false
     }
-    this.errors = []
+    this.clearErrors()
 
     this.validateDependants()
   }

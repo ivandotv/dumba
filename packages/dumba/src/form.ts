@@ -86,6 +86,12 @@ export class Form<TSchema = any> {
     }
   }
 
+  clearErrors() {
+    for (const field of this.fieldsByPath.values()) {
+      field.clearErrors()
+    }
+  }
+
   get data(): SchemaValues<TSchema> {
     const data = {}
     for (const [path, field] of this.fieldsByPath.entries()) {

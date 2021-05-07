@@ -134,7 +134,7 @@ describe('Field', () => {
           /Test value can't be null or undefined/
         )
       })
-      test('Throw if onChange value is not an object with "currentTarget" property', async () => {
+      test('Throw if onChange value is not an object with "currentTarget" or "target" property', async () => {
         const value = 'A'
         const path = '/path'
         const name = 'lastName'
@@ -147,7 +147,7 @@ describe('Field', () => {
         field.attachToPath(name, path, form)
 
         await expect(
-          field.onChange({ target: { value: 'test' } })
+          field.onChange({ noTarget: { value: 'test' } })
         ).rejects.toThrow(/Test value can't be null or undefined/)
       })
 
@@ -317,6 +317,26 @@ describe('Field', () => {
       await result
 
       expect(field.isDirty).toBe(true)
+    })
+
+    test('Clear errors', async () => {
+      const event = fixtures.onChangeEvent('A')
+      const path = '/path'
+      const name = 'lastName'
+      const form = fixtures.getForm()
+      const errorMessage = 'failed validation'
+      const field = createField({
+        value: event.currentTarget.value,
+        validations: [fixtures.asyncValidationError(errorMessage)]
+      })
+      field.attachToPath(name, path, form)
+
+      const result = field.setValue('A')
+      await result
+
+      field.clearErrors()
+      expect(field.errors).toHaveLength(0)
+      expect(field.isValid).toBe(true)
     })
     test('When non primitive initial value (array) is equal to current value, field is not dirty', async () => {
       const value = [1, 2]
