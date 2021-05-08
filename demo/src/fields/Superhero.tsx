@@ -10,7 +10,7 @@ const Superhero = observer(function Superhero() {
   const formStore = useForm()
   return (
     <FormControl>
-      <FormLabel component="legend">Superhero</FormLabel>
+      {/* <FormLabel component="legend">Superhero</FormLabel> */}
       <small>Asynchronous validation</small>
       <small>TIP: use "batman" to pass validaton</small>
       <TextField

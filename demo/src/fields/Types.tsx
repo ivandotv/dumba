@@ -31,6 +31,12 @@ const Types = observer(function Types() {
           control={<Radio />}
           label="Letter"
         />
+        <FormControlLabel
+          disabled={formStore.isSubmitting}
+          value="disabled"
+          control={<Radio />}
+          label="Disabled"
+        />
       </RadioGroup>
     </FormControl>
   )

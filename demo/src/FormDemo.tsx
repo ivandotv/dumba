@@ -16,8 +16,7 @@ import { schema } from './schema'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     wrap: {
-      display: 'flex',
-      maxWidth: '40ch'
+      display: 'flex'
     },
     form: {
       display: 'flex',

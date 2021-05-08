@@ -1,5 +1,4 @@
 import FormControl from '@material-ui/core/FormControl'
-import FormLabel from '@material-ui/core/FormLabel'
 import TextField from '@material-ui/core/TextField'
 import { observer } from 'mobx-react-lite'
 import { DisplayErrors } from '../DisplayErrors'
@@ -9,7 +8,6 @@ const Dependent = observer(function Dependent() {
   const formStore = useForm()
   return (
     <FormControl>
-      <FormLabel component="legend">Dependency field</FormLabel>
       <small>
         Allow letters or numbers, depending on the value of the{' '}
         <strong>type</strong> above.
@@ -21,19 +19,31 @@ const Dependent = observer(function Dependent() {
         variant="filled"
         size="small"
         value={formStore.fields.typeOptions.numberOrString.value}
-        disabled={formStore.isSubmitting}
+        disabled={
+          formStore.isSubmitting ||
+          formStore.fields.typeOptions.numberOrString.isDisabled
+        }
         onChange={formStore.fields.typeOptions.numberOrString.onChange}
         onBlur={formStore.fields.typeOptions.numberOrString.onChange}
         label={
           formStore.fields.typeOptions.types.value === 'letter'
             ? 'Letters only'
-            : 'Numbers only'
+            : formStore.fields.typeOptions.types.value === 'number'
+            ? 'Numbers only'
+            : 'Disabled'
         }
-        error={!!formStore.fields.typeOptions.numberOrString.errors.length}
+        error={
+          //only if field has errors and it is not disabled
+          !!formStore.fields.typeOptions.numberOrString.errors.length &&
+          !formStore.fields.typeOptions.numberOrString.isDisabled
+        }
         helperText={
-          <DisplayErrors
-            errors={formStore.fields.typeOptions.numberOrString.errors}
-          />
+          // show errors only if field is not disabled
+          !formStore.fields.typeOptions.numberOrString.isDisabled ? (
+            <DisplayErrors
+              errors={formStore.fields.typeOptions.numberOrString.errors}
+            />
+          ) : null
         }
       />
     </FormControl>

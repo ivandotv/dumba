@@ -8,9 +8,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     wrap: {
       padding: theme.spacing(2),
-      overflow: 'hidden',
-      maxWidth: '40ch',
-      witdh: '100%'
+      overflow: 'hidden'
+      // maxWidth: '40ch',
+      // witdh: '100%'
     },
     title: {
       marginTop: 0
@@ -30,7 +30,7 @@ const FormStatus = observer(function FormStatus() {
     <Paper elevation={2} className={classes.wrap}>
       <h4 className={classes.title}>Form status</h4>
       <p>
-        <small>All fields in form are valid initially.</small>
+        <small>All fields are valid initially.</small>
         <br />
         valid:<strong> {formStore.isValid.toString()}</strong>
       </p>

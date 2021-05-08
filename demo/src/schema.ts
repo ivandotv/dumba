@@ -69,6 +69,9 @@ export const schema: SchemaType = {
     numberOrString: createField({
       value: '',
       dependsOn: 'typeOptions.types',
+      shouldDisable: (_: string, __: Form, ___: Field, dependancy?: Field) => {
+        return dependancy?.value === 'disabled'
+      },
       validations: [
         createValidation(
           (str: string, form: Form, field: Field<string>) =>
