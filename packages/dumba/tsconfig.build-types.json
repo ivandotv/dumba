@@ -6,8 +6,8 @@
     "declarationMap": true,
     "declaration": true,
     "tsBuildInfoFile": "./.buildcache/build-types.tsbuildinfo"
-  },
-  "include": ["src/**/*"]
+  }
+  // "include": ["src/**/*"]
   // "exclude": [
   //   "**/node_modules",
   //   "src/**/__tests__",
