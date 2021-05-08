@@ -7,6 +7,11 @@ import { Field, FieldResult } from './field'
 import type React from 'react'
 
 /**
+ * Responst string that is return when form while submitting fails validation
+ */
+export const FAILED_VALIDATION_RESPONSE = 'validation_failed'
+
+/**
  * Schema structure with values for the fields in the schema
  */
 export type SchemaValues<T> = T extends Record<string, any>
@@ -30,6 +35,7 @@ export type SchemaResults<T> = T extends Record<string, any>
 
 export type FormConfig = {
   removeDisabled?: boolean
+  validateBeforeSubmit?: boolean
 }
 
 export class Form<TSchema = any> {
@@ -50,6 +56,7 @@ export class Form<TSchema = any> {
 
     this.config = {
       removeDisabled: false,
+      validateBeforeSubmit: true,
       ...this.config
     }
 
@@ -237,7 +244,7 @@ export class Form<TSchema = any> {
     onSuccess?: (form: Form<TSchema>, response: T) => void,
     onError?: (form: Form<TSchema>, response: any) => void
   ) {
-    return (event?: React.FormEvent<HTMLFormElement>) => {
+    return async (event?: React.FormEvent<HTMLFormElement>) => {
       event && event.preventDefault()
 
       runInAction(() => {
@@ -245,6 +252,17 @@ export class Form<TSchema = any> {
         this.submitError = null
       })
 
+      if (this.config.validateBeforeSubmit) {
+        await this.validate()
+      }
+
+      if (!this.isValid) {
+        //return fails
+        return {
+          status: 'rejected',
+          response: FAILED_VALIDATION_RESPONSE
+        }
+      }
       const dataBeforeSave = new Map()
 
       for (const [path, field] of this.fieldsByPath.entries()) {
@@ -258,34 +276,33 @@ export class Form<TSchema = any> {
         dataBeforeSave.set(path, value)
       }
 
-      return submission(this)
-        .then((response: any) => {
-          runInAction(() => {
-            this.lastSavedDataByPath = dataBeforeSave
-            onSuccess && onSuccess(this, response)
-          })
+      try {
+        const response = await submission(this)
 
-          return {
-            status: 'fulfilled',
-            response
-          }
+        runInAction(() => {
+          this.lastSavedDataByPath = dataBeforeSave
+          onSuccess && onSuccess(this, response)
         })
-        .catch((response) => {
-          runInAction(() => {
-            this.submitError = response
-            onError && onError(this, response)
-          })
 
-          return {
-            status: 'rejected',
-            response
-          }
+        return {
+          status: 'fulfilled',
+          response
+        }
+      } catch (err) {
+        runInAction(() => {
+          this.submitError = err
+          onError && onError(this, err)
         })
-        .finally(() => {
-          runInAction(() => {
-            this.isSubmitting = false
-          })
+
+        return {
+          status: 'rejected',
+          response: err
+        }
+      } finally {
+        runInAction(() => {
+          this.isSubmitting = false
         })
+      }
     }
   }
 }
