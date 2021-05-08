@@ -200,7 +200,7 @@ export class Field<T = any> {
 
   protected async maybeDisable(dependency: Field<any>) {
     if (this.shouldDisable) {
-      return await this.shouldDisable(this.value, this.form, this, dependency)
+      return await this.shouldDisable(this.value, this, dependency)
     }
 
     return this.isDisabled
@@ -253,6 +253,7 @@ export class Field<T = any> {
    * @param name - name of the field
    * @param path - dot notation of the path e.g. info.location.zip
    * @param form - reference to the {@link Form}
+   * @internal
    */
   setPathData(name: string, path: string, form: Form<any>): void {
     this.name = name
@@ -285,12 +286,7 @@ export class Field<T = any> {
     runInAction(() => {
       this.isValidating = true
     })
-    const result = await this.runner.validate(
-      this.value,
-      this.form,
-      this,
-      dependancy
-    )
+    const result = await this.runner.validate(this.value, this, dependancy)
     runInAction(() => {
       this.isValidating = false
 

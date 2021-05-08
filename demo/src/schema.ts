@@ -69,25 +69,27 @@ export const schema: SchemaType = {
     numberOrString: createField({
       value: '',
       dependsOn: 'typeOptions.types',
-      shouldDisable: (_: string, __: Form, ___: Field, dependancy?: Field) => {
+      shouldDisable: (_value: string, _field: Field, dependancy?: Field) => {
         return dependancy?.value === 'disabled'
       },
       validations: [
         createValidation(
-          (str: string, form: Form, field: Field<string>) =>
-            isLength(str, { min: 1 }),
+          (value: string, _field: Field<string>) => isLength(value, { min: 1 }),
           "Can't be empty"
         ),
-        createValidation((value: string, form: Form<SchemaType>) => {
+        createValidation((value: string, field: Field) => {
           // this validation only tests for numeric values
+          const form: Form<SchemaType> = field.form
+
           if (form.fields.typeOptions.types.value === 'number') {
             return isNumeric(value)
           }
 
           return true
         }, 'Not a number'),
-        createValidation((value: string, form: Form<any>) => {
+        createValidation((value: string, field: Field) => {
           // this validation only tests for letters
+          const form: Form<SchemaType> = field.form
           if (form.fields.typeOptions.types.value === 'letter') {
             // @ts-expect-error - typings from validator.js are wrong
             return isAlpha(value, undefined, { ignore: ' ' })

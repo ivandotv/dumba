@@ -32,10 +32,9 @@ describe('Runner', () => {
       const expectedValue = 'A'
       const expectedResult = { errors: null, value: expectedValue }
       const runner = new Runner([fixtures.validationOk()])
-      const form = fixtures.getForm()
       const { field } = fixtures.getField()
 
-      const result = await runner.validate(expectedValue, form, field)
+      const result = await runner.validate(expectedValue, field)
 
       expect(result).toEqual(expectedResult)
     })
@@ -49,9 +48,8 @@ describe('Runner', () => {
       }
       const runner = new Runner([fixtures.validationError(expectedMessage)])
 
-      const form = fixtures.getForm()
       const { field } = fixtures.getField()
-      const result = await runner.validate(expectedValue, form, field)
+      const result = await runner.validate(expectedValue, field)
 
       expect(result).toEqual(expectedResult)
     })
@@ -62,7 +60,6 @@ describe('Runner', () => {
         errors: null,
         value: expectedValue
       }
-      const form = fixtures.getForm()
       const { field } = fixtures.getField()
       const firstValidation = fixtures.validationOk()
       const firstSpy = jest.spyOn(firstValidation, 'fn')
@@ -70,7 +67,7 @@ describe('Runner', () => {
       const secondSpy = jest.spyOn(secondValidation, 'fn')
       const runner = new Runner([firstValidation, secondValidation], true)
 
-      const result = await runner.validate(expectedValue, form, field)
+      const result = await runner.validate(expectedValue, field)
 
       expect(result).toEqual(expectedResult)
       expect(firstSpy).toHaveBeenCalled()
@@ -89,9 +86,8 @@ describe('Runner', () => {
         [fixtures.validationError(expectedMessage)],
         true
       )
-      const form = fixtures.getForm()
       const { field } = fixtures.getField()
-      const result = await runner.validate(expectedValue, form, field)
+      const result = await runner.validate(expectedValue, field)
 
       expect(result).toEqual(expectedResult)
       expect(secondValidation).not.toHaveBeenCalled()
@@ -103,26 +99,15 @@ describe('Runner', () => {
       const fnOneSpy = jest.spyOn(fnOne, 'fn')
       const fnTwo = fixtures.validationOk()
       const fnTwoSpy = jest.spyOn(fnTwo, 'fn')
-      const form = fixtures.getForm()
       const { field } = fixtures.getField()
       const runner = new Runner([fnOne, fnTwo])
 
-      await runner.validate(expectedValue, form, field)
+      await runner.validate(expectedValue, field)
 
       expect(fnOneSpy).toHaveBeenCalledTimes(1)
-      expect(fnOneSpy).toHaveBeenCalledWith(
-        expectedValue,
-        form,
-        field,
-        undefined
-      )
+      expect(fnOneSpy).toHaveBeenCalledWith(expectedValue, field, undefined)
       expect(fnTwoSpy).toHaveBeenCalledTimes(1)
-      expect(fnTwoSpy).toHaveBeenCalledWith(
-        expectedValue,
-        form,
-        field,
-        undefined
-      )
+      expect(fnTwoSpy).toHaveBeenCalledWith(expectedValue, field, undefined)
     })
 
     test('Run mix of synchronous and asyncsynchronous validations', async () => {
@@ -137,32 +122,20 @@ describe('Runner', () => {
       const fnTwoAsync = fixtures.asyncValidationOk()
       const fnTwoAsyncSpy = jest.spyOn(fnTwoAsync, 'fn')
 
-      const form = fixtures.getForm()
       const { field } = fixtures.getField()
       const runner = new Runner([fnOne, fnOneAsync, fnTwo, fnTwoAsync])
 
-      await runner.validate(expectedValue, form, field)
+      await runner.validate(expectedValue, field)
 
       expect(fnOneSpy).toHaveBeenCalledTimes(1)
-      expect(fnOneSpy).toHaveBeenCalledWith(
-        expectedValue,
-        form,
-        field,
-        undefined
-      )
+      expect(fnOneSpy).toHaveBeenCalledWith(expectedValue, field, undefined)
 
       expect(fnTwoSpy).toHaveBeenCalledTimes(1)
-      expect(fnTwoSpy).toHaveBeenCalledWith(
-        expectedValue,
-        form,
-        field,
-        undefined
-      )
+      expect(fnTwoSpy).toHaveBeenCalledWith(expectedValue, field, undefined)
 
       expect(fnOneAsyncSpy).toHaveBeenCalledTimes(1)
       expect(fnOneAsyncSpy).toHaveBeenCalledWith(
         expectedValue,
-        form,
         field,
         undefined
       )
@@ -170,7 +143,6 @@ describe('Runner', () => {
       expect(fnTwoAsyncSpy).toHaveBeenCalledTimes(1)
       expect(fnTwoAsyncSpy).toHaveBeenCalledWith(
         expectedValue,
-        form,
         field,
         undefined
       )
@@ -180,7 +152,6 @@ describe('Runner', () => {
       const expectedValue = 'A'
       const expectedSyncMessage = 'sync fail A'
       const expectedAsyncMessage = 'async fail A'
-      const form = fixtures.getForm()
       const { field } = fixtures.getField()
       const expectedResult = {
         errors: [expectedSyncMessage, expectedAsyncMessage],
@@ -192,7 +163,7 @@ describe('Runner', () => {
       )
       const runner = new Runner([validationSync, validationAsync])
 
-      const result = await runner.validate(expectedValue, form, field)
+      const result = await runner.validate(expectedValue, field)
 
       expect(expectedResult).toEqual(result)
     })
