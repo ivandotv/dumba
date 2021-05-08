@@ -7,7 +7,7 @@ import { Form } from './form'
  * @param {@link Field} that holds the value that is being validated
  * @param {@link Field} dependency field that has changed and triggered this validation
  */
-type ValidationFn = (
+export type ValidationFn = (
   value: any,
   ctx: Form,
   field: Field<any>,

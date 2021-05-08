@@ -1,7 +1,9 @@
 import { configure } from 'mobx'
 import React from 'react'
-import { createField, Field } from '../field'
+import { Field } from '../field'
+import { createField } from '../field-factory'
 import { Form } from '../form'
+import { createValidation } from '../validation'
 import * as fixtures from './__fixtures__/fixtures'
 
 configure({
@@ -41,7 +43,46 @@ describe('Form', () => {
       expect(form.data).toEqual(expectedPayload)
       expect(form.isValid).toBe(true)
     })
+    test('When there are invalid disabled fields, they are skipped', async () => {
+      const validationSpy = jest.fn().mockReturnValueOnce(false)
+      const schema = {
+        a: createField({
+          disabled: false,
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            disabled: true,
+            validations: createValidation(validationSpy, ''),
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+      await form.validate()
 
+      expect(validationSpy).not.toHaveBeenCalled()
+    })
+
+    test('When there are invalid disabled fields, form is still valid', async () => {
+      const schema = {
+        a: createField({
+          disabled: false,
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            disabled: true,
+            validations: createValidation(() => false, ''),
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+      await form.validate()
+
+      expect(form.isValid).toBe(true)
+    })
     test('Validate unsuccessfully', async () => {
       const bFieldErrorOne = 'b field error one'
       const bFieldErrorTwo = 'b field error two'
@@ -149,6 +190,27 @@ describe('Form', () => {
     expect(form.isDirty).toBe(true)
   })
 
+  test('When field values on disabled fields are  changed, "isDirty" is still false', async () => {
+    const bValue = 'b'
+    const schema = {
+      a: createField({
+        disabled: false,
+        value: 'a'
+      }),
+      b: createField({
+        disabled: true,
+        value: bValue
+      })
+    }
+    const form = new Form(schema)
+
+    expect(form.isDirty).toBe(false)
+
+    await form.fields.b.setValue('new value')
+
+    expect(form.isDirty).toBe(false)
+  })
+
   test('When field values are not yet validated, "isValidated" is false', async () => {
     const form = new Form(fixtures.getSchema())
 
@@ -161,6 +223,29 @@ describe('Form', () => {
     await form.validate()
 
     expect(form.isValidated).toBe(true)
+  })
+
+  test('When disabled field are not validate, "isValidated" is true', async () => {
+    const validationSpy = jest.fn().mockReturnValueOnce(false)
+    const bValue = 'b'
+    const schema = {
+      a: createField({
+        disabled: false,
+        value: 'a'
+      }),
+      levelOne: {
+        b: createField({
+          disabled: true,
+          validations: createValidation(validationSpy, ''),
+          value: bValue
+        })
+      }
+    }
+    const form = new Form(schema)
+    await form.validate()
+
+    expect(form.isValidated).toBe(true)
+    expect(validationSpy).not.toHaveBeenCalled()
   })
 
   test('Payload always reflects current form data', () => {

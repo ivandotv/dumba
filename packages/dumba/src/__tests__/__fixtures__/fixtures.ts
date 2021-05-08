@@ -1,5 +1,5 @@
 import { Form } from '../..'
-import { createField, CreateFieldData } from '../../field'
+import { CreateFieldData, createField } from '../../field-factory'
 import { createValidation } from '../../validation'
 
 export function validationOk() {

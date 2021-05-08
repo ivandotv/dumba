@@ -2,57 +2,13 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { Form } from './form'
 import { Runner } from './runner'
 import { equals } from './utils'
-import { Validation } from './validation'
-
-/**
- * Data for the {@link createField} factory
- * @typeparam T - type of value for the {@link Field}
- *
- * @example Depends on
- * ```
- * const schema = {
- *   info:{
- *     name:{}
- *     nick:{
- *       dependsOn:'info.name'
- *     }
- *   }
- * }
- * ```
- */
-export type CreateFieldData<T> = {
-  /**
-   * value of the field
-   */
-  value: T
-  /**
-   * array of {@link Validation} to be used for validating the field
-   */
-  validations?: Validation[] | Validation
-  /**
-   * function that can intercept {@link Field.onChange} and return a custom value
-   */
-  parseValue?: (data: any, form: Form) => any
-
-  /**
-   * delay for running the validations
-   */
-  delay?: number
-  /**
-   * return as soon as first validation returns error
-   */
-  bailEarly?: boolean
-  /**
-   * path to fields that current field should depend on
-   */
-  dependsOn?: string | string[]
-}
+import { ValidationFn } from './validation'
 
 /**
  * Result of the {@link Field} validation
  * @typeparam T - value of the {@link Field}
  */
-export type FieldResult<T> = {
+export type FieldResult<T = any> = {
   /**
    * name of the field
    */
@@ -69,42 +25,6 @@ export type FieldResult<T> = {
    * error messages
    */
   errors: string[] | null
-}
-
-/**
- * Factory function that creates the @class Field
- * @param data need for the create of the Field instance
- * @returns {@link Field} instance
- */
-export function createField<T>(data: CreateFieldData<T>) {
-  let alwaysValid = false
-  if (data.validations) {
-    if (!Array.isArray(data.validations)) {
-      data.validations = [data.validations]
-    }
-  } else {
-    data.validations = []
-    alwaysValid = true
-  }
-
-  const runner = new Runner(data.validations, data.bailEarly)
-
-  data.dependsOn = data.dependsOn
-    ? Array.isArray(data.dependsOn)
-      ? [...data.dependsOn]
-      : [data.dependsOn]
-    : []
-
-  const field = new Field(
-    runner,
-    data.value,
-    alwaysValid,
-    data.parseValue,
-    data.delay,
-    data.dependsOn
-  )
-
-  return field
 }
 
 /**
@@ -154,8 +74,14 @@ export class Field<T> {
    */
   onChange: (...args: any[]) => Promise<void>
 
+  /**
+   * ID of debounced onChange event
+   */
   protected timeoutId?: number
 
+  /**
+   * Fields that depend on this field
+   */
   protected _dependants: Map<string, Field<any>> = new Map()
 
   /**
@@ -173,7 +99,9 @@ export class Field<T> {
     protected alwaysValid: boolean,
     protected parseValue?: (data: any, form: Form) => any,
     public delay?: number,
-    protected dependsOn: string[] = []
+    protected dependsOn: string[] = [],
+    public isDisabled = false,
+    protected shouldDisable?: ValidationFn
   ) {
     this.initialValue = this.value
 
@@ -182,6 +110,7 @@ export class Field<T> {
     }
 
     this.onChange = async (evt: any) => {
+      if (this.isDisabled) return
       this.value = this.parseValue
         ? this.parseValue(evt, this.form)
         : evt?.currentTarget?.value != null
@@ -219,12 +148,15 @@ export class Field<T> {
       isValid: computed,
       isDirty: computed,
       isValidating: observable,
+      isDisabled: observable,
       errors: observable,
       value: observable,
       isValidated: observable,
       onChange: action,
       setValue: action,
+      setDisabled: action,
       validate: action,
+
       reset: action,
       clearErrors: action
     })
@@ -253,10 +185,42 @@ export class Field<T> {
     const results = []
     for (const field of this._dependants.values()) {
       //field is a dependant field (not this)
-      results.push(field.validateAsync(this))
+
+      const shouldDisable = await field.maybeDisable(this)
+      runInAction(() => {
+        field.isDisabled = shouldDisable
+      })
+
+      if (!field.isDisabled) {
+        results.push(field.validateAsync(this))
+      }
     }
 
     return await Promise.all(results)
+  }
+
+  protected async maybeDisable(dependency: Field<any>) {
+    if (this.shouldDisable) {
+      return await this.shouldDisable(this.value, this.form, this, dependency)
+    }
+
+    return this.isDisabled
+  }
+
+  async setDisabled(disable: boolean, cb?: (field: Field<T>) => void) {
+    this.isDisabled = disable
+
+    if (!this.isDisabled) {
+      await this.validateAsync()
+    } else {
+      /* setting "isValidated" to true in this case
+         is needed because when the field is disabled it could never be validated
+       */
+      this.isValidated = true
+    }
+    await this.validateDependants()
+
+    cb && cb(this)
   }
 
   /**

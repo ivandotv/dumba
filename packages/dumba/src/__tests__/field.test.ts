@@ -1,6 +1,7 @@
 import { Form } from '../form'
-import { createField, Field } from '../field'
+import { Field } from '../field'
 import { Runner } from '../runner'
+import { createField } from '../field-factory'
 import { createValidation, Validation } from '../validation'
 import * as fixtures from './__fixtures__/fixtures'
 import { configure } from 'mobx'
@@ -120,15 +121,10 @@ describe('Field', () => {
       })
       test('Throw if onChange value is undefined', async () => {
         const value = 'A'
-        const path = '/path'
-        const name = 'lastName'
-        const form = fixtures.getForm()
         const field = createField({
           value,
           validations: [fixtures.asyncValidationOk()]
         })
-
-        field.setPathData(name, path, form)
 
         await expect(field.onChange()).rejects.toThrow(
           /Test value can't be null or undefined/
@@ -136,15 +132,10 @@ describe('Field', () => {
       })
       test('Throw if onChange value is not an object with "currentTarget" or "target" property', async () => {
         const value = 'A'
-        const path = '/path'
-        const name = 'lastName'
-        const form = fixtures.getForm()
         const field = createField({
           value,
           validations: [fixtures.asyncValidationOk()]
         })
-
-        field.setPathData(name, path, form)
 
         await expect(
           field.onChange({ noTarget: { value: 'test' } })
@@ -178,6 +169,44 @@ describe('Field', () => {
 
         expect(field.value).toBe(event.a.b.c.value)
       })
+    })
+
+    test('When field is disabled, validation is not executed', async () => {
+      const validationSpy = jest.fn()
+      const schema = {
+        a: createField({
+          disabled: true,
+          value: 'a',
+          validations: createValidation(validationSpy, '')
+        })
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.onChange()
+
+      expect(validationSpy).not.toHaveBeenCalled()
+    })
+    test('When field is disabled, dependant validation is not executed', async () => {
+      const validationSpy = jest.fn()
+      const bValue = 'b'
+      const schema = {
+        a: createField({
+          disabled: true,
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            validations: createValidation(validationSpy, ''),
+            value: bValue
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.onChange()
+
+      expect(validationSpy).not.toHaveBeenCalled()
     })
     test('When validation is in progress, "isValidating" is true', async () => {
       const value = 123
@@ -663,6 +692,296 @@ describe('Field', () => {
         form,
         form.fields.levelOne.levelTwo.c,
         form.fields.levelOne.b
+      )
+    })
+  })
+
+  describe('Field disabled', () => {
+    test('By default, field is not disabled', () => {
+      const field = createField({ value: '' })
+
+      expect(field.isDisabled).toBe(false)
+    })
+    test('Field can start disabled', () => {
+      const field = createField({ value: '', disabled: true })
+
+      expect(field.isDisabled).toBe(true)
+    })
+    test('"shouldDisable" function receives correct arguments', async () => {
+      const shouldDisableSpy = jest.fn()
+      const bValue = 'b'
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            disabled: false,
+            shouldDisable: shouldDisableSpy,
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setValue('new value')
+
+      expect(shouldDisableSpy).toHaveBeenCalledTimes(1)
+      expect(shouldDisableSpy).toHaveBeenCalledWith(
+        bValue,
+        form,
+        form.fields.levelOne.b,
+        form.fields.a
+      )
+    })
+
+    test('When dependency for the field changes, field can be disabled', async () => {
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            disabled: false,
+            shouldDisable: () => {
+              return true
+            },
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setValue('new value')
+
+      expect(form.fields.levelOne.b.isDisabled).toBe(true)
+    })
+
+    test('When dependency for the field changes, field can be enabled', async () => {
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            disabled: true,
+            shouldDisable: () => {
+              return false
+            },
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setValue('new value')
+
+      expect(form.fields.levelOne.b.isDisabled).toBe(false)
+    })
+
+    test('When dependency field value changes and field is enabled, validation are executed', async () => {
+      const validationSpy = jest.fn()
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            disabled: false,
+            validations: createValidation(validationSpy, ''),
+            shouldDisable: () => {
+              return false
+            },
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setValue('new value')
+
+      expect(validationSpy).toHaveBeenCalledTimes(1)
+    })
+
+    test('When dependency field value changes and field is disabled, validation are not executed', async () => {
+      const validationSpy = jest.fn()
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            disabled: true,
+            validations: createValidation(validationSpy, ''),
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setValue('new value')
+
+      expect(validationSpy).not.toHaveBeenCalled()
+    })
+
+    test('When dependency changes, and field is switched to enabled, validation is executed', async () => {
+      const validationSpy = jest.fn()
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            disabled: true,
+            shouldDisable: () => {
+              return false
+            },
+            validations: createValidation(validationSpy, ''),
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setValue('new value')
+
+      expect(validationSpy).toHaveBeenCalledTimes(1)
+    })
+    test('When dependency changes, and field is switched to disabled, validation is not executed', async () => {
+      const validationSpy = jest.fn()
+      const schema = {
+        a: createField({
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            disabled: false,
+            shouldDisable: () => {
+              return true
+            },
+            validations: createValidation(validationSpy, ''),
+            value: 'b'
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setValue('new value')
+
+      expect(validationSpy).not.toHaveBeenCalled()
+    })
+    test('When field is set to enabled, validation is executed', async () => {
+      const validationSpy = jest.fn()
+      const field = createField({
+        value: '',
+        disabled: true,
+        validations: createValidation(validationSpy, '')
+      })
+
+      await field.setDisabled(false)
+
+      expect(validationSpy).toHaveBeenCalledTimes(1)
+    })
+    test('When field is set to enabled, callback is called', async () => {
+      const callbackSpy = jest.fn()
+      const field = createField({
+        value: '',
+        disabled: true
+      })
+
+      await field.setDisabled(false, callbackSpy)
+
+      expect(callbackSpy).toHaveBeenCalledTimes(1)
+      expect(callbackSpy).toHaveBeenCalledWith(field)
+    })
+
+    test('When field is set to enabled, dependant validations are executed', async () => {
+      const validationSpy = jest.fn()
+      const bValue = 'b'
+      const schema = {
+        a: createField({
+          disabled: true,
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            validations: createValidation(validationSpy, ''),
+            value: bValue
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setDisabled(false)
+
+      expect(validationSpy).toHaveBeenCalledTimes(1)
+      expect(validationSpy).toHaveBeenCalledWith(
+        bValue,
+        form,
+        form.fields.levelOne.b,
+        form.fields.a
+      )
+    })
+
+    test('When field is set to disabled, validation is not executed', async () => {
+      const validationSpy = jest.fn()
+      const field = createField({
+        value: '',
+        disabled: false,
+        validations: createValidation(validationSpy, '')
+      })
+
+      await field.setDisabled(true)
+
+      expect(validationSpy).not.toHaveBeenCalled()
+    })
+    test('When field is set to disabled, callback is called', async () => {
+      const callbackSpy = jest.fn()
+      const field = createField({
+        value: '',
+        disabled: false
+      })
+
+      await field.setDisabled(true, callbackSpy)
+
+      expect(callbackSpy).toHaveBeenCalledTimes(1)
+      expect(callbackSpy).toHaveBeenCalledWith(field)
+    })
+
+    test('When field is set to disabled, dependant validations are executed', async () => {
+      const validationSpy = jest.fn()
+      const bValue = 'b'
+      const schema = {
+        a: createField({
+          disabled: false,
+          value: 'a'
+        }),
+        levelOne: {
+          b: createField({
+            dependsOn: 'a',
+            validations: createValidation(validationSpy, ''),
+            value: bValue
+          })
+        }
+      }
+      const form = new Form(schema)
+
+      await form.fields.a.setDisabled(true)
+
+      expect(validationSpy).toHaveBeenCalledTimes(1)
+      expect(validationSpy).toHaveBeenCalledWith(
+        bValue,
+        form,
+        form.fields.levelOne.b,
+        form.fields.a
       )
     })
   })

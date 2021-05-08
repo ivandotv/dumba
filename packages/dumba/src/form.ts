@@ -89,7 +89,9 @@ export class Form<TSchema = any> {
    */
   async validate(cb?: (form: Form<TSchema>) => void): Promise<void> {
     for (const field of this.fieldsByPath.values()) {
-      await field.validate()
+      if (!field.isDisabled) {
+        await field.validate()
+      }
     }
     if (cb) {
       cb(this)
@@ -123,7 +125,7 @@ export class Form<TSchema = any> {
    */
   get isValid(): boolean {
     for (const field of this.fieldsByPath.values()) {
-      if (!field.isValid) {
+      if (!field.isDisabled && !field.isValid) {
         return false
       }
     }
@@ -136,7 +138,7 @@ export class Form<TSchema = any> {
    */
   get isValidating(): boolean {
     for (const field of this.fieldsByPath.values()) {
-      if (field.isValidating) {
+      if (!field.isDisabled && field.isValidating) {
         return true
       }
     }
@@ -150,7 +152,7 @@ export class Form<TSchema = any> {
    */
   get isDirty(): boolean {
     for (const field of this.fieldsByPath.values()) {
-      if (field.isDirty) {
+      if (!field.isDisabled && field.isDirty) {
         return true
       }
     }
@@ -163,7 +165,7 @@ export class Form<TSchema = any> {
    */
   get isValidated(): boolean {
     for (const field of this.fieldsByPath.values()) {
-      if (!field.isValidated) {
+      if (!field.isDisabled && !field.isValidated) {
         return false
       }
     }
