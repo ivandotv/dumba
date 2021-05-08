@@ -31,7 +31,7 @@ export type FieldResult<T = any> = {
  * Field form the {@link Form}
  * @typeparam T - type of the value for the field
  */
-export class Field<T> {
+export class Field<T = any> {
   /**
    * Determines whether field is in the process of validating
    */

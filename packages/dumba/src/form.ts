@@ -28,6 +28,10 @@ export type SchemaResults<T> = T extends Record<string, any>
     }
   : T
 
+export type FormConfig = {
+  removeDisabled?: boolean
+}
+
 export class Form<TSchema = any> {
   fields: TSchema
 
@@ -40,9 +44,14 @@ export class Form<TSchema = any> {
 
   protected lastSavedDataByPath: Map<string, any> = new Map()
 
-  constructor(schema: TSchema) {
+  constructor(schema: TSchema, protected config: FormConfig = {}) {
     // @ts-expect-error - must be initialized with empty object
     this.fields = {}
+
+    this.config = {
+      removeDisabled: false,
+      ...this.config
+    }
 
     this.fieldsByPath = new Map()
     this.reset = this.reset.bind(this)
@@ -114,6 +123,9 @@ export class Form<TSchema = any> {
   get data(): SchemaValues<TSchema> {
     const data = {}
     for (const [path, field] of this.fieldsByPath.entries()) {
+      if (field.isDisabled && this.config.removeDisabled) {
+        continue
+      }
       setValue(data, path, field.value)
     }
 

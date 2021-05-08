@@ -358,6 +358,29 @@ describe('Form', () => {
 
         expect(form.lastSavedData).toBeNull()
       })
+
+      test('In form data, set disabled fields to "undefined",', async () => {
+        const schema = {
+          a: createField({
+            disabled: false,
+            value: 'a'
+          }),
+          levelOne: {
+            b: createField({
+              disabled: true,
+              value: 'b'
+            })
+          }
+        }
+
+        const expected = {
+          a: 'a'
+        }
+
+        const form = new Form(schema, { removeDisabled: true })
+
+        expect(form.data).toStrictEqual(expected)
+      })
     })
 
     describe('On unsuccessful submit', () => {
