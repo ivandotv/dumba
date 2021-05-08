@@ -11,47 +11,40 @@ configure({
 })
 
 describe('Field', () => {
-  describe('Create', () => {
-    test('Attach to path', () => {
-      const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
-      const field = createField({
-        value
-      })
-
-      field.setPathData(name, path, form)
-
-      expect(field.name).toBe(name)
-      expect(field.path).toBe(path)
-      expect(field.form).toBe(form)
+  test('Attach to path', () => {
+    const value = 'A'
+    const path = '/path'
+    const name = 'lastName'
+    const form = fixtures.getForm()
+    const field = createField({
+      value
     })
+
+    field.setPathData(name, path, form)
+
+    expect(field.name).toBe(name)
+    expect(field.path).toBe(path)
+    expect(field.form).toBe(form)
+  })
+
+  describe('Validate', () => {
     test('If there are no tests, pass validation', async () => {
       const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value
       })
-
-      field.setPathData(name, path, form)
 
       await field.validate()
 
       expect(field.errors).toHaveLength(0)
     })
+
     test('If callback is present, call it', async () => {
       const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value
       })
 
-      field.setPathData(name, path, form)
       const callback = jest.fn()
 
       await field.validate(callback)
@@ -59,17 +52,14 @@ describe('Field', () => {
       expect(callback).toHaveBeenCalledTimes(1)
       expect(callback).toHaveBeenCalledWith(field)
     })
+
     test('Use single validation', async () => {
       const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const message = 'failed validation'
       const field = createField({
         value,
         validations: fixtures.validationError(message)
       })
-      field.setPathData(name, path, form)
 
       await field.validate()
 
@@ -79,9 +69,6 @@ describe('Field', () => {
 
     test('Use array of validations', async () => {
       const value = 'A'
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const message = 'failed validation'
       const messageTwo = 'failed validation two'
       const field = createField({
@@ -91,8 +78,6 @@ describe('Field', () => {
           fixtures.validationError(messageTwo)
         ]
       })
-
-      field.setPathData(name, path, form)
 
       await field.validate()
 
@@ -105,15 +90,10 @@ describe('Field', () => {
     describe('Parse change object', () => {
       test('Throw if onChange value is null', async () => {
         const value = 'A'
-        const path = '/path'
-        const name = 'lastName'
-        const form = fixtures.getForm()
         const field = createField({
           value,
           validations: [fixtures.asyncValidationOk()]
         })
-
-        field.setPathData(name, path, form)
 
         await expect(field.onChange(null)).rejects.toThrow(
           "Test value can't be null or undefined"
@@ -142,29 +122,25 @@ describe('Field', () => {
         ).rejects.toThrow(/Test value can't be null or undefined/)
       })
 
-      test('Currectly parse object with "currentTarget"', async () => {
+      test('Correctly parse object with "currentTarget"', async () => {
         const value = 'A'
         const newValue = 'B'
-        const path = '/path'
-        const name = 'lastName'
-        const form = fixtures.getForm()
         const field = createField({
           value,
           validations: [fixtures.asyncValidationOk()]
         })
 
-        field.setPathData(name, path, form)
-
         await field.onChange({ currentTarget: { value: newValue } })
+
         expect(field.value).toBe(newValue)
       })
 
-      test('Custom parse value function', () => {
+      test('Use custom parse value function', () => {
         const event = { a: { b: { c: { value: 'A' } } } }
-
         const { field } = fixtures.getField({
           parseValue: (event: any) => event.a.b.c.value
         })
+
         field.onChange(event)
 
         expect(field.value).toBe(event.a.b.c.value)
@@ -186,6 +162,7 @@ describe('Field', () => {
 
       expect(validationSpy).not.toHaveBeenCalled()
     })
+
     test('When field is disabled, dependant validation is not executed', async () => {
       const validationSpy = jest.fn()
       const bValue = 'b'
@@ -208,17 +185,13 @@ describe('Field', () => {
 
       expect(validationSpy).not.toHaveBeenCalled()
     })
+
     test('When validation is in progress, "isValidating" is true', async () => {
       const value = 123
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value,
         validations: [fixtures.validationOk()]
       })
-
-      field.setPathData(name, path, form)
 
       expect(field.isValidating).toBe(false)
 
@@ -230,17 +203,13 @@ describe('Field', () => {
 
       expect(field.isValidating).toBe(false)
     })
-    test('When value is set, callback is called', async () => {
+
+    test('When value gets set, callback is called', async () => {
       const value = 123
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value,
         validations: [fixtures.validationOk()]
       })
-
-      field.setPathData(name, path, form)
 
       const callback = jest.fn()
 
@@ -267,7 +236,7 @@ describe('Field', () => {
       field.onChange(eventOne)
       field.onChange(eventTwo)
 
-      const last = field.onChange(eventThree)
+      const lastChange = field.onChange(eventThree)
 
       expect(field.isValidating).toBe(false)
       expect(validationFn).not.toHaveBeenCalled()
@@ -276,7 +245,7 @@ describe('Field', () => {
 
       expect(field.isValidating).toBe(true)
 
-      await last
+      await lastChange
 
       expect(field.isValidating).toBe(false)
 
@@ -291,27 +260,19 @@ describe('Field', () => {
 
     test('Validate successfully', async () => {
       const event = fixtures.onChangeEvent('A')
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value: event.currentTarget.value,
         validations: [fixtures.validationOk()]
       })
 
-      field.setPathData(name, path, form)
+      await field.onChange(event)
 
-      const result = field.onChange(event)
-      await result
       expect(field.errors).toEqual([])
       expect(field.isValid).toBe(true)
     })
 
     test('Validate unsuccessfully', async () => {
       const event = fixtures.onChangeEvent('A')
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const errorMessage = 'failed validation'
       const field = createField({
         value: event.currentTarget.value,
@@ -320,90 +281,50 @@ describe('Field', () => {
           fixtures.asyncValidationError(errorMessage)
         ]
       })
-      field.setPathData(name, path, form)
 
-      const result = field.onChange(event)
-
-      await result
+      await field.onChange(event)
 
       expect(field.errors).toEqual([errorMessage])
       expect(field.isValid).toBe(false)
     })
 
-    test('When primitive initial value is not equal to new value, field is dirty', async () => {
+    test('When primitive initial value is not equal to the new value, field is dirty', async () => {
       const value = 'A'
       const event = fixtures.onChangeEvent('B')
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value
       })
-      field.setPathData(name, path, form)
 
-      const result = field.onChange(event)
-
-      await result
+      await field.onChange(event)
 
       expect(field.isDirty).toBe(true)
     })
 
-    test('Clear errors', async () => {
-      const event = fixtures.onChangeEvent('A')
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
-      const errorMessage = 'failed validation'
-      const field = createField({
-        value: event.currentTarget.value,
-        validations: [fixtures.asyncValidationError(errorMessage)]
-      })
-      field.setPathData(name, path, form)
-
-      const result = field.setValue('A')
-      await result
-
-      field.clearErrors()
-      expect(field.errors).toHaveLength(0)
-      expect(field.isValid).toBe(true)
-    })
-    test('When non primitive initial value (array) is equal to current value, field is not dirty', async () => {
+    test('When non primitive initial value (array) is equal to current the value, field is not dirty', async () => {
       const value = [1, 2]
       const newValue = [1, 2]
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value
       })
-      field.setPathData(name, path, form)
 
-      const result = field.setValue(newValue)
-
-      await result
+      await field.setValue(newValue)
 
       expect(field.isDirty).toBe(false)
     })
 
-    test('When non primitive initial value (array) is not equal to new value, field is dirty', async () => {
+    test('When non primitive initial value (array) is not equal to new the value, field is dirty', async () => {
       const event = fixtures.onChangeEvent([1])
       const newEvent = fixtures.onChangeEvent([1, 2])
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value: event.currentTarget.value
       })
-      field.setPathData(name, path, form)
 
-      const result = field.onChange(newEvent)
-
-      await result
+      await field.onChange(newEvent)
 
       expect(field.isDirty).toBe(true)
     })
 
-    test('When non primitive initial value (object) is not equal to new value, field is dirty', async () => {
+    test('When non primitive initial value (object) is not equal to the new value, field is dirty', async () => {
       const value = { a: 'a' }
       const newValue = { a: 'a', b: 'b' }
       const path = '/path'
@@ -414,41 +335,46 @@ describe('Field', () => {
       })
       field.setPathData(name, path, form)
 
-      const result = field.setValue(newValue)
-
-      await result
+      await field.setValue(newValue)
 
       expect(field.isDirty).toBe(true)
     })
-    test('When non primitive initial value (object) is equal to new value, field is not dirty', async () => {
+
+    test('When non primitive initial value (object) is equal to the new value, field is not dirty', async () => {
       const event = fixtures.onChangeEvent({ a: 'a' })
       const newEvent = fixtures.onChangeEvent({ a: 'a' })
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value: event.currentTarget.value
       })
-      field.setPathData(name, path, form)
 
-      const result = field.onChange(newEvent)
-
-      await result
+      await field.onChange(newEvent)
 
       expect(field.isDirty).toBe(false)
     })
   })
+
   describe('Reset', () => {
+    test('Clear all errors', async () => {
+      const event = fixtures.onChangeEvent('A')
+      const errorMessage = 'failed validation'
+      const field = createField({
+        value: event.currentTarget.value,
+        validations: [fixtures.asyncValidationError(errorMessage)]
+      })
+
+      await field.setValue('A')
+      field.clearErrors()
+
+      expect(field.errors).toHaveLength(0)
+      expect(field.isValid).toBe(true)
+    })
+
     test('When field is reset, it has the initial value', async () => {
       const event = fixtures.onChangeEvent([1])
       const newEvent = fixtures.onChangeEvent([1, 2])
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value: event.currentTarget.value
       })
-      field.setPathData(name, path, form)
       await field.onChange(newEvent)
 
       field.reset()
@@ -459,15 +385,11 @@ describe('Field', () => {
     test('When field is reset, it should not keep previous errors', async () => {
       const event = fixtures.onChangeEvent([1])
       const newEvent = fixtures.onChangeEvent([1, 2])
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const errorMessage = 'validation failed'
       const field = createField({
         value: event.currentTarget.value,
         validations: fixtures.validationError(errorMessage)
       })
-      field.setPathData(name, path, form)
       await field.onChange(newEvent)
 
       field.reset()
@@ -475,34 +397,27 @@ describe('Field', () => {
       expect(field.value).toEqual(event.currentTarget.value)
       expect(field.errors).toStrictEqual([])
     })
+
     test('When field is reset, "validated" property is "false"', async () => {
       const event = fixtures.onChangeEvent([1])
       const newEvent = fixtures.onChangeEvent([1, 2])
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value: event.currentTarget.value,
         validations: fixtures.validationOk()
       })
-      field.setPathData(name, path, form)
       await field.onChange(newEvent)
 
       field.reset()
 
       expect(field.isValidated).toBe(false)
     })
+
     test('When field is reset, if field is "alwaysValid", "validated" property is "true"', async () => {
       const event = fixtures.onChangeEvent([1])
       const newEvent = fixtures.onChangeEvent([1, 2])
-      const path = '/path'
-      const name = 'lastName'
-      const form = fixtures.getForm()
       const field = createField({
         value: event.currentTarget.value
       })
-      field.setPathData(name, path, form)
-
       await field.onChange(newEvent)
 
       field.reset()
@@ -511,7 +426,7 @@ describe('Field', () => {
     })
   })
 
-  describe('Dependent fields', () => {
+  describe('Dependant fields', () => {
     test('Field registers dependencies correctly', () => {
       const bValidation = fixtures.validationOk()
       const cValidation = fixtures.validationOk()
@@ -560,9 +475,9 @@ describe('Field', () => {
       )
     })
 
-    test('When field is changed, all dependant field validations are run', async () => {
-      const cFnSpy = jest.fn().mockReturnValueOnce(true)
-      const cValidation = createValidation(cFnSpy, '')
+    test('When field value is changed, all dependant field validations are executed', async () => {
+      const cFunctionSpy = jest.fn().mockReturnValueOnce(true)
+      const cValidation = createValidation(cFunctionSpy, '')
       const cValue = 'c'
       const fieldEvent = { currentTarget: { value: 'new value' } }
       const schema = {
@@ -582,13 +497,12 @@ describe('Field', () => {
           }
         }
       }
-
       const form = new Form(schema)
 
       await form.fields.a.onChange(fieldEvent)
 
-      expect(cFnSpy).toHaveBeenCalledTimes(1)
-      expect(cFnSpy).toHaveBeenCalledWith(
+      expect(cFunctionSpy).toHaveBeenCalledTimes(1)
+      expect(cFunctionSpy).toHaveBeenCalledWith(
         cValue,
         form,
         form.fields.levelOne.levelTwo.c,
@@ -596,7 +510,7 @@ describe('Field', () => {
       )
     })
 
-    test('Field with dependencies validates unsuccessfully', async () => {
+    test('When dependency value is changed, field validates unsuccessfully', async () => {
       const validationMessage = 'failed'
       const bValidation = createValidation(() => {
         return false
@@ -615,7 +529,6 @@ describe('Field', () => {
           }
         }
       }
-
       const form = new Form(schema)
 
       await form.fields.levelOne.levelTwo.c.setValue('number')
@@ -625,9 +538,9 @@ describe('Field', () => {
       expect(form.fields.levelOne.b.isValidated).toBe(true)
     })
 
-    test('When field value is set, all dependant field validations are run', async () => {
-      const cFnSpy = jest.fn().mockReturnValueOnce(true)
-      const cValidation = createValidation(cFnSpy, '')
+    test('When field value is set, all dependant field validations are executed', async () => {
+      const cFunctionSpy = jest.fn().mockReturnValueOnce(true)
+      const cValidation = createValidation(cFunctionSpy, '')
       const cValue = 'c'
       const newFieldValue = 'new value'
       const schema = {
@@ -651,19 +564,19 @@ describe('Field', () => {
 
       await form.fields.a.setValue(newFieldValue)
 
-      expect(cFnSpy).toHaveBeenCalledTimes(1)
-      expect(cFnSpy).toHaveBeenCalledWith(
+      expect(cFunctionSpy).toHaveBeenCalledTimes(1)
+      expect(cFunctionSpy).toHaveBeenCalledWith(
         cValue,
         form,
         form.fields.levelOne.levelTwo.c,
         form.fields.a
       )
     })
-    test('Can depend on deeply nested fields', async () => {
-      const newFieldValue = 'new value'
 
-      const cFnSpy = jest.fn().mockReturnValueOnce(true)
-      const cValidation = createValidation(cFnSpy, '')
+    test('Field can depend on deeply nested fields', async () => {
+      const newFieldValue = 'new value'
+      const cFunctionSpy = jest.fn().mockReturnValueOnce(true)
+      const cValidation = createValidation(cFunctionSpy, '')
       const cValue = 'c'
       const schema = {
         a: createField({
@@ -686,8 +599,8 @@ describe('Field', () => {
 
       await form.fields.levelOne.b.setValue(newFieldValue)
 
-      expect(cFnSpy).toHaveBeenCalledTimes(1)
-      expect(cFnSpy).toHaveBeenCalledWith(
+      expect(cFunctionSpy).toHaveBeenCalledTimes(1)
+      expect(cFunctionSpy).toHaveBeenCalledWith(
         cValue,
         form,
         form.fields.levelOne.levelTwo.c,
@@ -702,11 +615,13 @@ describe('Field', () => {
 
       expect(field.isDisabled).toBe(false)
     })
+
     test('Field can start disabled', () => {
       const field = createField({ value: '', disabled: true })
 
       expect(field.isDisabled).toBe(true)
     })
+
     test('"shouldDisable" function receives correct arguments', async () => {
       const shouldDisableSpy = jest.fn()
       const bValue = 'b'
@@ -736,7 +651,7 @@ describe('Field', () => {
       )
     })
 
-    test('When dependency for the field changes, field can be disabled', async () => {
+    test('When dependency for the field changes, field gets disabled', async () => {
       const schema = {
         a: createField({
           value: 'a'
@@ -759,7 +674,7 @@ describe('Field', () => {
       expect(form.fields.levelOne.b.isDisabled).toBe(true)
     })
 
-    test('When dependency for the field changes, field can be enabled', async () => {
+    test('When dependency for the field changes, field gets enabled', async () => {
       const schema = {
         a: createField({
           value: 'a'
@@ -782,7 +697,7 @@ describe('Field', () => {
       expect(form.fields.levelOne.b.isDisabled).toBe(false)
     })
 
-    test('When dependency field value changes and field is enabled, validation are executed', async () => {
+    test('When dependency field value changes and field is enabled, validation is executed', async () => {
       const validationSpy = jest.fn()
       const schema = {
         a: createField({
@@ -807,7 +722,7 @@ describe('Field', () => {
       expect(validationSpy).toHaveBeenCalledTimes(1)
     })
 
-    test('When dependency field value changes and field is disabled, validation are not executed', async () => {
+    test('When dependency field value changes and field is disabled, validation is not executed', async () => {
       const validationSpy = jest.fn()
       const schema = {
         a: createField({
@@ -853,6 +768,7 @@ describe('Field', () => {
 
       expect(validationSpy).toHaveBeenCalledTimes(1)
     })
+
     test('When dependency changes, and field is switched to disabled, validation is not executed', async () => {
       const validationSpy = jest.fn()
       const schema = {
@@ -877,6 +793,7 @@ describe('Field', () => {
 
       expect(validationSpy).not.toHaveBeenCalled()
     })
+
     test('When field is set to enabled, validation is executed', async () => {
       const validationSpy = jest.fn()
       const field = createField({
@@ -902,7 +819,7 @@ describe('Field', () => {
       expect(callbackSpy).toHaveBeenCalledWith(field)
     })
 
-    test('When field is set to enabled, dependant validations are executed', async () => {
+    test('When field is set to enabled, dependant validation is executed', async () => {
       const validationSpy = jest.fn()
       const bValue = 'b'
       const schema = {
@@ -956,7 +873,7 @@ describe('Field', () => {
       expect(callbackSpy).toHaveBeenCalledWith(field)
     })
 
-    test('When field is set to disabled, dependant validations are executed', async () => {
+    test('When field is set to disabled, dependant validation is executed', async () => {
       const validationSpy = jest.fn()
       const bValue = 'b'
       const schema = {

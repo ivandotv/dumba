@@ -32,7 +32,6 @@ describe('Runner', () => {
       const expectedValue = 'A'
       const expectedResult = { errors: null, value: expectedValue }
       const runner = new Runner([fixtures.validationOk()])
-
       const form = fixtures.getForm()
       const { field } = fixtures.getField()
 
@@ -57,7 +56,7 @@ describe('Runner', () => {
       expect(result).toEqual(expectedResult)
     })
 
-    test('With success when bail early is true', async () => {
+    test('With success when bail early on errors is set to true', async () => {
       const expectedValue = 'A'
       const expectedResult = {
         errors: null,
@@ -67,35 +66,29 @@ describe('Runner', () => {
       const { field } = fixtures.getField()
       const firstValidation = fixtures.validationOk()
       const firstSpy = jest.spyOn(firstValidation, 'fn')
-
       const secondValidation = fixtures.validationOk()
       const secondSpy = jest.spyOn(secondValidation, 'fn')
-
       const runner = new Runner([firstValidation, secondValidation], true)
 
       const result = await runner.validate(expectedValue, form, field)
 
       expect(result).toEqual(expectedResult)
-
       expect(firstSpy).toHaveBeenCalled()
       expect(secondSpy).toHaveBeenCalled()
     })
 
-    test('With failure when bail early is true', async () => {
+    test('With failure when bail early on errors is set to true', async () => {
       const expectedValue = 'A'
       const expectedMessage = 'failed'
       const expectedResult = {
         errors: [expectedMessage],
         value: expectedValue
       }
-
       const secondValidation = jest.spyOn(fixtures.validationError(), 'fn')
-
       const runner = new Runner(
         [fixtures.validationError(expectedMessage)],
         true
       )
-
       const form = fixtures.getForm()
       const { field } = fixtures.getField()
       const result = await runner.validate(expectedValue, form, field)
@@ -112,7 +105,6 @@ describe('Runner', () => {
       const fnTwoSpy = jest.spyOn(fnTwo, 'fn')
       const form = fixtures.getForm()
       const { field } = fixtures.getField()
-
       const runner = new Runner([fnOne, fnTwo])
 
       await runner.validate(expectedValue, form, field)
@@ -184,7 +176,7 @@ describe('Runner', () => {
       )
     })
 
-    test('Return error from async validation', async () => {
+    test('Return error from validation', async () => {
       const expectedValue = 'A'
       const expectedSyncMessage = 'sync fail A'
       const expectedAsyncMessage = 'async fail A'

@@ -156,7 +156,6 @@ export class Field<T = any> {
       setValue: action,
       setDisabled: action,
       validate: action,
-
       reset: action,
       clearErrors: action
     })
