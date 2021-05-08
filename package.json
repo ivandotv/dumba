@@ -20,6 +20,7 @@
     "lint:ci": "lerna run lint:ci --stream",
     "type:check": "lerna run type:check --stream",
     "build": "lerna run build --stream",
+    "docs": "lerna run docs --stream",
     "prepare": "husky install",
     "release:old": "yarn run prepublish && yarn changeset publish",
     "release": "yarn changeset publish"
