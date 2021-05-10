@@ -135,7 +135,7 @@ describe('Field', () => {
         expect(field.value).toBe(newValue)
       })
 
-      test('Use custom parse value function', () => {
+      test('Use custom parse value function, to return custom value', () => {
         const event = { a: { b: { c: { value: 'A' } } } }
         const { field } = fixtures.getField({
           parseValue: (event: any) => event.a.b.c.value
@@ -144,6 +144,18 @@ describe('Field', () => {
         field.onChange(event)
 
         expect(field.value).toBe(event.a.b.c.value)
+      })
+      test('Parse function accepts event like object and a reference to field', () => {
+        const parseSpy = jest.fn()
+        const event = { a: { b: { c: { value: 'A' } } } }
+        const { field } = fixtures.getField({
+          parseValue: parseSpy
+        })
+
+        field.onChange(event)
+
+        expect(parseSpy).toHaveBeenCalledTimes(1)
+        expect(parseSpy).toHaveBeenCalledWith(event, field)
       })
     })
 

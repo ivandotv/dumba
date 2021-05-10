@@ -97,7 +97,7 @@ export class Field<T = any> {
     public runner: Runner,
     public value: T,
     protected alwaysValid: boolean,
-    protected parseValue?: (data: any, form: Form) => any,
+    protected parseValue?: (data: any, field: Field<T>) => any,
     public delay?: number,
     protected dependsOn: string[] = [],
     public isDisabled = false,
@@ -112,7 +112,7 @@ export class Field<T = any> {
     this.onChange = async (evt: any) => {
       if (this.isDisabled) return
       this.value = this.parseValue
-        ? this.parseValue(evt, this.form)
+        ? this.parseValue(evt, this)
         : evt?.currentTarget?.value != null
         ? evt.currentTarget.value
         : evt?.target?.value != null

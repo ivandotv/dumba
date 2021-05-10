@@ -1,5 +1,4 @@
 import { Field } from './field'
-import { Form } from './form'
 import { Runner } from './runner'
 import { Validation, ValidationFn } from './validation'
 
@@ -33,7 +32,7 @@ export type CreateFieldData<T> = {
   /**
    * function that can intercept {@link Field.onChange} and return a custom value
    */
-  parseValue?: (data: any, form: Form) => any
+  parseValue?: (data: any, field: Field<T>) => any
 
   /**
    * delay for running the validations

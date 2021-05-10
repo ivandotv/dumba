@@ -43,13 +43,16 @@ export const schema: SchemaType = {
       (str: string) => isLength(str, { min: 1 }),
       'Must have at least one character'
     ),
-    parseValue: (evt: React.ChangeEvent<HTMLInputElement>, form: Form<any>) => {
+    parseValue: (
+      evt: React.ChangeEvent<HTMLInputElement>,
+      field: Field<string>
+    ) => {
       const newValue = evt.currentTarget.value
 
       if (newValue.length === 0) {
         return newValue
       }
-      const currentValue = form.fields.masked.value
+      const currentValue = field.value
 
       //todo - compile regex ahead of time
       const regex = /^[ABC]+$/
