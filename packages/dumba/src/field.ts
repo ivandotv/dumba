@@ -97,7 +97,7 @@ export class Field<T = any> {
     public runner: Runner,
     public value: T,
     protected alwaysValid: boolean,
-    protected parseValue?: (data: any, field: Field<T>) => any,
+    protected parseValue?: <T>(data: any, field: Field<T>) => T,
     public delay?: number,
     protected dependsOn: string[] = [],
     public isDisabled = false,

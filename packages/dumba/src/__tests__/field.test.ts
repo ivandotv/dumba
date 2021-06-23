@@ -145,9 +145,10 @@ describe('Field', () => {
 
         expect(field.value).toBe(event.a.b.c.value)
       })
+
       test('Parse function accepts event like object and a reference to field', () => {
-        const parseSpy = jest.fn()
-        const event = { a: { b: { c: { value: 'A' } } } }
+        const parseSpy = jest.fn().mockImplementation((data: any) => data.value)
+        const event = { value: 'A' }
         const { field } = fixtures.getField({
           parseValue: parseSpy
         })

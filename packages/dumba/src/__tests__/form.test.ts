@@ -278,9 +278,9 @@ describe('Form', () => {
       const form = new Form(fixtures.getSchema())
       const response = 'response'
       const submitFn = jest.fn().mockResolvedValueOnce(response)
-      const preventDefaultSpy = ({
+      const preventDefaultSpy = {
         preventDefault: jest.fn()
-      } as unknown) as React.FormEvent<HTMLFormElement>
+      } as unknown as React.FormEvent<HTMLFormElement>
 
       await form.handleSubmit(submitFn)(preventDefaultSpy)
 
