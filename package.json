@@ -9,8 +9,14 @@
       "packages/*"
     ],
     "nohoist": [
+      "@ivandotv/demo/**",
+      "**/@iv/andotv/demo/**",
       "**/@types/jest",
-      "**/@types/jest/**"
+      "**/@types/jest/**",
+      "**/eslint",
+      "**/eslint/**",
+      "**/react-scripts",
+      "**/react-scripts/**"
     ]
   },
   "scripts": {

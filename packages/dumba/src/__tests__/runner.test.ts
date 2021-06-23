@@ -158,9 +158,8 @@ describe('Runner', () => {
         value: expectedValue
       }
       const validationSync = fixtures.validationError(expectedSyncMessage)
-      const validationAsync = fixtures.asyncValidationError(
-        expectedAsyncMessage
-      )
+      const validationAsync =
+        fixtures.asyncValidationError(expectedAsyncMessage)
       const runner = new Runner([validationSync, validationAsync])
 
       const result = await runner.validate(expectedValue, field)

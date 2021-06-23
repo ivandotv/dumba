@@ -30,6 +30,9 @@ module.exports = {
   settings: {
     react: {
       version: 'detect'
+    },
+    jest: {
+      version: 'latest'
     }
   },
   rules: {

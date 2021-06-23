@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ['10', '12', '14']
+        node: ['12', '14', '16']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -52,14 +52,14 @@ jobs:
           CI: true
 
       - name: Generate Code Coverage
-        # only when running in node v14
-        if: matrix.node == 14
+        # only when running in node v16
+        if: matrix.node == 16
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: 'Publish to NPM'
-        if: github.event_name == 'push' && github.repository == 'ivandotv/dumba' && matrix.node == 14 && github.ref == 'refs/head/master'
+        if: github.event_name == 'push' && github.repository == 'ivandotv/dumba' && matrix.node == 16 && github.ref == 'refs/head/master'
         uses: changesets/action@master
         id: 'changesets'
         with:
