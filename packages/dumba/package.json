@@ -44,15 +44,15 @@
   "keywords": [],
   "dependencies": {
     "deep-for-each": "^3.0.0",
-    "set-value": "^3.0.2"
+    "set-value": "^4.0.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
-    "@types/react": "^17.0.5",
-    "mobx": "^6.2.0"
+    "@types/react": "^17.0.11",
+    "mobx": "^6.3.2"
   },
   "peerDependencies": {
-    "mobx": "^6.2.0",
-    "@types/react": "^17.0.5"
+    "mobx": "^6.3.2",
+    "@types/react": "^17.0.11"
   }
 }
