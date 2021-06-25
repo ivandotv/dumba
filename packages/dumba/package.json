@@ -1,7 +1,7 @@
 {
   "name": "dumba",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "author": "Ivan Vlatkovic",
   "description": "Mobx forms made easy",
   "buildTarget": "server",
