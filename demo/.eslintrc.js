@@ -1,14 +1,3 @@
 module.exports = {
-  extends: ['react-app', 'shared-config'],
-  rules: {
-    'additional-rule': 'warn'
-  },
-  overrides: [
-    {
-      files: ['**/*.ts?(x)'],
-      rules: {
-        'additional-typescript-only-rule': 'warn'
-      }
-    }
-  ]
+  extends: ['react-app']
 }
