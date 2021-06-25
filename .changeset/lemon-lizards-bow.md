@@ -1,5 +1,0 @@
----
-'dumba': major
----
-
-initial release
