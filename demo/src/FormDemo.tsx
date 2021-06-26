@@ -32,6 +32,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+/**
+ * Fake submit - mock submit async form action
+ * @param _form
+ * @returns
+ */
 function fakeSubmit(_form: Form<typeof schema>) {
   return new Promise((resolve, _reject) => {
     setTimeout(resolve, 1500)
@@ -42,12 +47,12 @@ const FormDemo = observer(function FormDemo() {
   const classes = useStyles()
   const formStore = useForm()
 
-  const memo = useMemo(() => formStore.handleSubmit(fakeSubmit), [formStore])
+  const handleOnSubmit = useMemo(() => formStore.handleSubmit(fakeSubmit), [formStore])
 
   return (
     <Paper elevation={2} className={classes.wrap}>
       <form
-        onSubmit={memo}
+        onSubmit={handleOnSubmit}
         autoComplete="off"
         noValidate
         className={classes.form}
