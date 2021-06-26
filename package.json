@@ -15,6 +15,7 @@
     ]
   },
   "scripts": {
+    "build:demo": "lerna run build --scope demo --include-dependencies --stream",
     "test:ci": "lerna run test:ci --stream",
     "test": "lerna run test --stream",
     "lint": "lerna run lint --stream",
