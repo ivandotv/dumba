@@ -2,7 +2,6 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { Form } from './form'
 import { Runner } from './runner'
 import { equals } from './utils'
-import { ValidationFn } from './validation'
 
 /**
  * Result of the {@link Field} validation
@@ -101,7 +100,11 @@ export class Field<T = any> {
     public delay?: number,
     protected dependsOn: string[] = [],
     public isDisabled = false,
-    protected shouldDisable?: ValidationFn
+    protected shouldDisable?: (
+      value: any,
+      field: Field<any>,
+      dependency?: Field<any>
+    ) => boolean | Promise<boolean>
   ) {
     this.initialValue = this.value
 

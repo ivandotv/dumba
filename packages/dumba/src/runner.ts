@@ -60,7 +60,9 @@ export class Runner {
     const resolved = await Promise.all(validationsToRun)
 
     for (const validation of resolved) {
-      if (!validation.result) {
+      if (typeof validation.result === 'string') {
+        errors.push(validation.result)
+      } else if (!validation.result) {
         errors.push(validation.msg)
       }
     }
@@ -83,7 +85,9 @@ export class Runner {
     for (const validation of this.validations) {
       const result = await validation.fn(value, field, dependency)
 
-      if (!result) {
+      if (typeof result === 'string') {
+        return { errors: [result], value }
+      } else if (!result) {
         return { errors: [validation.msg], value }
       }
     }

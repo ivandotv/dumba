@@ -9,6 +9,10 @@ export function validationError(msg = 'error') {
   return createValidation(() => false, msg)
 }
 
+export function validationErrorWithString(msg = 'error') {
+  return createValidation(() => msg)
+}
+
 export function asyncValidationOk() {
   return createValidation(() => Promise.resolve(true), '')
 }

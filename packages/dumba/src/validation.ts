@@ -9,12 +9,17 @@ export type ValidationFn = (
   value: any,
   field: Field<any>,
   dependency?: Field<any>
-) => boolean | Promise<boolean>
+) => boolean | Promise<boolean> | string | Promise<string>
 
-export function createValidation(fn: ValidationFn, msg: string) {
+export function createValidation(
+  fn: ValidationFn,
+  msg: string = Validation.defaultMessage
+) {
   return new Validation(fn, msg)
 }
 
 export class Validation {
+  static defaultMessage = 'not valid'
+
   constructor(public fn: ValidationFn, public msg: string) {}
 }

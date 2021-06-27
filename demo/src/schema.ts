@@ -1,4 +1,4 @@
-import { createField, createValidation, Field, Form } from 'dumba'
+import { createField, createValidation, Field } from 'dumba'
 import React from 'react'
 import isAlpha from 'validator/es/lib/isAlpha'
 import isLength from 'validator/es/lib/isLength'
@@ -80,26 +80,19 @@ export const schema: SchemaType = {
           (value: string, _field: Field<string>) => isLength(value, { min: 1 }),
           "Can't be empty"
         ),
-        createValidation((value: string, field: Field) => {
-          // this validation only tests for numeric values
-          const form: Form<SchemaType> = field.form
-
-          if (form.fields.typeOptions.types.value === 'number') {
-            return isNumeric(value)
+        createValidation((value: string, field: Field, dependancy?: Field) => {
+          // dependancy?.name === 'types'
+          if (dependancy?.value === 'number') {
+            return !isNumeric(value) && 'Not a number'
           }
 
-          return true
-        }, 'Not a number'),
-        createValidation((value: string, field: Field) => {
-          // this validation only tests for letters
-          const form: Form<SchemaType> = field.form
-          if (form.fields.typeOptions.types.value === 'letter') {
+          if (dependancy?.value === 'letter') {
             // @ts-expect-error - typings from validator.js are wrong
-            return isAlpha(value, undefined, { ignore: ' ' })
+            return !isAlpha(value, undefined, { ignore: ' ' }) && 'Not a letter'
           }
 
           return true
-        }, 'Not a letter')
+        })
       ]
     })
   },

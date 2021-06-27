@@ -1,6 +1,6 @@
 import { Field } from './field'
 import { Runner } from './runner'
-import { Validation, ValidationFn } from './validation'
+import { Validation } from './validation'
 
 /**
  * Data for the {@link createField} factory
@@ -49,7 +49,11 @@ export type CreateFieldData<T> = {
    */
   dependsOn?: string | string[]
 
-  shouldDisable?: ValidationFn
+  shouldDisable?: (
+    value: any,
+    field: Field<any>,
+    dependency?: Field<any>
+  ) => boolean | Promise<boolean>
   /**
    * if field is disabled
    */

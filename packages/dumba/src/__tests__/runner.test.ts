@@ -1,4 +1,5 @@
 import { Runner } from '../runner'
+import { createValidation, Validation } from '../validation'
 import * as fixtures from './__fixtures__/fixtures'
 
 describe('Runner', () => {
@@ -165,6 +166,75 @@ describe('Runner', () => {
       const result = await runner.validate(expectedValue, field)
 
       expect(expectedResult).toEqual(result)
+    })
+
+    test('With default error message', async () => {
+      const expectedValue = 'A'
+      const expectedMessage = Validation.defaultMessage
+      const expectedResult = {
+        errors: [expectedMessage],
+        value: expectedValue
+      }
+      const runner = new Runner([createValidation(() => false)])
+
+      const { field } = fixtures.getField()
+      const result = await runner.validate(expectedValue, field)
+
+      expect(result).toEqual(expectedResult)
+    })
+
+    describe('Validate with string return result from validate function', () => {
+      test('With failure string', async () => {
+        const expectedValue = 'A'
+        const expectedMessage = 'failed'
+        const expectedResult = {
+          errors: [expectedMessage],
+          value: expectedValue
+        }
+        const runner = new Runner([createValidation(() => expectedMessage)])
+
+        const { field } = fixtures.getField()
+        const result = await runner.validate(expectedValue, field)
+
+        expect(result).toEqual(expectedResult)
+      })
+
+      test('Default message will be ignored', async () => {
+        const expectedValue = 'A'
+        const expectedMessage = 'failed'
+
+        const expectedResult = {
+          errors: [expectedMessage],
+          value: expectedValue
+        }
+        const runner = new Runner([
+          createValidation(() => expectedMessage, 'ignored message')
+        ])
+
+        const { field } = fixtures.getField()
+        const result = await runner.validate(expectedValue, field)
+
+        expect(result).toEqual(expectedResult)
+      })
+
+      test('With failure when bail early on errors is set to true', async () => {
+        const expectedValue = 'A'
+        const expectedMessage = 'failed'
+        const expectedResult = {
+          errors: [expectedMessage],
+          value: expectedValue
+        }
+        const secondValidation = jest.spyOn(fixtures.validationError(), 'fn')
+        const runner = new Runner(
+          [createValidation(() => expectedMessage, 'ignored message')],
+          true
+        )
+        const { field } = fixtures.getField()
+        const result = await runner.validate(expectedValue, field)
+
+        expect(result).toEqual(expectedResult)
+        expect(secondValidation).not.toHaveBeenCalled()
+      })
     })
   })
 })
