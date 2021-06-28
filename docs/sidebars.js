@@ -13,7 +13,7 @@ module.exports = {
   docs: [
     'introduction',
     {
-      Guides: ['getting-started']
+      Guide: ['schema']
     }
   ]
   // But you can create a sidebar manually

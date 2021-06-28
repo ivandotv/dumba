@@ -1,4 +1,4 @@
-import { createField, createValidation, Field } from 'dumba'
+import { createField, createValidation, Field, Form } from 'dumba'
 import React from 'react'
 import isAlpha from 'validator/es/lib/isAlpha'
 import isLength from 'validator/es/lib/isLength'
@@ -82,6 +82,7 @@ export const schema: SchemaType = {
         ),
         createValidation((value: string, field: Field, dependancy?: Field) => {
           // dependancy?.name === 'types'
+
           if (dependancy?.value === 'number') {
             return !isNumeric(value) && 'Not a number'
           }
