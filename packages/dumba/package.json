@@ -4,7 +4,6 @@
   "private": false,
   "author": "Ivan Vlatkovic",
   "description": "Mobx forms made easy",
-  "buildTarget": "server",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/dumba.esm.js",
   "unpkg": "dist/unpkg/dumba.min.js",
