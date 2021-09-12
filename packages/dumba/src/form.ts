@@ -43,7 +43,7 @@ export class Form<TSchema = any> {
 
   isSubmitting = false
 
-  submitError = null
+  submitError: unknown = null
 
   //@internal
   fieldsByPath: Map<string, Field<any>> = new Map()

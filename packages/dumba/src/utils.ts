@@ -1,3 +1,5 @@
+import type { Field, Form } from '.'
+
 /*
 Performs a deep comparison between two values to determine if they are equivalent.
 @see https://www.30secondsofcode.org/js/s/equals
@@ -12,4 +14,12 @@ export function equals(a: any, b: any): boolean {
   if (keys.length !== Object.keys(b).length) return false
 
   return keys.every((k) => equals(a[k], b[k]))
+}
+
+/**
+ * Gets the form {@link Form} from the passed in field
+ * @typeparam T - value of the Form schema
+ */
+export function getForm<T>(field: Field): Form<T> {
+  return field.form
 }

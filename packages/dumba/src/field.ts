@@ -172,7 +172,11 @@ export class Field<T = any> {
     this.dependsOn.forEach((path) => {
       const formField = this.form.fieldsByPath.get(path)
       if (formField instanceof Field) {
-        formField._dependants.set(this.path, this)
+        formField._dependants.set(
+          this.path,
+
+          this
+        )
       } else {
         throw new Error(`Dependant field "${path}" not found`)
       }

@@ -1,5 +1,6 @@
 import { configure } from 'mobx'
 import React from 'react'
+import { getForm } from '..'
 import { Field } from '../field'
 import { createField } from '../field-factory'
 import { FAILED_VALIDATION_RESPONSE, Form } from '../form'
@@ -19,6 +20,16 @@ describe('Form', () => {
     expect(form.fields.info.a).toBeUndefined()
     expect(form.fields.info.b).toBeInstanceOf(Field)
     expect(form.fields.info.c.c1).toBeInstanceOf(Field)
+  })
+
+  test('Get the form from a field propety', () => {
+    const form = new Form(fixtures.getSchema())
+
+    const fromNameField = getForm<typeof fixtures.getSchema>(form.fields.name)
+    const formSubFields = getForm<typeof fixtures.getSchema>(form.fields.info.b)
+
+    expect(fromNameField).toBe(form)
+    expect(formSubFields).toBe(form)
   })
 
   describe('Validate', () => {
