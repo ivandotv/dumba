@@ -7,6 +7,7 @@ import { useForm } from '../formStore'
 
 const Superhero = observer(function Superhero() {
   const formStore = useForm()
+
   return (
     <FormControl>
       {/* <FormLabel component="legend">Superhero</FormLabel> */}

@@ -1,22 +1,11 @@
-import { createField, createValidation, Field } from 'dumba'
+import { createField, createValidation, Field, getForm } from 'dumba'
 import React from 'react'
 import isAlpha from 'validator/es/lib/isAlpha'
 import isLength from 'validator/es/lib/isLength'
 import isEmail from 'validator/lib/isEmail'
 import isNumeric from 'validator/lib/isNumeric'
 
-type SchemaType = {
-  username: Field<string>
-  email: Field<string>
-  masked: Field<string>
-  superhero: Field<string>
-  typeOptions: {
-    types: Field<string>
-    numberOrString: Field<string>
-  }
-}
-
-export const schema: SchemaType = {
+export const schema = {
   username: createField({
     value: '',
     validations: [
@@ -61,6 +50,7 @@ export const schema: SchemaType = {
       if (!isOnlyABC) {
         return currentValue
       }
+
       return newValue
     }
   }),
@@ -81,19 +71,29 @@ export const schema: SchemaType = {
           "Can't be empty"
         ),
         createValidation((value: string, field: Field, dependancy?: Field) => {
-          // dependancy?.name === 'types'
+          //get the Form instance of the field
+          const form = getForm<typeof schema>(field)
+          /*
+          when validation runs because of the dependency change
+            form.fields.typeOptions.types  === dependancy
+          */
 
-          if (dependancy?.value === 'number') {
-            return !isNumeric(value) && 'Not a number'
-          }
-
-          if (dependancy?.value === 'letter') {
-            // @ts-expect-error - typings from validator.js are wrong
-            return !isAlpha(value, undefined, { ignore: ' ' }) && 'Not a letter'
+          if (form.fields.typeOptions.types.value === 'number') {
+            return isNumeric(value)
           }
 
           return true
-        })
+        }, 'Not a number'),
+        createValidation((value: string, field: Field, dependancy?: Field) => {
+          const form = getForm<typeof schema>(field)
+
+          if (form.fields.typeOptions.types.value === 'letter') {
+            // @ts-expect-error - typings from validator.js are wrong
+            return isAlpha(value, undefined, { ignore: ' ' })
+          }
+
+          return true
+        }, 'Not a letter')
       ]
     })
   },

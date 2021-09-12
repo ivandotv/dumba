@@ -6,6 +6,7 @@ import { useForm } from '../formStore'
 
 const Email = observer(function Email() {
   const formStore = useForm()
+
   return (
     <FormControl>
       <TextField

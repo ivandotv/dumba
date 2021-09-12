@@ -8,6 +8,7 @@ import { useForm } from '../formStore'
 
 const Types = observer(function Types() {
   const formStore = useForm()
+
   return (
     <FormControl>
       <FormLabel component="legend">Type</FormLabel>

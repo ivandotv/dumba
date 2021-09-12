@@ -7,6 +7,7 @@ import { useForm } from '../formStore'
 
 const Username = observer(function Username() {
   const formStore = useForm()
+
   return (
     <FormControl>
       <FormLabel component="legend"></FormLabel>

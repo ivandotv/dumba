@@ -47,7 +47,10 @@ const FormDemo = observer(function FormDemo() {
   const classes = useStyles()
   const formStore = useForm()
 
-  const handleOnSubmit = useMemo(() => formStore.handleSubmit(fakeSubmit), [formStore])
+  const handleOnSubmit = useMemo(
+    () => formStore.handleSubmit(fakeSubmit),
+    [formStore]
+  )
 
   return (
     <Paper elevation={2} className={classes.wrap}>

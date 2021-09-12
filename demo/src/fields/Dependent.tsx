@@ -6,10 +6,11 @@ import { useForm } from '../formStore'
 
 const Dependent = observer(function Dependent() {
   const formStore = useForm()
+
   return (
     <FormControl>
       <small>
-        Allow letters or numbers, depending on the value of the{' '}
+        <span>Allow letters or numbers, depending on the value of the </span>
         <strong>type</strong> above.
       </small>
       <TextField
