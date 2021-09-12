@@ -9,8 +9,6 @@ const useStyles = makeStyles((theme: Theme) =>
     wrap: {
       padding: theme.spacing(2),
       overflow: 'hidden'
-      // maxWidth: '40ch',
-      // witdh: '100%'
     },
     title: {
       marginTop: 0
