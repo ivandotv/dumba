@@ -48,5 +48,6 @@
   "devDependencies": {},
   "peerDependencies": {
     "mobx": "^6.3.2"
-  }
+  },
+  "license": "MIT"
 }
