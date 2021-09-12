@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   env: {
     // commonjs: true,
     es6: true,
@@ -17,17 +18,13 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
     'plugin:jest/style',
-    'plugin:prettier/recommended'
+    'prettier'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    // project: './tsconfig.eslint.json',
     sourceType: 'module'
   },
   settings: {
-    react: {
-      version: 'detect'
-    },
     jest: {
       version: 'latest'
     }
