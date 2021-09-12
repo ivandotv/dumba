@@ -6,6 +6,3 @@ const form = new Form(schema)
 export function useForm() {
   return form
 }
-
-// @ts-ignore
-window.form = form

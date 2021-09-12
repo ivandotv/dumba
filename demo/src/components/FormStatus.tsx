@@ -1,8 +1,9 @@
 import { observer } from 'mobx-react-lite'
-import { useForm } from './formStore'
+import { useForm } from '../formStore'
 import Paper from '@material-ui/core/Paper'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,7 +16,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     btnWrap: {
       display: 'flex',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      marginBottom: theme.spacing(1)
     }
   })
 )
@@ -26,31 +28,33 @@ const FormStatus = observer(function FormStatus() {
 
   return (
     <Paper elevation={2} className={classes.wrap}>
-      <h4 className={classes.title}>Form status</h4>
-      <p>
+      <Typography variant="h6" className={classes.title}>
+        Form status
+      </Typography>
+      <Typography>
         <small>All fields are valid initially.</small>
         <br />
         valid:<strong> {formStore.isValid.toString()}</strong>
-      </p>
-      <p>
+      </Typography>
+      <Typography>
         <small>
           All fields have their validation tests executed at least once.
         </small>
         <br />
         validated: <strong>{formStore.isValidated.toString()}</strong>
-      </p>
-      <p>
+      </Typography>
+      <Typography>
         <small>
           True when asynchronous validation is in progress on any field.
         </small>
         <br />
         validating: <strong>{formStore.isValidating.toString()}</strong>
-      </p>
-      <p>
+      </Typography>
+      <Typography>
         <small>True when form is submitting data.</small>
         <br />
         submitting: <strong>{formStore.isSubmitting.toString()}</strong>
-      </p>
+      </Typography>
       <div>
         <pre>payload: {JSON.stringify(formStore.data, undefined, 2)}</pre>
       </div>
@@ -73,13 +77,13 @@ const FormStatus = observer(function FormStatus() {
           Reset to last saved
         </Button>
       </div>
-      <p>
+      <Typography>
         <small>Reset: reset to form original data.</small>
         <br />
         <small>
           Reset to last saved: Reset to last successfully saved data.
         </small>
-      </p>
+      </Typography>
     </Paper>
   )
 })

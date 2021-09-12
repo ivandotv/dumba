@@ -1,7 +1,7 @@
 import { createField, createValidation, Field, getForm } from 'dumba'
 import React from 'react'
-import isAlpha from 'validator/es/lib/isAlpha'
-import isLength from 'validator/es/lib/isLength'
+import isAlpha from 'validator/lib/isAlpha'
+import isLength from 'validator/lib/isLength'
 import isEmail from 'validator/lib/isEmail'
 import isNumeric from 'validator/lib/isNumeric'
 

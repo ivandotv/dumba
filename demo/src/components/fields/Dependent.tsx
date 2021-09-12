@@ -2,17 +2,20 @@ import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import { observer } from 'mobx-react-lite'
 import { DisplayErrors } from '../DisplayErrors'
-import { useForm } from '../formStore'
+import { useForm } from '../../formStore'
+import { Typography } from '@material-ui/core'
 
 const Dependent = observer(function Dependent() {
   const formStore = useForm()
 
   return (
     <FormControl>
-      <small>
-        <span>Allow letters or numbers, depending on the value of the </span>
-        <strong>type</strong> above.
-      </small>
+      <Typography>
+        <small>
+          <span>Allow letters or numbers, depending on the value of the </span>
+          <strong>type</strong> above.
+        </small>
+      </Typography>
       <TextField
         type="text"
         id="numberOrString"

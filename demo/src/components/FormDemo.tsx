@@ -7,11 +7,11 @@ import { useMemo } from 'react'
 import Dependent from './fields/Dependent'
 import Email from './fields/Email'
 import Masked from './fields/Masked'
-import Superhero from './fields/Superhero'
+import Async from './fields/Async'
 import Types from './fields/Types'
 import Username from './fields/Username'
-import { useForm } from './formStore'
-import { schema } from './schema'
+import { useForm } from '../formStore'
+import { schema } from '../schema'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -65,7 +65,7 @@ const FormDemo = observer(function FormDemo() {
         <Masked />
         <Types />
         <Dependent />
-        <Superhero />
+        <Async />
         <Button
           variant="contained"
           color="primary"

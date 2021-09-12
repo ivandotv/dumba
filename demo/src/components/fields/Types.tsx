@@ -4,7 +4,7 @@ import FormLabel from '@material-ui/core/FormLabel'
 import Radio from '@material-ui/core/Radio'
 import RadioGroup from '@material-ui/core/RadioGroup'
 import { observer } from 'mobx-react-lite'
-import { useForm } from '../formStore'
+import { useForm } from '../../formStore'
 
 const Types = observer(function Types() {
   const formStore = useForm()

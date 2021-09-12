@@ -3,7 +3,7 @@ import FormLabel from '@material-ui/core/FormLabel'
 import TextField from '@material-ui/core/TextField'
 import { observer } from 'mobx-react-lite'
 import { DisplayErrors } from '../DisplayErrors'
-import { useForm } from '../formStore'
+import { useForm } from '../../formStore'
 
 const Username = observer(function Username() {
   const formStore = useForm()

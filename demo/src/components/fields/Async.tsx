@@ -3,16 +3,18 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import TextField from '@material-ui/core/TextField'
 import { observer } from 'mobx-react-lite'
 import { DisplayErrors } from '../DisplayErrors'
-import { useForm } from '../formStore'
+import { useForm } from '../../formStore'
+import { Typography } from '@material-ui/core'
 
-const Superhero = observer(function Superhero() {
+const Async = observer(function Async() {
   const formStore = useForm()
 
   return (
     <FormControl>
-      {/* <FormLabel component="legend">Superhero</FormLabel> */}
-      <small>Asynchronous validation</small>
-      <small>TIP: use "batman" to pass validaton</small>
+      <Typography>
+        <small>Asynchronous validation</small>
+        <small>TIP: use &quotbatman&quot to pass validaton</small>
+      </Typography>
       <TextField
         type="text"
         id="superhero"
@@ -39,4 +41,4 @@ const Superhero = observer(function Superhero() {
     </FormControl>
   )
 })
-export default Superhero
+export default Async

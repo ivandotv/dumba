@@ -2,7 +2,7 @@ import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import { observer } from 'mobx-react-lite'
 import { DisplayErrors } from '../DisplayErrors'
-import { useForm } from '../formStore'
+import { useForm } from '../../formStore'
 
 const Email = observer(function Email() {
   const formStore = useForm()
