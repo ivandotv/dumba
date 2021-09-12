@@ -42,6 +42,7 @@ module.exports = {
     ['@babel/plugin-proposal-nullish-coalescing-operator'], //node v10
     ['@babel/plugin-proposal-optional-chaining'], // node v10
     ['@babel/proposal-class-properties', { loose: true }], // stage-3 proposal
+    ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
     ['@babel/proposal-private-methods', { loose: true }], // stage-3 proposal
     'dev-expression',
     [
