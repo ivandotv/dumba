@@ -181,6 +181,7 @@ export class Form<TSchema = any> {
 
   /**
    * Gets whether all the fields in the form have been validated at least once.
+   * Don't confuse this propety with {@link Form.isValid}
    */
   get isValidated(): boolean {
     for (const field of this.fieldsByPath.values()) {
