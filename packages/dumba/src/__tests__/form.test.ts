@@ -11,8 +11,8 @@ configure({
   enforceActions: 'always'
 })
 
-describe('Form', () => {
-  test('fields are correctly initialized', () => {
+describe('Form #form', () => {
+  test('Fields are correctly initialized', () => {
     const form = new Form(fixtures.getSchema())
 
     expect(form.fields.name).toBeInstanceOf(Field)
@@ -22,7 +22,7 @@ describe('Form', () => {
     expect(form.fields.info.c.c1).toBeInstanceOf(Field)
   })
 
-  test('Get the form from a field propety', () => {
+  test('Get the form from the field propety', () => {
     const form = new Form(fixtures.getSchema())
 
     const fromNameField = getForm<typeof fixtures.getSchema>(form.fields.name)
@@ -44,8 +44,8 @@ describe('Form', () => {
           }
         }
       }
-
       const callback = jest.fn()
+
       await form.validate(callback)
 
       expect(callback).toHaveBeenCalledTimes(1)
@@ -70,6 +70,7 @@ describe('Form', () => {
         }
       }
       const form = new Form(schema)
+
       await form.validate()
 
       expect(validationSpy).not.toHaveBeenCalled()
@@ -90,6 +91,7 @@ describe('Form', () => {
         }
       }
       const form = new Form(schema)
+
       await form.validate()
 
       expect(form.isValid).toBe(true)
@@ -99,7 +101,6 @@ describe('Form', () => {
       const bFieldErrorOne = 'b field error one'
       const bFieldErrorTwo = 'b field error two'
       const cFieldError = 'c field error'
-
       const schema = {
         name: createField({
           value: 'name',
@@ -137,17 +138,13 @@ describe('Form', () => {
 
       expect(callback).toHaveBeenCalledTimes(1)
       expect(callback).toHaveBeenCalledWith(form)
-
       expect(form.data).toEqual(expectedPayload)
       expect(form.isValid).toBe(false)
     })
   })
 
-  test('When validating, "isValidating" property is true', async () => {
+  test('When validation is in progress, form is in validating state', async () => {
     const form = new Form(fixtures.getAsyncSchema())
-
-    expect(form.isValidating).toBe(false)
-
     const result = form.validate()
 
     expect(form.isValidating).toBe(true)
@@ -157,7 +154,7 @@ describe('Form', () => {
     expect(form.isValidating).toBe(false)
   })
 
-  test('Clear validation errors for all fields', async () => {
+  test('Clear validation errors for all the fields', async () => {
     const schema = {
       name: createField({
         value: 'name',
@@ -192,7 +189,7 @@ describe('Form', () => {
     expect(form.fields.info.c.c1.isValid).toBe(true)
   })
 
-  test('When field value is changed, "isDirty" property is true', () => {
+  test('When the value of the field is changed, form is dirty', () => {
     const form = new Form(fixtures.getSchema())
 
     expect(form.isDirty).toBe(false)
@@ -202,7 +199,7 @@ describe('Form', () => {
     expect(form.isDirty).toBe(true)
   })
 
-  test('When field value on disabled field is changed, "isDirty" property is still false', async () => {
+  test('When the value of the disabled field is changed, form is not dirty', async () => {
     const bValue = 'b'
     const schema = {
       a: createField({
@@ -223,13 +220,13 @@ describe('Form', () => {
     expect(form.isDirty).toBe(false)
   })
 
-  test('When field value is not yet validated, "isValidated" property is false', async () => {
+  test('When the field value is not yet validated, form is in invalidated state', async () => {
     const form = new Form(fixtures.getSchema())
 
     expect(form.isValidated).toBe(false)
   })
 
-  test('When field value is validated, "isValidated" property is true', async () => {
+  test('When field value is validated, form is in validated state', async () => {
     const form = new Form(fixtures.getSchema())
 
     await form.validate()
@@ -237,7 +234,7 @@ describe('Form', () => {
     expect(form.isValidated).toBe(true)
   })
 
-  test('When there is a disable field, after validation "isValidated" property is true', async () => {
+  test('When there is a disabled field, form is validated', async () => {
     const validationSpy = jest.fn().mockReturnValueOnce(false)
     const bValue = 'b'
     const schema = {
@@ -268,9 +265,7 @@ describe('Form', () => {
 
     form.fields.info.b.setValue(newValue)
 
-    const newPayload = form.data
-
-    expect(newPayload.info.b).toBe(newValue)
+    expect(form.data.info.b).toBe(newValue)
   })
 
   describe('Handle submit', () => {
@@ -285,7 +280,7 @@ describe('Form', () => {
       expect(submitFn).toHaveBeenCalledWith(form)
     })
 
-    test('If event is passed to submit handler, it calls "preventDefault"', async () => {
+    test('If an event is passed to the submit handler, default action is not taken', async () => {
       const form = new Form(fixtures.getSchema())
       const response = 'response'
       const submitFn = jest.fn().mockResolvedValueOnce(response)
@@ -298,7 +293,7 @@ describe('Form', () => {
       expect(preventDefaultSpy.preventDefault).toHaveBeenCalledTimes(1)
     })
 
-    test('If success callback is passed in, it is called after successful submission', async () => {
+    test('If success callback is available, it is called after successful submission', async () => {
       const form = new Form(fixtures.getSchema())
       const response = 'response'
       const submitFn = jest.fn().mockResolvedValueOnce(response)
@@ -310,7 +305,7 @@ describe('Form', () => {
       expect(successCallback).toHaveBeenCalledWith(form, response)
     })
 
-    test('If error callback is passed in, it is called after failed submission', async () => {
+    test('If error callback is available, it is called after failed submission', async () => {
       const form = new Form(fixtures.getSchema())
       const response = 'response'
       const submitFn = jest.fn().mockRejectedValueOnce(response)
@@ -322,7 +317,7 @@ describe('Form', () => {
       expect(errorCallback).toHaveBeenCalledWith(form, response)
     })
 
-    test('When submit process starts, "isSubmitting" property is true', () => {
+    test('When submit process starts, form is in submitting stte', () => {
       const form = new Form(fixtures.getSchema())
       const submitFn = jest.fn().mockResolvedValueOnce(true)
 
@@ -331,7 +326,7 @@ describe('Form', () => {
       expect(form.isSubmitting).toBe(true)
     })
 
-    test('When submit process ends, "isSubmitting" property is false', async () => {
+    test('When submit process ends, form leaves submitting state', async () => {
       const form = new Form(fixtures.getSchema())
       const submitFn = jest.fn().mockResolvedValueOnce(true)
 
@@ -341,7 +336,7 @@ describe('Form', () => {
     })
 
     describe('Successful submit', () => {
-      test('"submitError" property is null', async () => {
+      test('Form holds no submission errors', async () => {
         const form = new Form(fixtures.getSchema())
         const submitFn = jest.fn().mockResolvedValueOnce(true)
 
@@ -349,11 +344,13 @@ describe('Form', () => {
 
         expect(form.submitError).toBeNull()
       })
-      test('"lastSavedData" reflects, last successful submit', async () => {
+
+      test('Form holds last successfully submitted data', async () => {
         const form = new Form(fixtures.getSchema())
         const submitFn = jest.fn().mockResolvedValueOnce(true)
         const dataBeforeSave = form.data
         await form.handleSubmit(submitFn)()
+
         //change field value
         await form.fields.info.b.setValue('new value')
 
@@ -361,13 +358,13 @@ describe('Form', () => {
         expect(form.lastSavedData).not.toEqual(form.data)
       })
 
-      test("If the form hasn't been submitted, 'lastSavedData' is null", async () => {
+      test("If the form hasn't been submitted, there is no last submitted data", async () => {
         const form = new Form(fixtures.getSchema())
 
         expect(form.lastSavedData).toBeNull()
       })
 
-      test('When configured to remove disabled fields, set disabled fields to "undefined"', async () => {
+      test('When the form is configured to remove disabled fields, all disabled fields are undefined', async () => {
         const schema = {
           a: createField({
             disabled: false,
@@ -429,7 +426,7 @@ describe('Form', () => {
         expect(validateSpy).not.toHaveBeenCalled()
       })
 
-      test('If validation fails, fail submission process', async () => {
+      test('If validation fails, fail the submission process', async () => {
         const submissionFn = jest.fn()
         const schema = {
           a: createField({
@@ -455,7 +452,7 @@ describe('Form', () => {
     })
 
     describe('Unsuccessful submit', () => {
-      test('"submitError" property holds latest submit error response', async () => {
+      test('Form holds latest submit error response', async () => {
         const form = new Form(fixtures.getSchema())
         const responseError = 'response error'
         const submitFn = jest.fn().mockRejectedValueOnce(responseError)
@@ -490,10 +487,8 @@ describe('Form', () => {
 
           form.reset()
 
-          const afterResetPayload = form.data
-
-          expect(afterResetPayload.info.b).not.toBe(newValue)
-          expect(initialPayload).toEqual(afterResetPayload)
+          expect(form.data.info.b).not.toBe(newValue)
+          expect(initialPayload).toEqual(form.data)
         })
       })
       describe('Last saved values', () => {
@@ -502,7 +497,6 @@ describe('Form', () => {
           const submitFn = jest.fn().mockResolvedValueOnce(true)
           const submit = form.handleSubmit(submitFn)
           await submit()
-
           form.fields.name.setValue('new name')
           form.fields.info.b.setValue('new value')
 

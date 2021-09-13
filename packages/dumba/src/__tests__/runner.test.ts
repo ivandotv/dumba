@@ -2,7 +2,7 @@ import { Runner } from '../runner'
 import { createValidation, Validation } from '../validation'
 import * as fixtures from './__fixtures__/fixtures'
 
-describe('Runner', () => {
+describe('Runner #runner', () => {
   describe('Create', () => {
     test('With one validation instance', () => {
       const validation = fixtures.validationOk()
@@ -111,7 +111,7 @@ describe('Runner', () => {
       expect(fnTwoSpy).toHaveBeenCalledWith(expectedValue, field, undefined)
     })
 
-    test('Run mix of synchronous and asyncsynchronous validations', async () => {
+    test('Run a mix of synchronous and asyncsynchronous validations', async () => {
       const expectedValue = 'A'
       const fnOne = fixtures.validationOk()
       const fnOneSpy = jest.spyOn(fnOne, 'fn')
@@ -126,6 +126,7 @@ describe('Runner', () => {
       const { field } = fixtures.getField()
       const runner = new Runner([fnOne, fnOneAsync, fnTwo, fnTwoAsync])
 
+      //act
       await runner.validate(expectedValue, field)
 
       expect(fnOneSpy).toHaveBeenCalledTimes(1)
@@ -149,7 +150,7 @@ describe('Runner', () => {
       )
     })
 
-    test('Return error from validation', async () => {
+    test('Corectly return error from validation', async () => {
       const expectedValue = 'A'
       const expectedSyncMessage = 'sync fail A'
       const expectedAsyncMessage = 'async fail A'
@@ -168,7 +169,7 @@ describe('Runner', () => {
       expect(expectedResult).toEqual(result)
     })
 
-    test('With default error message', async () => {
+    test('Return default error message', async () => {
       const expectedValue = 'A'
       const expectedMessage = Validation.defaultMessage
       const expectedResult = {
@@ -199,7 +200,7 @@ describe('Runner', () => {
         expect(result).toEqual(expectedResult)
       })
 
-      test('Default message will be ignored', async () => {
+      test('Ignore default error message', async () => {
         const expectedValue = 'A'
         const expectedMessage = 'failed'
 
