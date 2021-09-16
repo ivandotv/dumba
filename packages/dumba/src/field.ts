@@ -127,7 +127,7 @@ export class Field<T = any> {
       const validationTest = new Promise<void>((resolve) => {
         if (typeof this.delay !== 'undefined') {
           if (this.timeoutId) {
-            clearTimeout(this.timeoutId)
+            window.clearTimeout(this.timeoutId)
           }
           this.timeoutId = window.setTimeout(() => {
             resolve(this.validateAsync())
