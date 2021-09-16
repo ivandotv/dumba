@@ -6,12 +6,14 @@
     "declarationMap": true,
     "declaration": true,
     "tsBuildInfoFile": "./.buildcache/build-types.tsbuildinfo"
-  }
-  // "include": ["src/**/*"]
-  // "exclude": [
-  //   "**/node_modules",
-  //   "src/**/__tests__",
-  //   "src/**/*.test.ts",
-  //   "src/**/*.spec.ts"
-  // ]
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "**/node_modules",
+    "../**/node_modules",
+    "../../**/node_modules",
+    "src/**/__tests__",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
+  ]
 }

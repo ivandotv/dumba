@@ -14,7 +14,10 @@ const argv = require('minimist')(process.argv.slice(2))
 const packageRelativePath = path.relative(__dirname, process.cwd())
 const pkg = require(`${packageRelativePath}/package.json`)
 
-process.env.BUILD_PACKAGE_NAME = pkg.name
+const withNamespace = pkg.name.split('/')[1]
+const name = withNamespace ? withNamespace : pkg.name
+
+process.env.BUILD_PACKAGE_NAME = name
 
 const allBuilds = ['cjs', 'esm', 'umd']
 
@@ -31,7 +34,7 @@ process.env.BUILD_TARGET = buildBundle.join(',')
 })()
 
 let tasks = [
-  function (cb) {
+  (cb) => {
     spawn(
       'yarn',
       [
@@ -56,7 +59,7 @@ let tasks = [
 
 if (buildBundle.indexOf('cjs') !== -1) {
   tasks = tasks.concat(async () => {
-    return await createCjsIndexFile(pkg.name)
+    return await createCjsIndexFile(name)
   })
 }
 series(tasks)

@@ -5,7 +5,7 @@ import filesize from 'rollup-plugin-filesize'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import { terser } from 'rollup-plugin-terser'
 import minimist from 'minimist'
-// import visualizer from 'rollup-plugin-visualizer'
+import visualizer from 'rollup-plugin-visualizer'
 
 const argv = minimist(process.argv.slice(2))
 
@@ -25,8 +25,8 @@ function defaultPlugins(config = {}) {
     peerDepsExternal(),
     babel(config.babel || { babelHelpers: 'bundled' }),
     commonjs(),
-    argv.watch ? undefined : filesize()
-    // visualizer({ template: 'treemap' })
+    argv.watch ? undefined : filesize(),
+    visualizer({ template: 'treemap' })
   ]
 }
 

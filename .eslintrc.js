@@ -17,7 +17,6 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
-    'plugin:jest/style',
     'prettier'
   ],
   parser: '@typescript-eslint/parser',
@@ -31,8 +30,6 @@ module.exports = {
   },
   rules: {
     'jest/no-done-callback': 'off',
-    'react/prop-types': 'off',
-    'react/react-in-jsx-scope': 'off',
     'no-unused-vars': 'off',
     'generator-star-spacing': ['error', { before: false, after: true }],
     'space-before-function-paren': 'off',
