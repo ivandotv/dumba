@@ -1,4 +1,5 @@
-import type { Field, Form } from '.'
+import type { Form } from './form'
+import type { Field } from './field'
 
 /*
 Performs a deep comparison between two values to determine if they are equivalent.

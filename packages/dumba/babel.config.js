@@ -120,8 +120,8 @@ module.exports = {
         [
           '@babel/env',
           {
-            // useBuiltIns: 'usage',
-            // corejs: 3,
+            useBuiltIns: 'usage',
+            corejs: 3,
             targets: {
               // browsers: ['>0.2%', 'not dead', 'not op_mini all']
               // browsers: ['last 2 chrome version']
@@ -143,7 +143,6 @@ module.exports = {
         [
           '@babel/env',
           {
-            // useBuiltIns: 'none',
             targets: {
               // esmodules: true
               // browsers: ['last 2 chrome version']

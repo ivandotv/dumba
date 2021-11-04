@@ -36,10 +36,10 @@ process.env.BUILD_TARGET = buildBundle.join(',')
 let tasks = [
   (cb) => {
     spawn(
-      'yarn',
+      'pnpm',
       [
-        '--cwd',
-        process.cwd(),
+        // '--cwd',
+        // process.cwd(),
         'rollup',
         '-c',
         `${path.resolve(`${__dirname}/..`)}/rollup.config.js`,

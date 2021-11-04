@@ -21,7 +21,7 @@ const esmFilePath = libPath('./dist/esm', packageName)
 // https://github.com/rollup/rollup/issues/703#issuecomment-314848245
 function defaultPlugins(config = {}) {
   return [
-    resolve({ extensions }),
+    resolve({ extensions, browser: true }),
     peerDepsExternal(),
     babel(config.babel || { babelHelpers: 'bundled' }),
     commonjs(),
@@ -70,7 +70,8 @@ const cjsProd = {
 }
 
 const umdGlobals = {
-  mobx: 'mobx'
+  mobx: 'mobx',
+  crypto: 'crypto'
 }
 // umd build for the browser
 const umd = {
@@ -101,56 +102,21 @@ const umd = {
   })
 }
 
-const umdWithPolyfill = {
-  input,
-  output: [
-    {
-      file: umdFilePath('.polyfill.js'),
-      format: 'umd',
-      name: packageName,
-      sourcemap: true,
-      globals: umdGlobals
-    },
-    {
-      file: umdFilePath('.polyfill.min.js'),
-      format: 'umd',
-      name: packageName,
-      sourcemap: true,
-      globals: umdGlobals,
-      plugins: [terser()]
-    }
-  ],
-  plugins: defaultPlugins({
-    babel: {
-      extensions,
-      envName: 'browserPolyfill',
-      babelHelpers: 'bundled'
-    }
-  })
-}
-
 // build for browser as module
 const esm = {
   input,
-  watch: argv.watch
-    ? {
-        chokidar: false
-      }
-    : undefined,
   output: [
     {
       file: esmFilePath('.esm.js'),
       format: 'esm',
       sourcemap: true
     },
-    argv.watch
-      ? undefined
-      : {
-          file: esmFilePath('.esm.min.js'),
-          format: 'esm',
-          sourcemap: true,
-          plugins: [terser()]
-        }
+    {
+      file: esmFilePath('.esm.min.js'),
+      format: 'esm',
+      sourcemap: true,
+      plugins: [terser()]
+    }
   ],
   plugins: defaultPlugins({
     babel: {
@@ -161,38 +127,14 @@ const esm = {
   })
 }
 
-const _esmWithPolyfill = {
-  input,
-  output: [
-    {
-      file: esmFilePath('.esm.polyfill.js'),
-      format: 'esm',
-      sourcemap: true
-    },
-    {
-      file: esmFilePath('.esm.polyfill.min.js'),
-      format: 'esm',
-      sourcemap: true,
-      plugins: [terser()]
-    }
-  ],
-  plugins: defaultPlugins({
-    babel: {
-      extensions,
-      envName: 'browserModulePolyfill',
-      babelHelpers: 'bundled'
-    }
-  })
-}
-
 const envToBuild = {
   cjs: [cjsDev, cjsProd],
-  umd: [umd, umdWithPolyfill],
+  umd: [umd],
   esm: [esm]
 }
 
 function libPath(path, libName) {
-  return function (suffix) {
+  return (suffix) => {
     return path.concat('/', libName, suffix)
   }
 }

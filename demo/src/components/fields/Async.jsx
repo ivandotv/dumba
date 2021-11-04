@@ -13,7 +13,7 @@ const Async = observer(function Async() {
     <FormControl>
       <Typography>
         <small>Asynchronous validation</small>
-        <small>TIP: use &quotbatman&quot to pass validaton</small>
+        <small>TIP: use "batman" to pass validaton</small>
       </Typography>
       <TextField
         type="text"

@@ -12,7 +12,7 @@ const del = require('del')
 })()
 
 spawn(
-  'yarn',
+  'pnpm',
   [
     '--cwd',
     process.cwd(),

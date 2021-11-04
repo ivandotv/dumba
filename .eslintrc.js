@@ -1,10 +1,10 @@
 module.exports = {
   root: true,
   env: {
-    // commonjs: true,
     es6: true,
     node: true,
-    jest: true
+    jest: true,
+    browser: true
   },
   globals: {
     __DEV__: true,
@@ -12,26 +12,25 @@ module.exports = {
     __COMMIT_SHA__: true,
     __BUILD_DATE__: true
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'jest', 'prettier'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'prettier'],
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
-    'prettier'
+    'plugin:jest/style',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module'
   },
   settings: {
-    jest: {
-      version: 'latest'
+    react: {
+      version: 'detect'
     }
   },
   rules: {
-    'jest/no-done-callback': 'off',
     'no-unused-vars': 'off',
-    'generator-star-spacing': ['error', { before: false, after: true }],
     'space-before-function-paren': 'off',
     'no-dupe-class-members': 'off',
     'no-useless-constructor': 'off',
@@ -39,7 +38,8 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': [
       'warn',
       {
-        'ts-expect-error': 'allow-with-description'
+        'ts-expect-error': 'allow-with-description',
+        'ts-ignore': 'allow-with-description'
       }
     ],
     'prettier/prettier': ['error'],
@@ -54,14 +54,6 @@ module.exports = {
         patterns: ['@material-ui/*/*/*', '!@material-ui/core/test-utils/*']
       }
     ],
-    // '@typescript-eslint/explicit-function-return-type': [
-    //   'error',
-    //   {
-    //     allowExpressions: true,
-    //     allowTypedFunctionExpressions: true
-    //   }
-    // ],
-
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-member-accessibility': [
