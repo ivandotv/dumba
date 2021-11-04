@@ -1,41 +1,31 @@
-import { createField, createValidation, Field, getForm } from 'dumba'
-import React from 'react'
+import { createField, createValidation, getForm } from 'dumba'
 import isAlpha from 'validator/lib/isAlpha'
-import isLength from 'validator/lib/isLength'
 import isEmail from 'validator/lib/isEmail'
+import isLength from 'validator/lib/isLength'
 import isNumeric from 'validator/lib/isNumeric'
 
 export const schema = {
   username: createField({
     value: '',
     validations: [
+      createValidation((str) => isAlpha(str), 'Only letters are allowed'),
       createValidation(
-        (str: string) => isAlpha(str),
-        'Only letters are allowed'
-      ),
-      createValidation(
-        (str: string) => isLength(str, { min: 3 }),
+        (str) => isLength(str, { min: 3 }),
         'Name must be more than 3 characters'
       )
     ]
   }),
   email: createField({
     value: 'admin@example.com',
-    validations: createValidation(
-      (str: string) => isEmail(str),
-      'Not a valid email'
-    )
+    validations: createValidation((str) => isEmail(str), 'Not a valid email')
   }),
   masked: createField({
     value: '',
     validations: createValidation(
-      (str: string) => isLength(str, { min: 1 }),
+      (str) => isLength(str, { min: 1 }),
       'Must have at least one character'
     ),
-    parseValue: (
-      evt: React.ChangeEvent<HTMLInputElement>,
-      field: Field<string>
-    ) => {
+    parseValue: (evt, field) => {
       const newValue = evt.currentTarget.value
 
       if (newValue.length === 0) {
@@ -62,17 +52,17 @@ export const schema = {
     numberOrString: createField({
       value: '',
       dependsOn: 'typeOptions.types',
-      shouldDisable: (_value: string, _field: Field, dependancy?: Field) => {
+      shouldDisable: (_value, _field, dependancy) => {
         return dependancy?.value === 'disabled'
       },
       validations: [
         createValidation(
-          (value: string, _field: Field<string>) => isLength(value, { min: 1 }),
+          (value, _field) => isLength(value, { min: 1 }),
           "Can't be empty"
         ),
-        createValidation((value: string, field: Field, dependancy?: Field) => {
+        createValidation((value, field) => {
           //get the Form instance of the field
-          const form = getForm<typeof schema>(field)
+          const form = getForm(field)
           /*
           when validation runs because of the dependency change
             form.fields.typeOptions.types  === dependancy
@@ -84,11 +74,10 @@ export const schema = {
 
           return true
         }, 'Not a number'),
-        createValidation((value: string, field: Field, dependancy?: Field) => {
-          const form = getForm<typeof schema>(field)
+        createValidation((value, field) => {
+          const form = getForm(field)
 
           if (form.fields.typeOptions.types.value === 'letter') {
-            // @ts-expect-error - typings from validator.js are wrong
             return isAlpha(value, undefined, { ignore: ' ' })
           }
 
@@ -103,17 +92,17 @@ export const schema = {
     bailEarly: true,
     validations: [
       createValidation(
-        (str: string) => isAlpha(str),
+        (str) => isAlpha(str),
         'Required, only letters are allowed'
       ),
-      createValidation((str: string) => {
+      createValidation((str) => {
         const p = new Promise((resolve, reject) => {
           setTimeout(() => {
             resolve(str === 'batman')
           }, 700)
         })
 
-        return p as Promise<boolean>
+        return p
       }, 'Superhero not found')
     ]
   })

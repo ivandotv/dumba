@@ -1,0 +1,17 @@
+body {
+  overflow-y: scroll;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.app > * {
+  margin: 16px;
+}
+
+.title {
+  text-align: center;
+}
