@@ -78,7 +78,7 @@ importers:
       '@babel/types': ^7.15.6
       '@changesets/cli': ^2.17.0
       '@rollup/plugin-babel': ^5.3.0
-      '@rollup/plugin-commonjs': ^20.0.0
+      '@rollup/plugin-commonjs': ^21.0.0
       '@rollup/plugin-node-resolve': ^13.0.4
       '@types/jest': ^27.0.1
       '@types/node': ^16.9.1
@@ -136,7 +136,7 @@ importers:
       '@babel/types': 7.16.0
       '@changesets/cli': 2.17.0
       '@rollup/plugin-babel': 5.3.0_@babel+core@7.16.0+rollup@2.59.0
-      '@rollup/plugin-commonjs': 20.0.0_rollup@2.59.0
+      '@rollup/plugin-commonjs': 21.0.1_rollup@2.59.0
       '@rollup/plugin-node-resolve': 13.0.6_rollup@2.59.0
       '@types/jest': 27.0.2
       '@types/node': 16.11.6
@@ -4348,8 +4348,8 @@ packages:
       rollup: 2.59.0
     dev: true
 
-  /@rollup/plugin-commonjs/20.0.0_rollup@2.59.0:
-    resolution: {integrity: sha512-5K0g5W2Ol8hAcTHqcTBHiA7M58tfmYi1o9KxeJuuRNpGaTa5iLjcyemBitCBcKXaHamOBBEH2dGom6v6Unmqjg==}
+  /@rollup/plugin-commonjs/21.0.1_rollup@2.59.0:
+    resolution: {integrity: sha512-EA+g22lbNJ8p5kuZJUYyhhDK7WgJckW5g4pNN7n4mAFUM96VuwUnNT3xr2Db2iCZPI1pJPbGyfT5mS9T1dHfMg==}
     engines: {node: '>= 8.0.0'}
     peerDependencies:
       rollup: ^2.38.3
