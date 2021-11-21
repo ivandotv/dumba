@@ -22,7 +22,7 @@ importers:
   demo:
     specifiers:
       '@material-ui/core': ^4.12.3
-      dumba: workspace:*
+      dumba: ^2.0.0
       mobx: ^6.3.7
       mobx-react-lite: ^3.2.2
       react: ^17.0.2
@@ -8240,6 +8240,7 @@ packages:
 
   /encoding/0.1.13:
     resolution: {integrity: sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==}
+    requiresBuild: true
     dependencies:
       iconv-lite: 0.6.3
     dev: true
