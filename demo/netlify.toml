@@ -1,6 +1,8 @@
 [build.environment]
   NPM_FLAGS="--prefix=/dev/null"
   YARN_FLAGS="--prefix=/dev/null"
+  NETLIFY_USE_YARN="false"
 [build]
-  command = "npx pnpm install --store=node_modules/.pnpm-store && npx pnpm build"
+  command = "npx pnpm install --store=node_modules/.pnpm-store && \
+  npx pnpm run build --filter demo... --stream"
   publish = "build"
