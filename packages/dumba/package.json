@@ -100,8 +100,7 @@
     "typescript": "^4.4.3"
   },
   "peerDependencies": {
-    "mobx": "^6.3.2",
-    "react": "^17.0.2"
+    "mobx": "^6.3.2"
   },
   "license": "MIT"
 }
