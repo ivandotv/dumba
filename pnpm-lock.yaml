@@ -22,7 +22,7 @@ importers:
   demo:
     specifiers:
       '@material-ui/core': ^4.12.3
-      dumba: ^2.0.0
+      dumba: workspace:*
       mobx: ^6.3.7
       mobx-react-lite: ^3.2.2
       react: ^17.0.2
@@ -5712,7 +5712,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.14.5
+      follow-redirects: 1.14.5_debug@4.3.2
     transitivePeerDependencies:
       - debug
     dev: false
