@@ -7,7 +7,7 @@ import { Field, FieldResult } from './field'
 import type React from 'react'
 
 /**
- * Responst string that is return when form while submitting fails validation
+ * Response string that is returned when the form fails validation
  */
 export const FAILED_VALIDATION_RESPONSE = 'validation_failed'
 
