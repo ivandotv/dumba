@@ -51,7 +51,7 @@ jobs:
       - name: Generate Code Coverage
         # only when running in node v16
         if: matrix.node == 16
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -61,7 +61,7 @@ jobs:
         id: 'changesets'
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: yarn release
+          publish: pnpm release
           commit: Version release
           title: Next release
         env:
@@ -71,7 +71,8 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         run: pnpm docs
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Commit docs
         if: steps.changesets.outputs.published == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: 'Generate docs'
