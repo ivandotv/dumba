@@ -64,7 +64,6 @@ export class Form<TSchema = any> {
     this.reset = this.reset.bind(this)
     this.resetToLastSaved = this.resetToLastSaved.bind(this)
 
-    // initMobx(this)
     makeObservable<Form<any>, 'lastSavedDataByPath'>(this, {
       fields: observable,
       submitError: observable,
@@ -104,11 +103,14 @@ export class Form<TSchema = any> {
    * @param [cb] - Callback function that is called after the validation is complete
    */
   async validate(cb?: (form: Form<TSchema>) => void): Promise<void> {
+    const validations = []
     for (const field of this.fieldsByPath.values()) {
       if (!field.isDisabled) {
-        await field.validate()
+        validations.push(field.validate())
       }
     }
+    await Promise.allSettled(validations)
+
     if (cb) {
       cb(this)
     }
