@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <div className="title">
-        <Typography variant="h4">Dumba Form Demo Fix</Typography>
+        <Typography variant="h4">Dumba Form Demo</Typography>
         <Typography>
           Checkout the documentation at <Link href="www.google.com">Dumba</Link>
         </Typography>
