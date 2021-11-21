@@ -1,19 +1,17 @@
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import type { Form } from 'dumba'
+import { createStyles, makeStyles } from '@material-ui/core/styles'
 import { observer } from 'mobx-react-lite'
 import { useMemo } from 'react'
+import { useForm } from '../formStore'
+import Async from './fields/Async'
 import Dependent from './fields/Dependent'
 import Email from './fields/Email'
 import Masked from './fields/Masked'
-import Async from './fields/Async'
 import Types from './fields/Types'
 import Username from './fields/Username'
-import { useForm } from '../formStore'
-import { schema } from '../schema'
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     wrap: {
       display: 'flex'
@@ -37,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
  * @param _form
  * @returns
  */
-function fakeSubmit(_form: Form<typeof schema>) {
+function fakeSubmit(_form) {
   return new Promise((resolve, _reject) => {
     setTimeout(resolve, 1500)
   })

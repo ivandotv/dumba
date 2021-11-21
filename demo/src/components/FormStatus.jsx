@@ -1,11 +1,11 @@
+import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper'
+import { createStyles, makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
 import { observer } from 'mobx-react-lite'
 import { useForm } from '../formStore'
-import Paper from '@material-ui/core/Paper'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     wrap: {
       padding: theme.spacing(2),

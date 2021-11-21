@@ -1,4 +1,4 @@
-export function DisplayErrors({ errors }: { errors: string[] }) {
+export function DisplayErrors({ errors }) {
   return (
     <>
       {errors.map((error) => (
