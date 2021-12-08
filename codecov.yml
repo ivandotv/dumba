@@ -1,7 +1,23 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+      dumba:
+        target: auto
+        flags:
+          - dumba
+
+comment:
+  layout: 'reach, diff, flags, files'
+  behavior: default
+  require_changes: false
+  require_base: true
+  require_head: true
+  branches: [master]
+
 flags:
-  # filter the folder(s) you wish to measure by that flag
   dumba:
-    # only include files in the backend folder
-    carryforward: true
     paths:
       - packages/dumba/
+    carryforward: true

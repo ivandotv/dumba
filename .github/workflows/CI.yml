@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - master
+      - develop
 jobs:
   build:
     name: Node unit tests
@@ -16,6 +17,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
+          fetch-depth: 0
 
       - name: Cache .pnpm-store
         uses: actions/cache@v2
@@ -28,19 +32,19 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install pnpm
-        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
-
       - name: Install dependencies
-        run: pnpm install
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.23.6
+          run_install: true
 
       - name: Lint source
         run: |
           pnpm lint:ci
 
-      - name: Check types
+      - name: Build packages
         run: |
-          pnpm type:check
+          pnpm build
 
       - name: Run tests
         run: |
@@ -55,9 +59,9 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: 'Publish to NPM'
+      - name: 'Consume changesets'
         if: github.event_name == 'push' && github.repository == 'ivandotv/dumba' && matrix.node == 16 && github.ref == 'refs/heads/master'
-        uses: changesets/action@master
+        uses: changesets/action@v1
         id: 'changesets'
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
@@ -69,7 +73,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: 'Generate docs'
         if: steps.changesets.outputs.published == 'true'
-        run: pnpm docs
+        run: pnpm gen:docs
 
       - name: Commit docs
         if: steps.changesets.outputs.published == 'true'
