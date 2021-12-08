@@ -50,7 +50,7 @@ jobs:
       - name: Build packages for Node V12 only
         if: matrix.node == 12
         run: |
-          pnpm build --filter=!docs
+          pnpm build -- --filter=!docs
 
       - name: Run tests
         run: |
