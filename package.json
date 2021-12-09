@@ -10,6 +10,7 @@
     "lint:ci": "pnpm multi run lint:ci",
     "type:build": "pnpm multi run type:build",
     "build": "pnpm multi run build",
+    "gen:docs": "rm -rf ./docs/api && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --exclude ./src/__tests__ --out docs/api ./src",
     "prepare": "husky install",
     "release": "pnpm multi run prepublishOnly --workspace-concurrency 1 && pnpm changeset publish"
   },
