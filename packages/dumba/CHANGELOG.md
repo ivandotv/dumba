@@ -1,5 +1,12 @@
 # dumba
 
+## 2.0.2
+
+### Patch Changes
+
+- 5328e10: Switch to microbundle build.
+  Fix Eslint errors.
+
 ## 2.0.1
 
 ### Patch Changes
