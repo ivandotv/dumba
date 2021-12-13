@@ -42,7 +42,7 @@ importers:
       '@docusaurus/core': 2.0.0-beta.13
       '@docusaurus/preset-classic': 2.0.0-beta.13
       '@mdx-js/react': ^1.6.22
-      '@svgr/webpack': ^5.5.0
+      '@svgr/webpack': ^6.0.0
       clsx: ^1.1.1
       file-loader: ^6.2.0
       prism-react-renderer: ^1.2.1
@@ -53,7 +53,7 @@ importers:
       '@docusaurus/core': 2.0.0-beta.13_react-dom@17.0.2+react@17.0.2
       '@docusaurus/preset-classic': 2.0.0-beta.13_cf03b7458ee8070c9e09362c20b6f0a1
       '@mdx-js/react': 1.6.22_react@17.0.2
-      '@svgr/webpack': 5.5.0
+      '@svgr/webpack': 6.1.2
       clsx: 1.1.1
       file-loader: 6.2.0
       prism-react-renderer: 1.2.1_react@17.0.2
@@ -308,10 +308,10 @@ packages:
     dependencies:
       '@babel/code-frame': 7.16.0
       '@babel/generator': 7.16.0
-      '@babel/helper-compilation-targets': 7.16.0_@babel+core@7.16.0
+      '@babel/helper-compilation-targets': 7.16.3_@babel+core@7.16.0
       '@babel/helper-module-transforms': 7.16.0
       '@babel/helpers': 7.16.0
-      '@babel/parser': 7.16.2
+      '@babel/parser': 7.16.4
       '@babel/template': 7.16.0
       '@babel/traverse': 7.16.3
       '@babel/types': 7.16.0
