@@ -1,215 +1,384 @@
-# TypeScript \* Babel \* Jest \* Rollup Quick Start Template
+<p align="center">
+    <img width="256" src=".assets/dumba-small.png" alt="library logo">
+</p>
+<p align="center">
+  <a href="https://img.shields.io/github/workflow/status/ivandotv/dumba/Test"><img src="https://img.shields.io/github/workflow/status/ivandotv/dumba/Test" alt="workflow status"></a>
+  <a href="https://app.codecov.io/gh/ivandotv/dumba"><img src="https://img.shields.io/codecov/c/gh/ivandotv/dumba" alt="code coverage"></a>
+  <a href="https://github.com/ivandotv/dumba/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ivandotv/dumba" alt="sofware licence"></a>
+</p>
 
-Opinionated template repository for creating Javascript libraries with Typescript, Rollup, Babel, and Jest.
+<!-- toc -->
 
-## Getting Started
+- [Introduction](#introduction)
+- [Demo](#demo)
+- [Installation](#installation)
+- [Quick Usage](#quick-usage)
+- [Schema](#schema)
+  - [Schema Fields](#schema-fields)
+  - [Advanced field creation properties](#advanced-field-creation-properties)
+  - [Creating Form Field Validation](#creating-form-field-validation)
+- [Form Class](#form-class)
+- [API Documentation](#api-documentation)
 
-You can immediately create your repo by clicking on the `Use this template` button in the Github page UI.
-Or you can use [deGit](https://github.com/Rich-Harris/degit) which is a very convenient tool to quickly download the repository (without git clone) `degit https://github.com/ivandotv/node-module-typescript`
+<!-- tocstop -->
 
-## Table of Contents
+## Introduction
 
-- [Motivation](#motivation)
-- [Compiling Typescript via Babel](#typescript-via-babel)
-- [Development Only Code](#development-only-code)
-- [Rollup configuration](#rollup)
-- [Jest Testing](#jest-testing)
-- [ESLint and Prettier](#eslint-and-prettier)
-- [Continous Integration](#continous-integration)
-- [Git Hooks](#git-hooks)
-- [Debugging](#debugging)
-- [Nodemon](#nodemon)
-- [Conventional Commits](#Conventional-commits)
-- [Semantic Release](#semantic-release)
-- [Generating Documentation](#generating-documentation)
-- [Renovate Bot](#renovate-bot)
-- [Build](#build)
-- [Publish](#publish)
+Dumba.js is a small library (2.4KB) for handling form data via [Mobx.js](https://github.com/mobxjs/mobx). If you use Mobx for your state management this libarary will help you to create fully reactive forms.
+It supports asynchronous validation and a whole lot more.
+It does not contain any validation rules though, so for actual field validation it is recommended to use tried and tested third party validation libraries like [Validator.js](https://github.com/validatorjs/validator.js)
 
-### Motivation
+## Demo
 
-Setting up a modern Typescript or Javascript development stack is a daunting task, there are a lot of moving parts, and sometimes the whole process seems like magic. I wanted the create a modern javascript stack from scratch so I can better familiarize myself with the tools that go into the stack. There some pre-built tools like [tsdx cli](https://tsdx.io/) or [microbundle](https://github.com/developit/microbundle) however, I find myself always modifying the generated configuration, by adding another build target, eslint rule, etc...
-With this template repository I am also handling automatic publishing to NPM, continuous integration, debugging etc..
+Take a look at this [form demo](https://dumba-demo.netlify.app/) that shows pretty much all the functionality of the library.
 
-This repository is actively maintained and as new versions of tools are being released it is updated and modified accordingly.
+You can also play with it the same demo in [CodeSandobx]('')
 
-### Compiling Typescript via Babel
+Or look at the [source of the demo here on github](./demo/README.md)
 
-Typescript files are compiled via babel, which makes compilation a lot faster. However, as a consequence typescript types are not type-checked. Fear not there are scripts (`type:check` and `type:check:watch`) to check and watch for typescript errors.
+## Installation
 
-#### Build targets
+```sh
+npm install dumba
+```
 
-There are two build targets: `server` and `browser`. The reason for this distinction is because code for the `browser` is passed through Rollup and only one file is created. These build targets are determined by the `buildTarget` field in the `package.json`. Please note that the generated files will have the name something like: `yourLib.production.min.js` where `yourLib` is the name that is picked up by parsing the `package.json` `name` field.
+## Quick Usage
 
-##### Target: Server
+In order to use Dumba.js we need the create the `schema` object, which declarease what filelds exists and how will they be validated.
 
-Babel is set to compile two versions of your source code (with no polyfills):
+```ts
+import { createField, createValidation } from 'dumba'
+import isEmail from 'validator/lib/isEmail'
 
-- `server:build:cjs` (common js) which targets node `v12`
-- `server:build:esm` (ES6) which targets node `v12`
-
-Depending on if the `NODE_ENV` is set to `production` or `development` different babel plugins will be loaded ( production plugins will do dead code elimination).
-
-There is also watch mode `server:watch` which compiles to your `current` version of node.
-
-Full build of the `server` target is done via `server:build`
-
-#### Target: Browser
-
-When compiling for the `browser` there are a few different versions created.
-
-- `browser:build:cjs` This will build a `common module version` that will have a `production` and `development` file like this:
-
-```js
-'use strict'
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./yourLib.production.min.js')
-} else {
-  module.exports = require('./yourLib.development.js')
+const schema = {
+  email: createField({
+    value: 'admin@example.com',
+    validations: createValidation(
+      (str: string) => isEmail(str),
+      'Not a valid email'
+    )
+  })
 }
 ```
 
-This is great for your end-users since they can have a better developer experience while building their software, but when it's time to build the final bundle (include your lib in their code) `production` version will be used.
+After we create the schema, we use the `Form` class to create the fields that will be connected to the actual HTML form.
 
-Rollup is used to compile and bundle the code for the browser. Rollup configuration compiles:
+```tsx
+// FormDemo.tsx
 
-- `umd` versions with and without polyfills
-- `esm` versions for modern browsers with and without polyfills. Version without polyfills will be referenced by `package.json` `module` field.
+//using material ui just as an example
+import TextField from '@material-ui/core/TextField'
+import { observer } from 'mobx-react-lite'
+import { Form } from 'dumba'
+import { schema } from './schema'
 
-For `umd` version browser targets are: `['>0.2%', 'not dead', 'not op_mini all']` (same as create-react-app)
+//declare it outside of the component, usual Mobx rules apply.
+const form = new Form(schema)
 
-**Peer dependencies will not be bundled**!
+const FormDemo = observer(function FormDemo() {
+  //form submit function
+  const handleOnSubmit = () =>
+    form.handleSubmit((form: Form) => Promise.resolve(true))
 
-### Development only code
+  return (
+    <form onSubmit={handleOnSubmit} autoComplete="off" noValidate>
+      <TextField
+        type="text"
+        id="email"
+        name="email"
+        label="Email"
+        disabled={form.isSubmitting || form.isValidating} // disable while submit is in progress or async validation
+        value={form.fields.email.value} //value of the field pulled from the schema
+        onChange={form.fields.email.onChange} //handle field change event
+        onBlur={form.fields.email.onChange} // handle blur event (same as onChange)
+        error={!!form.fields.email.errors.length} // mark field as invalid (if there are any email errors)
+        helperText={<DisplayErrors errors={form.fields.email.errors} />} // display error text
+        autoComplete="off"
+      />
+      <Button //form submit button
+        variant="contained"
+        color="primary"
+        type="submit"
+        disabled={
+          // disable button while submit or async validation is in progress or form is invalid or not yet validated
+          form.isSubmitting ||
+          form.isValidating ||
+          !form.isValid ||
+          !form.isValidated
+        }
+      >
+        Submit
+      </Button>
+    </form>
+  )
+})
+```
 
-While in the development your can the `__DEV__` expression to write code that will be stripped out from the production build.
+And that's the gist of it. There is a lot more you can do with Dumba forms, make sure you read the rest of the documentation.
 
-this code:
+## Schema
 
-```js
-if (__DEV__) {
-  //dev only code
+Schema is the most important part of the library, all form logic lives in schema.
+With schema we define constraints for the fields in the form.
+
+```ts
+const schema = {
+  email: createField({
+    value: 'admin@example.com',
+    validations: createValidation(
+      (str: string) => isEmail(str),
+      'Not a valid email'
+    )
+  })
 }
 ```
 
-will generate:
+We just created a simple schema with only one field (`email`) that has an initial value of `admin@example.com` and, there is one validation for this field, it checks if what the user entered is a valid email address, if the address is not valid, this field will contain an error message `Not a valid email`.
 
-```js
-if (process.env.NODE_ENV !== 'production') {
-  //dev only code
+Schema can have any number of fields even nested fields.
+
+```ts
+const schema = {
+  person: {
+    name: createField(),
+    lastName: createField(),
+    address: {
+      street: createField(),
+      zipCode: createField(),
+      city: createField(),
+      country: createField()
+    }
+  }
 }
 ```
 
-Which will later (in `production` mode) be resolved to:
+### Schema Fields
 
-```js
-if (false) {
-  //dev only code
+Schema consist of the fields, every field element in the HTML form should have a coresponding field in the schema.
+
+Schema fields are created via `createField()` factory function.
+In the example below we are going to create an `email` field.
+
+```ts
+const schema = {
+  email: createField({
+    value: 'admin@example.com',
+    validations: [
+      createValidation((str: string) => isEmail(str), 'Not a valid email'),
+      createValidation(
+        (str: string) => isAlpha(str),
+        'Only letters are allowed'
+      )
+    ],
+    delay: 100,
+    bailEarly: true,
+    disabled: false
+  })
 }
 ```
 
-And it will be removed from your `production` build by `rollup` (in case of the `browser` build) or by `minify-dead-code-elimination` babel plugin (in case of the `server` build).
+- `value`- the initial value of the field
+- `validations` - single validation or array of `validations` for the field to be tested with. [Read more](#creating-field-validation)
+- `delay` - delay in running the field validations. This is very handy if you like to debounce user input and not run validations on every user keystroke.
+- `bailEarly` - mark field as invalid as soon as the first validation for the field fails. This is only valid when there is more than one validation for the field.
+- `disabled` - determine if the field should be disabled. If the field is disabled, it will not be validated, and the form with a disabled field will always be valid.
 
-There are also some other expressions that you can use:
+### Advanced field creation properties
 
-- `__VERSION__` is replaced with the environment variable `PKG_VERSION` or with `package.json` `version` field.
-- `__COMMIT_SHA__` is replaced with the short version of the git commit sha from the HEAD.
-- `__BUILD_DATE__` is replaced with the date of the commit from the HEAD.
+```ts
+const schema = {
+  email: createField({
+    value: 'admin@example.com',
+    validations: [
+      createValidation((str: string) => isEmail(str), 'Not a valid email'),
+      createValidation(
+        (str: string) => isAlpha(str),
+        'Only letters are allowed'
+      )
+    ],
+    delay: 100,
+    bailEarly: true,
+    disabled: false
+  })
+}
+```
 
-### Jest Testing
+- `parseValue` - `(evt: any, field: Field<T>) => any` function to **extract** the value from the field in the actual HTML form. By default this function just takes the value from `evt.currentTarget.value` and passess it for validation. For example you can use it to limit the values that can entered in the input field. In the example below we only allow uppercase letter `A,B,c` to be entered.
 
-Jest is used for testing. You can write your tests in Typescript and they will be compiled via babel for the nodejs version that is running the tests. The testing environment is set to `node` you might want to change that if you need access to `DOM` in your tests.
-I think there is no faster way to run typescript tests in jest. :)
+```js
+parseValue: (evt, field) => {
+  const newValue = evt.currentTarget.value
 
-The coverage threshold is set to `80%` globally.
+  if (newValue.length === 0) {
+    return newValue
+  }
+  const currentValue = field.value
 
-Two plugins are added to jest:
+  //todo - compile regex ahead of time
+  const regex = /^[ABC]+$/
 
-- `jest-watch-typeahead` (for filtering tests by file name or test name)
-- `jest-junit` for reporting coverage.
+  const isOnlyABC = regex.test(newValue)
+  if (!isOnlyABC) {
+    return currentValue
+  }
 
-There are three tasks for running tests:
+  return newValue
+}
+```
 
-- `test` run all test and report code coverage
-- `test:ci` basically the same as `test` only optimized for CI (will not run in parallel)
-- `test:watch` continuously run tests by watching some or all files
+- `dependsOn` - Fields in a schema can depend on other fields, that means that when the field in the `dependsOn` array (`location` in the example below) changes, validations for the `numPeople` field will be automatically triggered.
 
-### ESLint and Prettier
+If the field to be validated depends on some other field in the form (one or more fields) every time the **dependancy** field changes, all validations that **depend** on it will also be validated again.
+In the example below imagine we want to validate total number of people allowed at the party depending if the party is on the beach or by the pool (`numPeople` depends on `location`).
 
--ESLint is set up with three plugins:
+```ts
+const schema: SchemaType = {
+  location: createField({
+    value: 'beach' // or pool
+  }),
+  numPeople: createField({
+    value: '',
+    dependsOn:['location'] // depends on the location field above
+    validations: [
+      createValidation(
+        (partyPeople: number, _field: Field, locationDependancy?: Field) => {
+          if (locationDependancy?.value === 'pool') {
+            if (partyPeople > 20) {
+              return 'max pool party attendance is 40' // error message
+            }
+            return true //valid
+          }
+          if (locationDependancy?.value === 'beach') {
+            if (partyPeople > 200) {
+              return 'max beach party attendance is 200' // error message
+            }
+            return true //valid
+          }
+        }
+      )
+    ]
+  })
+}
+```
 
-- `@typescript-eslint/eslint-plugin` for linting Typescript.
-  `eslint-plugin-tsdoc` for linting markdown files.
-  `prettier` for prettier integration
+If the field depends on other fields that are deeply nested in the object schema that you should use `dot (.)` as field separator e.g. (`level1.level2.location`).
 
-- There are a few overrides that I think are common sense. You can see the overrides inside the [.eslintrc.js](.eslintrc.js) file.
+- `shouldDisable` - `(value: string, field: Field, dependancy?: Field):boolean` if the function returns **true** schema field will be disabled, and no validations for the field will run and `disabled` property of the field will be `true`. This function is triggered only if `dependsOn` field is declared and not empty.
+  In the example below, if the user does not play any sports `favoriteSport` field (e.g. input type select) will be disabled
 
-- You can run ESLint via `fix:src` and `fix:tests` scripts. `fix` script will run both of them.
+```ts
+const schema: SchemaType = {
+  playsSports: createField({
+    value: false // of true
+  }),
+  favoriteSport: createField({
+    value: '',
+    dependsOn: ['playsSports'],
+    shouldDisable: (_value, _field, playsSportsDependency) => {
+      return dependancy?.value === false
+    }
+  })
+}
+```
 
-### Continous Integration
+### Creating Form Field Validation
 
-You can choose between Github actions and CircleCI.
+Actual field validation tests are created via `createValidation` function. `createValidation` function accepts two arguments:
 
-#### CircleCI
+- function to execute the validation. It should return true if field is valid, or if it **returns a string** it will mark the field as invalid, and the string will be used as the error, in this case, second parameter (message) will be ignored. This is particularly useful when working with dependant fields.
+- message to be used as an error if validation fails
 
-[CircleCI](https://circleci.com/) is used for continuous integration.
+```ts
+export type ValidationFn = (
+  value: any, // field value
+  field: Field<any>, // reference to the Field instance
+  dependency?: Field<any> // depended Field instance that can also trigger the validation function
+) => boolean | Promise<boolean>
+```
 
-Tests are run for node versions 10, 12, and 14.
+Also note that you can accces the complete form via `field.form` or `dependency.form`
 
-CircleCI is also set up to upload code coverage to [codecov.io](https://codecov.io) however you can also use [coveralls](https://coveralls.io) for code coverage ( it's currently commented out).
+example function that checks if value is email:
 
-#### Github Actions
+```ts
+// isEmail from validator library
+import isEmail from 'validator/lib/isEmail'
+createValidation((str: string) => isEmail(str), 'Not a valid email')
+```
 
-Same as CircleCI.
-Github actions can also run `semantic-release` and automatically publish the library to NPM.
-Don't forget to set up NPM and code coverage tokens (via GitHub secrets).
+check if value is bigger than 3, if `false` return a `string` that will be used as error message.
 
-### Git Hooks
+```ts
+createValidation((num: number) =>
+  Number.isInteger(num) && num > 3
+    ? true
+    : 'Should be a number and bigger than 3'
+)
+```
 
-There is one git hook setup via [husky](https://www.npmjs.com/package/husky) package in combination with [lint-staged](https://www.npmjs.com/package/lint-staged). Before committing the files all staged files will be run through ESLint and Prettier.
+Take a look at the generated [API docs]() for the complete api
 
-### Debugging
+## Form Class
 
-If you are using VS Code as your editor,
-there are three debug configurations:
+`Form` class is used to create **reactive** fields and event listeners based on the `schema` that is used.
 
-- `Main` debug the application by running the compiled `index.js` file.
-- `Current test file` debug currently focused test file inside the editor.
-- `Nodemon` attach a debugger to the `nodemon`
+```js
+const schema = {
+  email: createField({
+    value: 'admin@example.com',
+    validations: createValidation(
+      (str: string) => isEmail(str),
+      'Not a valid email'
+    )
+  })
+}
+const form = new Form(schema)
+```
 
-### Nodemon
+Once we have the form instance we use it connect the form elements.
 
-Nodemon is set to watch `dist/cjs` directory (where ES5 compile code is saved) and it will automatically reload `index.js`
+```jsx
+import { schema } from './my-schema'
 
-### Conventional Commits
+const form = new Form(schema)
 
-If you are not using [Conventional commits specifiction](https://www.conventionalcommits.org/en/v1.0.0/) for your commit messages, you should. Conventional commits CLI client is installed and it can be run by `yarn commit`.
+const FormDemo = observer(function FormDemo() {
+  //form submit function
+  const handleOnSubmit = () =>
+    form.handleSubmit((form: Form) => Promise.resolve(true))
 
-### Semantic Release
+  return (
+    <form onSubmit={handleOnSubmit} autoComplete="off" noValidate>
+      <input
+        type="text"
+        id="email"
+        name="email"
+        label="Email"
+        disabled={form.isSubmitting || form.isValidating} // disable while submit is in progress or async validation
+        value={form.fields.email.value} //value of the field pulled from the schema
+        onChange={form.fields.email.onChange} //handle field change event
+        onBlur={form.fields.email.onChange} // handle blur event (same as onChange)
+      />
+      <button //form submit button
+        type="submit"
+        disabled={
+          // disable button while submit or async validation is in progress or form is invalid or not yet validated
+          form.isSubmitting ||
+          form.isValidating ||
+          !form.isValid ||
+          !form.isValidated
+        }
+      >
+        Submit
+      </button>
+    </form>
+  )
+})
+```
 
-The semantic release works together with the conventional commits specification and it is set up to automatically publish to NPM via CI.
-There is a custom configuration (`.releaserc.js`) that will also trigger a release under these conditions:
+Once the form is connected to the HTML elements, every time the input filed is changed the field will be re-validated.
+There are other methods on the form class that you might find useful (`reset`, `isValid` ,`validated` etc..) please take a look at the generated API docs.
 
-- `docs(readme):` - will trigger a **patch** release
-- `refactor` - will trigger a **patch** release
+## API Documentation
 
-### Generating documentation
-
-You can generate documentation for your source files via [typedoc](https://typedoc.org)(`yarn docs`).
-Currently, documentation will be generated into `docs/api` directory and it is generated in markdown so it can be displayed on Github.
-
-- Private members are excluded.
-- Only exported properties are documented.
-
-### Renovate Bot
-
-There is a renovate bot configuration file for automatically updating dependencies. Make sure to active `renovate bot` first via [github marketplace.](https://github.com/marketplace/renovate)
-
-### Build
-
-For the final build just run `yarn build` and it will type check Typescript files, test all the files, and finally depending on the `buildTarget` from the `package.json` file it will build the [appropriate bundles.](#build-targets)
-
-### Publish
-
-Manual publishing is done via `yarn publish` this task will go through regular NPM publish steps. When publishing via continuous integration, a `semantic-release` package will be used. Both versions will call [`prepublishOnly` life cycle script](https://docs.npmjs.com/cli/v7/using-npm/scripts#life-cycle-scripts).
+Auto generated API docs are [here](docs/api/)

@@ -3,6 +3,9 @@
     "eslint --fix",
     "prettier --ignore-unknown --write"
   ],
+  "packages/*/docs/**/*.{js,jsx,ts,tsx,json,md}": [
+    "prettier --ignore-unknown --write"
+  ],
   "packages/*/tests/**/*.{js,jsx,ts,tsx,json}": [
     "eslint --fix",
     "prettier --ignore-unknown --write"

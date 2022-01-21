@@ -3,7 +3,7 @@
   "version": "2.0.2",
   "private": false,
   "author": "Ivan Vlatkovic",
-  "description": "Mobx forms made easy",
+  "description": "Small library for handling forms with Mobx.js ",
   "main": "./dist/prod/dumba.js",
   "umd": "./dist/prod/dumba.umd.js",
   "exports": {
@@ -29,7 +29,7 @@
     "build:dev": "cross-env NODE_ENV=development microbundle --define process.env.NODE_ENV=development --tsconfig ./tsconfig.json --generateTypes false --format modern --output dist/dev",
     "build": "rm -rf ./dist && pnpm build:dev && pnpm build:prod",
     "type:check": "tsc --noEmit true",
-    "gen:docs": "rm -rf ./docs/api && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --exclude ./src/__tests__ --out docs/api ./src",
+    "gen:docs": "rm -rf ../../docs && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --exclude ./src/__tests__ --out ../../docs/api ./src",
     "prepublishOnly": "pnpm build",
     "release": "pnpm run prepublishOnly && pnpm changeset publish"
   },
@@ -41,35 +41,43 @@
     "url": "https://github.com/ivandotv/dumba/issues"
   },
   "homepage": "https://github.com/ivandotv/dumba#readme",
-  "keywords": [],
+  "keywords": [
+    "mobx",
+    "mobx-form",
+    "mobx-react",
+    "mobx-react-lite",
+    "form",
+    "react",
+    "forms"
+  ],
   "dependencies": {
     "deep-for-each": "^3.0.0",
-    "set-value": "^4.0.0"
+    "set-value": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/preset-typescript": "^7.16.0",
-    "@changesets/cli": "^2.18.1",
-    "@types/jest": "^27.0.3",
-    "@typescript-eslint/eslint-plugin": "^5.6.0",
-    "@typescript-eslint/parser": "^5.6.0",
+    "@babel/preset-typescript": "^7.16.7",
+    "@changesets/cli": "^2.19.0",
+    "@types/jest": "^27.4.0",
+    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/parser": "^5.10.0",
     "babel-plugin-dev-expression": "^0.2.3",
     "babel-plugin-transform-define": "^2.0.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.4.1",
+    "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-jest": "^25.3.0",
+    "eslint-plugin-jest": "^25.7.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-tsdoc": "^0.2.14",
-    "jest": "^27.4.3",
+    "jest": "^27.4.7",
     "jest-mock-console": "^1.2.3",
     "jest-watch-typeahead": "^1.0.0",
     "microbundle": "^0.14.2",
-    "mobx": "^6.3.7",
+    "mobx": "^6.3.12",
     "prettier": "^2.5.1",
-    "shx": "^0.3.3",
-    "typedoc": "^0.22.10",
-    "typedoc-plugin-markdown": "^3.11.7"
+    "shx": "^0.3.4",
+    "typedoc": "^0.22.11",
+    "typedoc-plugin-markdown": "^3.11.12"
   },
   "peerDependencies": {
     "mobx": "^6.3.2"

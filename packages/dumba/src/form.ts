@@ -39,10 +39,19 @@ export type FormConfig = {
 }
 
 export class Form<TSchema = any> {
+  /**
+   * Access to fields that are created from the schema
+   */
   fields: TSchema
 
+  /**
+   * Determines whether form is in the process of submitting
+   */
   isSubmitting = false
 
+  /**
+   * Holds last submission error
+   */
   submitError: unknown = null
 
   //@internal
