@@ -1,5 +1,11 @@
 # dumba
 
+## 2.0.3
+
+### Patch Changes
+
+- c1c9beb: Update documentation in source
+
 ## 2.0.2
 
 ### Patch Changes
