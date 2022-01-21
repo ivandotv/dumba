@@ -32,9 +32,7 @@ It does not contain any validation rules though, so for actual field validation 
 
 Take a look at this [form demo](https://dumba-demo.netlify.app/) that shows pretty much all the functionality of the library.
 
-You can also play with it the same demo in [CodeSandobx]('')
-
-Or look at the [source of the demo here on github](./demo/README.md)
+Or look at the [source of the demo here on github](demo/README.md)
 
 ## Installation
 
