@@ -42,7 +42,8 @@ npm install dumba
 
 ## Quick Usage
 
-To use Dumba.js we need the create the `schema` object, which declares what fields exist and how will they be validated.
+To use the library we need the create the `schema` object, which declares what fields exist and what validation tests to use for every field.
+In the example below we are going to create a schema with only one field (`email`) and that field will have only one validation (there could be an array of validations), that will check if the field value is a valid email address.
 
 ```ts
 import { createField, createValidation } from 'dumba'
@@ -59,7 +60,31 @@ const schema = {
 }
 ```
 
-After we create the schema, we use the `Form` class to create the fields that will be connected to the actual HTML form.
+After we create the schema, we use the `Form` class to create the class instance that will be connected to the actual HTML form. Form instance needs to be connected to the schema.
+
+```ts
+import { Form } from 'dumba'
+import { schema } from './schema'
+const form = new Form(schema)
+```
+
+When the form instance is created, we use it to connect the fields to the actual HTML form. The form will have all the fields from the schema e.g.
+
+```ts
+const form = new Form(schema)
+form.fields.email.value // field value
+form.fields.email.onChange //field change event handler to connect to html input
+form.fields.email.errors // array of validation errors (if any)
+
+// also there are properties and methods on the form instance itself
+
+form.isValid // if the form is valid
+form.isSubmitting // if form is in the process of submitting
+form.isValidating // if the form is in the process of validating (async validations)
+form.handleSubmit // submit the form
+```
+
+Now, let's connect the form to the Material UI TextField as an example
 
 ```tsx
 // FormDemo.tsx
@@ -86,9 +111,9 @@ const FormDemo = observer(function FormDemo() {
         name="email"
         label="Email"
         disabled={form.isSubmitting || form.isValidating} // disable while submit is in progress or async validation
-        value={form.fields.email.value} //value of the field pulled from the schema
-        onChange={form.fields.email.onChange} //handle field change event
-        onBlur={form.fields.email.onChange} // handle blur event (same as onChange)
+        value={form.fields.email.value}
+        onChange={form.fields.email.onChange}
+        onBlur={form.fields.email.onChange}
         error={!!form.fields.email.errors.length} // mark field as invalid (if there are any email errors)
         helperText={<DisplayErrors errors={form.fields.email.errors} />} // display error text
         autoComplete="off"
