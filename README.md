@@ -24,7 +24,7 @@
 
 ## Introduction
 
-Dumba.js is a small library (2.4KB) for handling form data via [Mobx.js](https://github.com/mobxjs/mobx). If you use Mobx for your state management this libarary will help you to create fully reactive forms.
+Dumba.js is a small library (2.4KB) for handling form data via [Mobx.js](https://github.com/mobxjs/mobx). If you use Mobx for your state management this library will help you to create fully reactive forms.
 It supports asynchronous validation and a whole lot more.
 It does not contain any validation rules though, so for actual field validation it is recommended to use tried and tested third party validation libraries like [Validator.js](https://github.com/validatorjs/validator.js)
 
@@ -42,7 +42,7 @@ npm install dumba
 
 ## Quick Usage
 
-In order to use Dumba.js we need the create the `schema` object, which declarease what filelds exists and how will they be validated.
+To use Dumba.js we need the create the `schema` object, which declares what fields exist and how will they be validated.
 
 ```ts
 import { createField, createValidation } from 'dumba'
@@ -116,8 +116,8 @@ And that's the gist of it. There is a lot more you can do with Dumba forms, make
 
 ## Schema
 
-Schema is the most important part of the library, all form logic lives in schema.
-With schema we define constraints for the fields in the form.
+Schema is the most important part of the library, all form logic lives in the schema.
+With schema, we define constraints for the fields in the form.
 
 ```ts
 const schema = {
@@ -152,7 +152,7 @@ const schema = {
 
 ### Schema Fields
 
-Schema consist of the fields, every field element in the HTML form should have a coresponding field in the schema.
+The schema consists of the fields, every field element in the HTML form should have a corresponding field in the schema.
 
 Schema fields are created via `createField()` factory function.
 In the example below we are going to create an `email` field.
@@ -178,7 +178,7 @@ const schema = {
 - `value`- the initial value of the field
 - `validations` - single validation or array of `validations` for the field to be tested with. [Read more](#creating-field-validation)
 - `delay` - delay in running the field validations. This is very handy if you like to debounce user input and not run validations on every user keystroke.
-- `bailEarly` - mark field as invalid as soon as the first validation for the field fails. This is only valid when there is more than one validation for the field.
+- `bailEarly` - mark the field as invalid as soon as the first validation for the field fails. This is only valid when there is more than one validation for the field.
 - `disabled` - determine if the field should be disabled. If the field is disabled, it will not be validated, and the form with a disabled field will always be valid.
 
 ### Advanced field creation properties
@@ -201,7 +201,7 @@ const schema = {
 }
 ```
 
-- `parseValue` - `(evt: any, field: Field<T>) => any` function to **extract** the value from the field in the actual HTML form. By default this function just takes the value from `evt.currentTarget.value` and passess it for validation. For example you can use it to limit the values that can entered in the input field. In the example below we only allow uppercase letter `A,B,c` to be entered.
+- `parseValue` - `(evt: any, field: Field<T>) => any` function to **extract** the value from the field in the actual HTML form. By default this function just takes the value from `evt.currentTarget.value` and passes it for validation. For example, you can use it to limit the values that can be entered into the input field. In the example below we only allow the uppercase letter `A,B,c` to be entered.
 
 ```js
 parseValue: (evt, field) => {
@@ -224,10 +224,10 @@ parseValue: (evt, field) => {
 }
 ```
 
-- `dependsOn` - Fields in a schema can depend on other fields, that means that when the field in the `dependsOn` array (`location` in the example below) changes, validations for the `numPeople` field will be automatically triggered.
+- `dependsOn` - Fields in a schema can depend on other fields, which means that when the field in the `dependsOn` array (`location` in the example below) changes, validations for the `numPeople` field will be automatically triggered.
 
-If the field to be validated depends on some other field in the form (one or more fields) every time the **dependancy** field changes, all validations that **depend** on it will also be validated again.
-In the example below imagine we want to validate total number of people allowed at the party depending if the party is on the beach or by the pool (`numPeople` depends on `location`).
+If the field to be validated depends on some other field in the form (one or more fields) every time the **dependency** field changes, all validations that **depend** on it will also be validated again.
+In the example below imagine we want to validate the total number of people allowed at the party depending on if the party is on the beach or by the pool (`numPeople` depends on `location`).
 
 ```ts
 const schema: SchemaType = {
@@ -259,7 +259,7 @@ const schema: SchemaType = {
 }
 ```
 
-If the field depends on other fields that are deeply nested in the object schema that you should use `dot (.)` as field separator e.g. (`level1.level2.location`).
+If the field depends on other fields that are deeply nested in the object schema that you should use `dot (.)` as a field separator e.g. (`level1.level2.location`).
 
 - `shouldDisable` - `(value: string, field: Field, dependancy?: Field):boolean` if the function returns **true** schema field will be disabled, and no validations for the field will run and `disabled` property of the field will be `true`. This function is triggered only if `dependsOn` field is declared and not empty.
   In the example below, if the user does not play any sports `favoriteSport` field (e.g. input type select) will be disabled
@@ -283,7 +283,7 @@ const schema: SchemaType = {
 
 Actual field validation tests are created via `createValidation` function. `createValidation` function accepts two arguments:
 
-- function to execute the validation. It should return true if field is valid, or if it **returns a string** it will mark the field as invalid, and the string will be used as the error, in this case, second parameter (message) will be ignored. This is particularly useful when working with dependant fields.
+- function to execute the validation. It should return true if field is valid, or if it **returns a string** it will mark the field as invalid, and the string will be used as the error, in this case, the second parameter (message) will be ignored. This is particularly useful when working with dependent fields.
 - message to be used as an error if validation fails
 
 ```ts
@@ -294,7 +294,7 @@ export type ValidationFn = (
 ) => boolean | Promise<boolean>
 ```
 
-Also note that you can accces the complete form via `field.form` or `dependency.form`
+Also, note that you can access the complete form via `field.form` or `dependency.form`
 
 example function that checks if value is email:
 
@@ -304,7 +304,7 @@ import isEmail from 'validator/lib/isEmail'
 createValidation((str: string) => isEmail(str), 'Not a valid email')
 ```
 
-check if value is bigger than 3, if `false` return a `string` that will be used as error message.
+check if the value is bigger than 3, if `false` return a `string` that will be used as an error message.
 
 ```ts
 createValidation((num: number) =>
@@ -333,7 +333,7 @@ const schema = {
 const form = new Form(schema)
 ```
 
-Once we have the form instance we use it connect the form elements.
+Once we have the form instance we use it to connect the form elements.
 
 ```jsx
 import { schema } from './my-schema'
