@@ -17,7 +17,6 @@
   "dependencies": {
     "husky": "^7.0.4",
     "lint-staged": "^12.2.2",
-    "markdown-toc": "^1.2.0",
     "prettier": "^2.5.1"
   },
   "devDependencies": {
