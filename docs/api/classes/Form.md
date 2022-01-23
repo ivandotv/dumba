@@ -61,7 +61,7 @@
 
 #### Defined in
 
-[form.ts:62](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L62)
+[form.ts:62](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L62)
 
 ## Properties
 
@@ -79,7 +79,7 @@ Access to fields that are created from the schema
 
 #### Defined in
 
-[form.ts:45](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L45)
+[form.ts:45](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L45)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[form.ts:58](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L58)
+[form.ts:58](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L58)
 
 ___
 
@@ -101,7 +101,7 @@ Determines whether form is in the process of submitting
 
 #### Defined in
 
-[form.ts:50](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L50)
+[form.ts:50](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L50)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[form.ts:60](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L60)
+[form.ts:60](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L60)
 
 ___
 
@@ -123,7 +123,7 @@ Holds last submission error
 
 #### Defined in
 
-[form.ts:55](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L55)
+[form.ts:55](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L55)
 
 ## Accessors
 
@@ -140,7 +140,7 @@ only holds values, so it could be sent over the wire.
 
 #### Defined in
 
-[form.ts:141](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L141)
+[form.ts:141](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L141)
 
 ___
 
@@ -157,7 +157,7 @@ value of the is different from the value the field was initialized with.
 
 #### Defined in
 
-[form.ts:183](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L183)
+[form.ts:183](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L183)
 
 ___
 
@@ -173,7 +173,7 @@ Gets whether all fields in the form are valid.
 
 #### Defined in
 
-[form.ts:156](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L156)
+[form.ts:156](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L156)
 
 ___
 
@@ -190,7 +190,7 @@ Don't confuse this propety with [Form.isValid](Form.md#isvalid)
 
 #### Defined in
 
-[form.ts:197](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L197)
+[form.ts:197](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L197)
 
 ___
 
@@ -206,7 +206,7 @@ Gets whether any of the fields in the form are currently validating.
 
 #### Defined in
 
-[form.ts:169](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L169)
+[form.ts:169](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L169)
 
 ___
 
@@ -222,7 +222,7 @@ After successful form submission, this field holds the data that the form head w
 
 #### Defined in
 
-[form.ts:211](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L211)
+[form.ts:211](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L211)
 
 ## Methods
 
@@ -238,7 +238,7 @@ Clears errors for all form fields.
 
 #### Defined in
 
-[form.ts:131](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L131)
+[form.ts:131](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L131)
 
 ___
 
@@ -283,7 +283,7 @@ the response from the submission function
 
 #### Defined in
 
-[form.ts:254](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L254)
+[form.ts:254](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L254)
 
 ___
 
@@ -299,7 +299,7 @@ Resets form fields to their initial values from the schema
 
 #### Defined in
 
-[form.ts:226](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L226)
+[form.ts:226](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L226)
 
 ___
 
@@ -315,7 +315,7 @@ Resets form fields to last successfully saved values
 
 #### Defined in
 
-[form.ts:235](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L235)
+[form.ts:235](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L235)
 
 ___
 
@@ -337,4 +337,4 @@ Validates form
 
 #### Defined in
 
-[form.ts:114](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L114)
+[form.ts:114](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L114)

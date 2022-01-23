@@ -72,7 +72,7 @@ const schema = {
 
 #### Defined in
 
-[field-factory.ts:21](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/field-factory.ts#L21)
+[field-factory.ts:21](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/field-factory.ts#L21)
 
 ___
 
@@ -99,7 +99,7 @@ Result of the [Field](classes/Field.md) validation
 
 #### Defined in
 
-[field.ts:10](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/field.ts#L10)
+[field.ts:10](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/field.ts#L10)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 #### Defined in
 
-[form.ts:36](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L36)
+[form.ts:36](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L36)
 
 ___
 
@@ -135,7 +135,7 @@ Result of running all [Validations](classes/Validation.md)
 
 #### Defined in
 
-[runner.ts:7](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/runner.ts#L7)
+[runner.ts:7](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/runner.ts#L7)
 
 ___
 
@@ -153,7 +153,7 @@ Schema structure with validation results for the fields in the schema
 
 #### Defined in
 
-[form.ts:28](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L28)
+[form.ts:28](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L28)
 
 ___
 
@@ -171,7 +171,7 @@ Schema structure with values for the fields in the schema
 
 #### Defined in
 
-[form.ts:17](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L17)
+[form.ts:17](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L17)
 
 ___
 
@@ -199,7 +199,7 @@ Validation function signature
 
 #### Defined in
 
-[validation.ts:8](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/validation.ts#L8)
+[validation.ts:8](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/validation.ts#L8)
 
 ## Variables
 
@@ -211,7 +211,7 @@ Response string that is returned when the form fails validation
 
 #### Defined in
 
-[form.ts:12](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/form.ts#L12)
+[form.ts:12](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/form.ts#L12)
 
 ## Functions
 
@@ -241,7 +241,7 @@ instance of [Field](classes/Field.md)
 
 #### Defined in
 
-[field-factory.ts:68](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/field-factory.ts#L68)
+[field-factory.ts:68](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/field-factory.ts#L68)
 
 ___
 
@@ -262,7 +262,7 @@ ___
 
 #### Defined in
 
-[validation.ts:14](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/validation.ts#L14)
+[validation.ts:14](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/validation.ts#L14)
 
 ___
 
@@ -290,4 +290,4 @@ Gets the form [Form](classes/Form.md) from the passed in field
 
 #### Defined in
 
-[utils.ts:24](https://github.com/ivandotv/dumba/blob/deccee5/packages/dumba/src/utils.ts#L24)
+[utils.ts:24](https://github.com/ivandotv/dumba/blob/68b3f17/packages/dumba/src/utils.ts#L24)
