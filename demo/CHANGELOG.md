@@ -1,5 +1,12 @@
 # demo
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [e020eff]
+  - dumba@2.0.5
+
 ## 0.1.4
 
 ### Patch Changes
