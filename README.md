@@ -42,7 +42,7 @@ npm install dumba
 
 ## Quick Usage
 
-To use the library we need the create the `schema` object, which declares what fields exist and what validation tests to use for every field.
+To use the library we need to create the `schema` object, which declares what fields exist and what validation tests to use for every field.
 In the example below we are going to create a schema with only one field (`email`) and that field will have only one validation (there could be an array of validations), that will check if the field value is a valid email address.
 
 ```ts
@@ -60,7 +60,7 @@ const schema = {
 }
 ```
 
-After we create the schema, we use the `Form` class to create the class instance that will be connected to the actual HTML form. Form instance needs to be connected to the schema.
+After we create the schema, we use the `Form` class to create the class instance that will be connected to the actual HTML form. Form instance needs the schema object.
 
 ```ts
 import { Form } from 'dumba'
@@ -87,8 +87,6 @@ form.handleSubmit // submit the form
 Now, let's connect the form to the Material UI TextField as an example
 
 ```tsx
-// FormDemo.tsx
-
 //using material ui just as an example
 import TextField from '@material-ui/core/TextField'
 import { observer } from 'mobx-react-lite'
@@ -110,12 +108,15 @@ const FormDemo = observer(function FormDemo() {
         id="email"
         name="email"
         label="Email"
-        disabled={form.isSubmitting || form.isValidating} // disable while submit is in progress or async validation
+        // disable while submit is in progress or async validation
+        disabled={form.isSubmitting || form.isValidating}
         value={form.fields.email.value}
         onChange={form.fields.email.onChange}
         onBlur={form.fields.email.onChange}
-        error={!!form.fields.email.errors.length} // mark field as invalid (if there are any email errors)
-        helperText={<DisplayErrors errors={form.fields.email.errors} />} // display error text
+        // mark textfield as invalid (if there are any email errors)
+        error={!!form.fields.email.errors.length}
+        // display error text
+        helperText={<DisplayErrors errors={form.fields.email.errors} />}
         autoComplete="off"
       />
       <Button //form submit button
