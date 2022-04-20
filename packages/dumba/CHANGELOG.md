@@ -1,5 +1,11 @@
 # dumba
 
+## 2.0.7
+
+### Patch Changes
+
+- 03055c1: fix monorepo readme location
+
 ## 2.0.6
 
 ### Patch Changes
