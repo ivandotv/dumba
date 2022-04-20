@@ -83,7 +83,7 @@ Creates an instance of field.
 
 #### Defined in
 
-[field.ts:95](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L95)
+[field.ts:95](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L95)
 
 ## Properties
 
@@ -95,7 +95,7 @@ Fields that depend on this field
 
 #### Defined in
 
-[field.ts:84](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L84)
+[field.ts:84](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L84)
 
 ___
 
@@ -125,7 +125,7 @@ Errors from the validation process
 
 #### Defined in
 
-[field.ts:48](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L48)
+[field.ts:48](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L48)
 
 ___
 
@@ -137,7 +137,7 @@ Refrence to the [Form](Form.md) that is holding the field instance
 
 #### Defined in
 
-[field.ts:53](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L53)
+[field.ts:53](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L53)
 
 ___
 
@@ -149,7 +149,7 @@ Initial value of field. Field will be reverted to this value after [Field.reset]
 
 #### Defined in
 
-[field.ts:68](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L68)
+[field.ts:68](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L68)
 
 ___
 
@@ -168,7 +168,7 @@ have run at least once
 
 #### Defined in
 
-[field.ts:43](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L43)
+[field.ts:43](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L43)
 
 ___
 
@@ -180,7 +180,7 @@ Determines whether field is in the process of validating
 
 #### Defined in
 
-[field.ts:37](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L37)
+[field.ts:37](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L37)
 
 ___
 
@@ -192,7 +192,7 @@ Name  of field
 
 #### Defined in
 
-[field.ts:58](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L58)
+[field.ts:58](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L58)
 
 ___
 
@@ -219,7 +219,7 @@ This method can also be hooked to the HTML "onBlur" event.
 
 #### Defined in
 
-[field.ts:74](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L74)
+[field.ts:74](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L74)
 
 ___
 
@@ -252,7 +252,7 @@ Path  of field in the [Form](Form.md) that holds the field
 
 #### Defined in
 
-[field.ts:63](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L63)
+[field.ts:63](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L63)
 
 ___
 
@@ -292,7 +292,7 @@ ID of debounced onChange event
 
 #### Defined in
 
-[field.ts:79](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L79)
+[field.ts:79](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L79)
 
 ___
 
@@ -314,7 +314,7 @@ Gets all the dependant fields
 
 #### Defined in
 
-[field.ts:235](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L235)
+[field.ts:235](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L235)
 
 ___
 
@@ -331,7 +331,7 @@ Field is dirty when current value is not equal to the initial value
 
 #### Defined in
 
-[field.ts:316](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L316)
+[field.ts:316](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L316)
 
 ___
 
@@ -347,7 +347,7 @@ Gets whether field is valid. Field is valid when there are no errors.
 
 #### Defined in
 
-[field.ts:308](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L308)
+[field.ts:308](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L308)
 
 ## Methods
 
@@ -369,7 +369,7 @@ Checks if value is null
 
 #### Defined in
 
-[field.ts:338](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L338)
+[field.ts:338](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L338)
 
 ___
 
@@ -385,7 +385,7 @@ Clears all field errors
 
 #### Defined in
 
-[field.ts:283](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L283)
+[field.ts:283](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L283)
 
 ___
 
@@ -405,7 +405,7 @@ ___
 
 #### Defined in
 
-[field.ts:208](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L208)
+[field.ts:208](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L208)
 
 ___
 
@@ -422,7 +422,7 @@ on all dependant fields.
 
 #### Defined in
 
-[field.ts:324](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L324)
+[field.ts:324](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L324)
 
 ___
 
@@ -443,7 +443,7 @@ ___
 
 #### Defined in
 
-[field.ts:216](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L216)
+[field.ts:216](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L216)
 
 ___
 
@@ -466,7 +466,7 @@ Sets value to the field
 
 #### Defined in
 
-[field.ts:248](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L248)
+[field.ts:248](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L248)
 
 ___
 
@@ -488,7 +488,7 @@ Run all validations for the field
 
 #### Defined in
 
-[field.ts:275](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L275)
+[field.ts:275](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L275)
 
 ___
 
@@ -506,4 +506,4 @@ results of all validations
 
 #### Defined in
 
-[field.ts:190](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/field.ts#L190)
+[field.ts:190](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/field.ts#L190)

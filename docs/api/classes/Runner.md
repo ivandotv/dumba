@@ -36,7 +36,7 @@ Runs validations and reports results
 
 #### Defined in
 
-[runner.ts:23](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/runner.ts#L23)
+[runner.ts:23](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/runner.ts#L23)
 
 ## Properties
 
@@ -74,7 +74,7 @@ early validation
 
 #### Defined in
 
-[runner.ts:80](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/runner.ts#L80)
+[runner.ts:80](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/runner.ts#L80)
 
 ___
 
@@ -100,4 +100,4 @@ promise of [RunnerResult](../README.md#runnerresult)
 
 #### Defined in
 
-[runner.ts:32](https://github.com/ivandotv/dumba/blob/d0bf704/packages/dumba/src/runner.ts#L32)
+[runner.ts:32](https://github.com/ivandotv/dumba/blob/a5ded83/packages/dumba/src/runner.ts#L32)
