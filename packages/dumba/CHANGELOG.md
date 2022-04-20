@@ -1,5 +1,11 @@
 # dumba
 
+## 2.0.10
+
+### Patch Changes
+
+- 8af20a1: change release scripts
+
 ## 2.0.9
 
 ### Patch Changes
