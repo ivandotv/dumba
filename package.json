@@ -12,7 +12,7 @@
     "build": "pnpm multi run build",
     "gen:docs": "pnpm multi run gen:docs",
     "prepare": "husky install",
-    "release": "pnpm multi run prepublishOnly --workspace-concurrency 1 && pnpm changeset publish"
+    "release": "pnpm multi run prepublishOnly --workspace-concurrency 1 && pnpm changeset publish && pnpm multi run postpublishOnly"
   },
   "dependencies": {
     "husky": "^7.0.4",
