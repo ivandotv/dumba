@@ -2,6 +2,11 @@
     <img width="256" src=".assets/dumba-small.png" alt="library logo">
 </p>
 <p align="center">
+Small library for handling form data with Mobx.js
+</p>
+
+---
+<p align="center">
   <a href="https://img.shields.io/github/workflow/status/ivandotv/dumba/Test"><img src="https://img.shields.io/github/workflow/status/ivandotv/dumba/Test" alt="workflow status"></a>
   <a href="https://app.codecov.io/gh/ivandotv/dumba"><img src="https://img.shields.io/codecov/c/gh/ivandotv/dumba" alt="code coverage"></a>
   <a href="https://github.com/ivandotv/dumba/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ivandotv/dumba" alt="sofware licence"></a>
