@@ -30,8 +30,8 @@
     "build": "rm -rf ./dist && pnpm build:dev && pnpm build:prod",
     "type:check": "tsc --noEmit true",
     "gen:docs": "rm -rf ../../docs && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --exclude ./src/__tests__ --out ../../docs/api ./src",
-    "prepublishOnly": "pnpm cp-readme && pnpm build && pnpm rm-readme",
-    "release": "pnpm run prepublishOnly && pnpm changeset publish",
+    "prepublishOnly": "pnpm build ",
+    "release": "pnpm cp-readme && pnpm run prepublishOnly && pnpm changeset publish && pnpm rm-readme",
     "cp-readme": "cp ../../README.md ./",
     "rm-readme": "rm ./README.md"
   },
