@@ -1,5 +1,11 @@
 # dumba
 
+## 2.0.6
+
+### Patch Changes
+
+- ca7cfbd: update docs
+
 ## 2.0.5
 
 ### Patch Changes
