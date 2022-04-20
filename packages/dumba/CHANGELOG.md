@@ -1,5 +1,11 @@
 # dumba
 
+## 2.0.9
+
+### Patch Changes
+
+- 42f38f8: change publish scripts
+
 ## 2.0.8
 
 ### Patch Changes
