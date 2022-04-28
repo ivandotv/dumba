@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[validation.ts:24](https://github.com/ivandotv/dumba/blob/06bf5ea/packages/dumba/src/validation.ts#L24)
+[validation.ts:24](https://github.com/ivandotv/dumba/blob/213e863/packages/dumba/src/validation.ts#L24)
 
 ## Properties
 
@@ -51,4 +51,4 @@ ___
 
 #### Defined in
 
-[validation.ts:22](https://github.com/ivandotv/dumba/blob/06bf5ea/packages/dumba/src/validation.ts#L22)
+[validation.ts:22](https://github.com/ivandotv/dumba/blob/213e863/packages/dumba/src/validation.ts#L22)
