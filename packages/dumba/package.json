@@ -5,11 +5,12 @@
   "author": "Ivan Vlatkovic",
   "description": "Small library for handling forms with Mobx.js ",
   "main": "./dist/prod/dumba.js",
-  "umd": "./dist/prod/dumba.umd.js",
+  "module": "./dist/prod/dumba.modern.mjs",
+  "umd:main": "./dist/prod/dumba.umd.js",
   "exports": {
-    "development": "./dist/dev/dumba.esm.js",
-    "import": "./dist/prod/dumba.esm.js",
-    "require": "./dist/prod/dumba.js"
+    "require": "./dist/prod/dumba.js",
+    "development": "./dist/dev/dumba.modern.mjs",
+    "default": "./dist/prod/dumba.modern.mjs"
   },
   "types": "./dist/types/index.d.ts",
   "files": [
