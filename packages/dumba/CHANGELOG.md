@@ -1,5 +1,11 @@
 # dumba
 
+## 2.0.11
+
+### Patch Changes
+
+- ef59c4b: create `.mjs` file build for dumba
+
 ## 2.0.10
 
 ### Patch Changes
