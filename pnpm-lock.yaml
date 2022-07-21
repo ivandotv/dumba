@@ -6,12 +6,12 @@ importers:
     specifiers:
       '@changesets/cli': ^2.19.0
       del: ^6.0.0
-      husky: ^7.0.4
+      husky: ^8.0.0
       lint-staged: ^12.2.2
       minimist: ^1.2.5
       prettier: ^2.5.1
     dependencies:
-      husky: 7.0.4
+      husky: 8.0.0
       lint-staged: 12.2.2
       prettier: 2.5.1
     devDependencies:
@@ -59,7 +59,7 @@ importers:
       eslint-plugin-prettier: ^4.0.0
       eslint-plugin-promise: ^6.0.0
       eslint-plugin-tsdoc: ^0.2.16
-      husky: ^7.0.4
+      husky: ^8.0.0
       jest: ^28.0.2
       jest-environment-jsdom: ^28.0.2
       jest-mock-console: ^1.2.3
@@ -95,7 +95,7 @@ importers:
       eslint-plugin-prettier: 4.0.0_665eb419c9d7860ca0c224f7f6dcdace
       eslint-plugin-promise: 6.0.0_eslint@8.14.0
       eslint-plugin-tsdoc: 0.2.16
-      husky: 7.0.4
+      husky: 8.0.0
       jest: 28.0.2_@types+node@17.0.29
       jest-environment-jsdom: 28.0.2
       jest-mock-console: 1.2.3_jest@28.0.2
@@ -589,7 +589,7 @@ packages:
     resolution: {integrity: sha512-o1rjBT/gppAqKsYfUdfHq5Rk03lMQrkPHG1OWzHWpLgVXRH4HnMM9Et9CVdIqwkCQlobnGHEJMsgWP/jE1zUiw==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.16.8
+      '@babel/types': 7.17.0
 
   /@babel/helper-simple-access/7.17.7:
     resolution: {integrity: sha512-txyMCGroZ96i+Pxr3Je3lzEJjqwaRC9buMUgtomcrLe5Nd0+fk1h0LLA+ixUF5OW7AhHuQ7Es1WcQJZmZsz2XA==}
@@ -2737,7 +2737,7 @@ packages:
       '@babel/code-frame': 7.16.7
       '@babel/generator': 7.16.8
       '@babel/helper-environment-visitor': 7.16.7
-      '@babel/helper-function-name': 7.16.7
+      '@babel/helper-function-name': 7.17.9
       '@babel/helper-hoist-variables': 7.16.7
       '@babel/helper-split-export-declaration': 7.16.7
       '@babel/parser': 7.16.10
@@ -7980,9 +7980,9 @@ packages:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
 
-  /husky/7.0.4:
-    resolution: {integrity: sha512-vbaCKN2QLtP/vD4yvs6iz6hBEo6wkSzs8HpRah1Z6aGmF2KW5PdYuAd7uX5a+OyBZHBhd+TFLqgjUgytQr4RvQ==}
-    engines: {node: '>=12'}
+  /husky/8.0.0:
+    resolution: {integrity: sha512-4qbE/5dzNDNxFEkX9MNRPKl5+omTXQzdILCUWiqG/lWIAioiM5vln265/l6I2Zx8gpW8l1ukZwGQeCFbBZ6+6w==}
+    engines: {node: '>=14'}
     hasBin: true
 
   /hyphenate-style-name/1.0.4:
