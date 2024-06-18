@@ -7,7 +7,7 @@ Small library for handling form data with Mobx.js
 
 ---
 <p align="center">
-  <a href="https://img.shields.io/github/workflow/status/ivandotv/dumba/Test"><img src="https://img.shields.io/github/workflow/status/ivandotv/dumba/Test" alt="workflow status"></a>
+  <a href="https://github.com/ivandotv/dumba/actions/workflows/CI.yml"><img src="https://github.com/ivandotv/dumba/actions/workflows/CI.yml/badge.svg" alt="workflow status"></a>
   <a href="https://app.codecov.io/gh/ivandotv/dumba"><img src="https://img.shields.io/codecov/c/gh/ivandotv/dumba" alt="code coverage"></a>
   <a href="https://github.com/ivandotv/dumba/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ivandotv/dumba" alt="sofware licence"></a>
 </p>
