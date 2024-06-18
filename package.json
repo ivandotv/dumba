@@ -4,15 +4,15 @@
   "private": true,
   "author": "Ivan Vlatkovic",
   "scripts": {
-    "test": "pnpm multi run test --workspace-concurrency 1",
-    "test:ci": "pnpm multi run test:ci --workspace-concurrency 1",
+    "test": "pnpm multi run test",
+    "test:ci": "pnpm multi run test:ci",
     "lint": "pnpm multi run lint",
     "lint:ci": "pnpm multi run lint:ci",
     "type:build": "pnpm multi run type:build",
     "build": "pnpm multi run build",
     "gen:docs": "pnpm multi run gen:docs",
     "prepare": "husky install",
-    "release": "pnpm multi run prepublishOnly --workspace-concurrency 1 && pnpm changeset publish && pnpm multi run postpublishOnly"
+    "release": "pnpm multi run prepublishOnly && pnpm changeset publish && pnpm multi run postpublishOnly"
   },
   "dependencies": {
     "husky": "^7.0.4",
