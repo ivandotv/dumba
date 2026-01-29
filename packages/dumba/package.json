@@ -70,7 +70,7 @@
     "babel-plugin-dev-expression": "^0.2.3",
     "babel-plugin-transform-define": "^2.0.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.14.0",
+    "eslint": "^9.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^26.1.5",
     "eslint-plugin-prettier": "^4.0.0",
