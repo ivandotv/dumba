@@ -15,7 +15,7 @@
     "release": "pnpm multi run prepublishOnly && pnpm changeset publish && pnpm multi run postpublishOnly"
   },
   "dependencies": {
-    "husky": "^7.0.4",
+    "husky": "^9.0.0",
     "lint-staged": "^12.2.2",
     "prettier": "^2.5.1"
   },
